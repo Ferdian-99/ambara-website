@@ -2,6 +2,7 @@
 
 ## Current Progress
 - Fresh public frontend website preview is complete.
+- Source has been published to GitHub repository `Ferdian-99/ambara-website` on branch `main`.
 - Visual direction: warm ivory, soft stone gray, charcoal black, champagne gold accent.
 - Backend, authentication, CMS, RBAC, client portal, and project tracking are intentionally not included.
 
@@ -16,6 +17,8 @@
 - Smooth scroll, polished hover states, portfolio grid, service cards, process timeline, testimonial section, and contact CTA implemented.
 - npm dependencies installed for local verification.
 - Local Vite preview is running at `http://127.0.0.1:5173/`.
+- GitHub repository verified to contain required source files only.
+- `.tools/`, `node_modules/`, `dist/`, generated binaries, and local runtime files are excluded.
 
 ## Remaining Features
 - Browser-based visual QA is still recommended once the in-app browser or a local browser is available.
@@ -29,7 +32,7 @@
 - `npm run build` succeeds but prints non-fatal Framer Motion warnings about ignored `"use client"` directives during bundling.
 
 ## Next Task
-- Open the local preview in a browser and do a final visual pass across desktop and mobile widths.
+- Deploy the public frontend to Vercel from GitHub branch `main`.
 
 ## Exact Command To Run Locally
 ```bash

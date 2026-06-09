@@ -11,10 +11,10 @@
 - Framer Motion added in the React implementation.
 - One-page public website completed: Hero, Tentang Ambara, Layanan, Portofolio, Proses Kerja, Testimoni, Kontak, footer.
 - Premium Bahasa Indonesia copy completed for public-facing sections.
-- Generated AMBARA hero image copied into `public/assets/ambara-hero.png`.
+- Hero visual implemented as a code-native architectural composition for source-only deployment.
 - Responsive navigation and mobile menu implemented.
 - Smooth scroll, polished hover states, portfolio grid, service cards, process timeline, testimonial section, and contact CTA implemented.
-- npm dependencies installed and `package-lock.json` generated.
+- npm dependencies installed for local verification.
 - Local Vite preview is running at `http://127.0.0.1:5173/`.
 
 ## Remaining Features
@@ -23,6 +23,8 @@
 
 ## Known Issues
 - The local machine did not have global `node`, `npm`, or `git` on PATH. A workspace-local portable Node runtime was used for install/build verification and is ignored by git in `.tools/`.
+- The GitHub connector path cannot stream large local binaries, so the generated hero PNG was replaced with a deployable code-native visual block.
+- `package-lock.json` is not required for this preview and was removed from the source scope; Vercel can install from `package.json`.
 - The Codex in-app browser failed to connect in this Windows sandbox, and the local Playwright fallback could not resolve its bundled peer modules. HTTP preview was verified with status `200 OK`.
 - `npm run build` succeeds but prints non-fatal Framer Motion warnings about ignored `"use client"` directives during bundling.
 

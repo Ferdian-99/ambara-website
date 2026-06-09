@@ -177,15 +177,17 @@ function App() {
               initial={{ opacity: 0, scale: 0.985 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 1, ease: "easeOut", delay: 0.12 }}
-              className="relative min-h-[470px] overflow-hidden bg-smoke shadow-soft md:min-h-[650px]"
+              className="hero-visual"
+              aria-label="Komposisi visual interior premium AMBARA"
             >
-              <img
-                src="/assets/ambara-hero.png"
-                alt="Interior premium AMBARA dengan furnitur rendah, dinding ivory, dan detail stone gray"
-                className="h-full w-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-charcoal/26 via-transparent to-transparent" />
-              <div className="absolute bottom-5 left-5 right-5 flex items-end justify-between border-t border-white/45 pt-4 text-linen">
+              <div className="absolute inset-6 border border-white/45" />
+              <div className="absolute left-[12%] top-[14%] h-[46%] w-[36%] border border-charcoal/20 bg-linen/64 backdrop-blur-sm" />
+              <div className="absolute right-[10%] top-[18%] h-[62%] w-[32%] bg-charcoal/90" />
+              <div className="absolute bottom-[18%] left-[18%] h-[20%] w-[62%] bg-ivory shadow-soft" />
+              <div className="absolute bottom-[25%] left-[24%] h-px w-[48%] bg-champagne" />
+              <div className="absolute bottom-[31%] right-[18%] h-20 w-20 rounded-full border border-champagne/70" />
+              <div className="absolute right-10 top-10 h-28 w-px bg-champagne/70" />
+              <div className="absolute bottom-5 left-5 right-5 flex items-end justify-between border-t border-charcoal/15 pt-4 text-charcoal">
                 <span className="max-w-[12rem] text-sm leading-5">Koleksi ruang privat dan furnitur kustom</span>
                 <span className="text-xs uppercase tracking-[0.24em]">Jakarta</span>
               </div>

@@ -171,3 +171,121 @@ export const whyAmbara = [
   "Komunikasi proyek yang jelas",
   "Hasil akhir rapi dan tahan lama",
 ];
+
+export const featuredProject = {
+  slug: "residensi-senja",
+  name: "Residensi Senja",
+  type: "Interior residensial dan built-in furniture",
+  year: "2026",
+  location: "Jakarta Selatan",
+  area: "185 m2",
+  mainMaterial: "Travertine honed, linen ivory, charcoal metal",
+  duration: "14 minggu",
+  story:
+    "Sebuah rumah keluarga yang dirancang agar ruang publik terasa lapang, tenang, dan tetap hangat saat digunakan setiap hari. Furnitur dibuat rendah, storage disembunyikan di garis arsitektur, dan material dipilih agar cahaya pagi bergerak lembut di permukaan ruang.",
+  tone: "from-[#f8f3ea] via-[#c9c1b3] to-[#24231f]",
+};
+
+export const finishingDetails = [
+  {
+    title: "Solid wood",
+    body: "Dipilih untuk bagian yang membutuhkan struktur kuat, sentuhan natural, dan karakter material yang bertambah matang seiring waktu.",
+  },
+  {
+    title: "HPL premium",
+    body: "Solusi rapi dan tahan pakai untuk kabinet harian, dengan pilihan tekstur yang tetap tenang dan mudah dirawat.",
+  },
+  {
+    title: "Veneer",
+    body: "Memberi kedalaman serat kayu yang lebih halus pada panel, meja, dan bidang besar tanpa membuat ruang terasa berat.",
+  },
+  {
+    title: "Marble finish",
+    body: "Digunakan sebagai aksen permukaan untuk menghadirkan rasa stone yang elegan, terukur, dan tidak berlebihan.",
+  },
+  {
+    title: "Metal accent",
+    body: "Detail tipis pada kaki, handle, trim, atau sambungan untuk memberi struktur visual dan sentuhan champagne yang premium.",
+  },
+  {
+    title: "Soft-close hardware",
+    body: "Hardware dipilih untuk gerak yang halus, senyap, dan konsisten, terutama pada kabinet, drawer, dan built-in storage.",
+  },
+];
+
+export const faqItems = [
+  {
+    question: "Apakah bisa custom ukuran?",
+    answer: "Bisa. Setiap furnitur dan built-in dapat disesuaikan dengan ukuran ruang, kebutuhan penyimpanan, proporsi visual, dan kebiasaan penggunaan harian.",
+  },
+  {
+    question: "Apakah Ambara menerima proyek luar kota?",
+    answer: "Bisa untuk proyek tertentu. Tim akan meninjau lokasi, skala pekerjaan, kebutuhan pengukuran, pengiriman, dan instalasi sebelum memberikan rekomendasi alur kerja.",
+  },
+  {
+    question: "Berapa lama proses pengerjaan?",
+    answer: "Durasi bergantung pada lingkup desain, jumlah item, kompleksitas detail, dan ketersediaan material. Proyek furnitur biasanya lebih singkat dibanding interior menyeluruh.",
+  },
+  {
+    question: "Apakah bisa konsultasi terlebih dahulu?",
+    answer: "Bisa. Konsultasi awal membantu membaca kebutuhan ruang, prioritas budget, timeline, dan arah desain sebelum masuk ke tahap konsep atau produksi.",
+  },
+  {
+    question: "Apakah desain bisa direvisi?",
+    answer: "Bisa. Revisi dilakukan secara terarah agar keputusan desain tetap rapi, tidak melebar, dan tetap sesuai dengan karakter ruang yang ingin dibangun.",
+  },
+  {
+    question: "Apakah tersedia instalasi?",
+    answer: "Tersedia untuk built-in, interior, dan furnitur tertentu. Instalasi direncanakan agar pengiriman, pemasangan, dan pengecekan akhir berjalan tertib.",
+  },
+  {
+    question: "Apakah bisa menyesuaikan budget?",
+    answer: "Bisa. Tim akan membantu memilah prioritas material, finishing, dan lingkup pekerjaan agar hasil tetap terasa premium dalam batas anggaran yang realistis.",
+  },
+];
+
+export const moodOptions = [
+  {
+    name: "Minimal Modern",
+    description: "Ruang bersih dengan garis tipis, storage tersembunyi, dan komposisi yang tidak banyak berbicara.",
+    direction: "Ivory, stone gray, charcoal accent, panel matte, metal tipis.",
+    service: "Interior Design dan Built-in Furniture",
+  },
+  {
+    name: "Japandi",
+    description: "Hangat, ringan, dan tertata. Cocok untuk hunian yang ingin terasa natural tanpa menjadi terlalu rustic.",
+    direction: "Linen, veneer terang, tekstur woven, stone lembut.",
+    service: "Residential Projects dan Custom Furniture",
+  },
+  {
+    name: "Luxury Contemporary",
+    description: "Elegan dengan detail material lebih tegas, tetap tenang, dan cocok untuk ruang representatif.",
+    direction: "Charcoal, champagne metal, marble finish, glass detail.",
+    service: "Interior Design dan Commercial Projects",
+  },
+  {
+    name: "Warm Natural",
+    description: "Ruang yang terasa dekat, nyaman, dan berlapis melalui material natural yang dikurasi.",
+    direction: "Ivory hangat, veneer, kain linen, aksen stone.",
+    service: "Custom Furniture dan Residential Projects",
+  },
+  {
+    name: "Compact Living",
+    description: "Solusi untuk ruang terbatas yang butuh storage rapi, flow jelas, dan furnitur multifungsi.",
+    direction: "Panel terang, hardware soft-close, built-in storage, tone ringan.",
+    service: "Space Planning dan Built-in Furniture",
+  },
+  {
+    name: "Commercial Elegant",
+    description: "Ruang brand, studio, butik, atau kantor privat yang perlu terasa profesional dan berkelas.",
+    direction: "Charcoal, stone gray, champagne trim, lighting aksen.",
+    service: "Commercial Projects dan Interior Design",
+  },
+  {
+    name: "Lainnya",
+    description:
+      "Ceritakan referensi dan kebutuhan ruang Anda, tim Ambara akan membantu menerjemahkannya menjadi arah desain yang lebih personal.",
+    direction: "Arah material dan warna disusun setelah membaca ruang, fungsi, dan preferensi Anda.",
+    service: "Konsultasi awal AMBARA",
+  },
+];

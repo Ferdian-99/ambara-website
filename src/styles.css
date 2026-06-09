@@ -30,37 +30,86 @@ body {
 }
 
 @layer components {
-  .nav-link {
-    @apply relative transition hover:text-charcoal;
-  }
-
-  .nav-link::after {
-    content: "";
-    @apply absolute -bottom-2 left-0 h-px w-0 bg-champagne transition-all duration-300;
-  }
-
-  .nav-link:hover::after {
-    @apply w-full;
-  }
-
-  .btn-primary {
-    @apply inline-flex items-center justify-center bg-charcoal px-6 py-3 text-sm font-medium text-linen transition duration-300 hover:bg-champagne hover:text-charcoal;
-  }
-
-  .btn-secondary {
-    @apply inline-flex items-center justify-center border border-charcoal/20 px-6 py-3 text-sm font-medium text-charcoal transition duration-300 hover:border-champagne hover:text-champagne;
-  }
-
-  .portfolio-panel {
-    @apply relative aspect-[4/5] overflow-hidden shadow-line transition duration-500 group-hover:brightness-105;
-  }
-
+  .section-label { @apply mb-5 text-xs font-medium uppercase tracking-[0.28em] text-champagne; }
+  .section-wrap { @apply mx-auto max-w-7xl px-5 py-20 md:px-8 md:py-28; }
+  .content-grid { @apply mx-auto grid max-w-7xl gap-10 px-5 md:grid-cols-[0.84fr_1.16fr] md:px-8; }
+  .section-heading { @apply mx-auto flex max-w-7xl flex-col justify-between gap-8 md:flex-row md:items-end; }
+  .section-title { @apply font-serif text-3xl leading-tight md:text-5xl; }
+  .page-hero { @apply border-b border-charcoal/10 bg-linen py-20 md:py-28; }
+  .page-title { @apply max-w-4xl font-serif text-4xl leading-[1.04] md:text-6xl; }
+  .lead-copy { @apply max-w-2xl text-lg leading-8 text-graphite/70; }
+  .text-link { @apply text-sm font-medium text-champagne transition hover:text-charcoal; }
+  .nav-link { @apply relative transition hover:text-charcoal; }
+  .nav-link::after { content: ""; @apply absolute -bottom-2 left-0 h-px w-0 bg-champagne transition-all duration-300; }
+  .nav-link:hover::after { @apply w-full; }
+  .btn-primary { @apply inline-flex items-center justify-center bg-charcoal px-6 py-3 text-sm font-medium text-linen transition duration-300 hover:bg-champagne hover:text-charcoal; }
+  .btn-secondary { @apply inline-flex items-center justify-center border border-charcoal/20 px-6 py-3 text-sm font-medium text-charcoal transition duration-300 hover:border-champagne hover:text-champagne; }
+  .portfolio-panel { @apply relative aspect-[4/5] overflow-hidden shadow-line transition duration-500 group-hover:brightness-105; }
   .hero-visual {
     @apply relative min-h-[470px] overflow-hidden bg-smoke shadow-soft md:min-h-[650px];
-    background:
-      linear-gradient(120deg, rgba(247, 242, 232, 0.92), rgba(189, 184, 174, 0.5)),
-      linear-gradient(90deg, rgba(255, 255, 255, 0.22) 1px, transparent 1px),
-      linear-gradient(rgba(23, 23, 23, 0.08) 1px, transparent 1px);
+    background: linear-gradient(120deg, rgba(247, 242, 232, 0.92), rgba(189, 184, 174, 0.5)), linear-gradient(90deg, rgba(255, 255, 255, 0.22) 1px, transparent 1px), linear-gradient(rgba(23, 23, 23, 0.08) 1px, transparent 1px);
     background-size: auto, 44px 44px, 44px 44px;
   }
+  .visual-block { @apply relative overflow-hidden shadow-line transition duration-500 group-hover:brightness-105; }
+  .premium-grid { @apply grid gap-px overflow-hidden border border-charcoal/10 bg-charcoal/10 md:grid-cols-3; }
+  .service-panel { @apply min-h-[360px] bg-ivory p-8 transition duration-300 hover:bg-linen; }
+  .service-detail-panel { @apply grid gap-8 border border-charcoal/10 bg-linen p-7 transition duration-300 hover:border-champagne/60 md:grid-cols-[0.78fr_1.22fr] md:p-10; }
+  .detail-columns { @apply grid gap-5 md:grid-cols-3; }
+  .detail-columns h3 { @apply mb-4 text-xs uppercase tracking-[0.22em] text-champagne; }
+  .detail-columns p, .detail-columns li { @apply text-sm leading-7 text-graphite/70; }
+  .detail-columns ul { @apply space-y-2; }
+  .process-chip { @apply border border-charcoal/10 bg-ivory p-5 transition hover:border-champagne/60; }
+  .process-chip span, .reason-row span, .process-card span, .dark-panel span { @apply text-sm text-champagne; }
+  .process-chip p { @apply mt-8 font-serif text-2xl; }
+  .reason-row { @apply flex items-center justify-between gap-6 border-t border-charcoal/10 py-5; }
+  .reason-row p { @apply max-w-lg text-xl leading-8; }
+  .testimonial-card { @apply border border-charcoal/10 bg-ivory p-8; }
+  .testimonial-card blockquote { @apply mt-8 font-serif text-2xl leading-snug; }
+  .testimonial-card figcaption { @apply mt-8 text-sm text-graphite/65; }
+  .initial-mark { @apply flex h-14 w-14 items-center justify-center rounded-full border border-champagne/60 text-sm text-champagne; }
+  .editorial-block { @apply border-t border-charcoal/10 pt-6; }
+  .editorial-block h2 { @apply font-serif text-3xl; }
+  .editorial-block p { @apply mt-4 leading-8 text-graphite/70; }
+  .dark-panel { @apply border border-linen/10 bg-linen/10 p-7; }
+  .dark-panel p { @apply mt-12 font-serif text-2xl; }
+  .filter-pill { @apply border border-charcoal/15 px-5 py-2 text-sm transition hover:border-champagne hover:text-champagne; }
+  .filter-pill.is-active { @apply border-champagne bg-champagne text-charcoal; }
+  .portfolio-caption { @apply mt-5 flex items-start justify-between gap-4; }
+  .portfolio-caption p { @apply text-xs uppercase tracking-[0.22em] text-champagne; }
+  .portfolio-caption h2 { @apply mt-2 font-serif text-3xl; }
+  .portfolio-caption span, .portfolio-caption strong { @apply text-sm font-normal text-graphite/60; }
+  .project-meta { @apply grid gap-px bg-charcoal/10; }
+  .project-meta div { @apply bg-ivory p-7; }
+  .project-meta span { @apply text-xs uppercase tracking-[0.22em] text-champagne; }
+  .project-meta p { @apply mt-6 font-serif text-3xl; }
+  .material-pill { @apply border border-charcoal/10 bg-ivory px-4 py-2 text-sm text-graphite/70; }
+  .process-board { @apply grid gap-px bg-charcoal/10 md:grid-cols-2 lg:grid-cols-5; }
+  .process-card { @apply min-h-[280px] bg-ivory p-7 transition hover:bg-linen; }
+  .process-card h2 { @apply mt-16 font-serif text-3xl; }
+  .process-card p { @apply mt-4 text-sm leading-7 text-graphite/70; }
+  .tracking-panel { @apply grid gap-8 border border-charcoal/10 bg-linen p-7 md:grid-cols-[0.9fr_1.1fr] md:items-end md:p-10; }
+  .tracking-form { @apply flex flex-col gap-3 sm:flex-row; }
+  .tracking-form input, .contact-form input, .contact-form select, .contact-form textarea { @apply w-full border border-charcoal/15 bg-ivory px-4 py-3 text-sm outline-none transition focus:border-champagne; }
+  .tracking-form button, .contact-form button { @apply bg-charcoal px-6 py-3 text-sm font-medium text-linen transition hover:bg-champagne hover:text-charcoal; }
+  .mock-project-card, .timeline-card { @apply mt-8 border border-charcoal/10 bg-ivory p-7 md:p-10; }
+  .status-badge { @apply inline-flex border border-champagne/60 px-5 py-2 text-sm text-champagne; }
+  .progress-track { @apply h-2 overflow-hidden bg-charcoal/10; }
+  .progress-track div { @apply h-full bg-champagne; }
+  .stage-node { @apply border border-charcoal/10 p-3 text-center text-xs text-graphite/60; }
+  .stage-node span { @apply mx-auto mb-3 flex h-7 w-7 items-center justify-center rounded-full border border-charcoal/15; }
+  .stage-node.is-done { @apply border-champagne/60 bg-linen text-charcoal; }
+  .stage-node.is-done span { @apply border-champagne bg-champagne text-charcoal; }
+  .timeline-card h2 { @apply mb-6 font-serif text-3xl; }
+  .timeline-row { @apply border-t border-charcoal/10 py-5; }
+  .timeline-row span { @apply text-xs uppercase tracking-[0.2em] text-champagne; }
+  .timeline-row p { @apply mt-2 leading-7 text-graphite/70; }
+  .placeholder-grid { @apply grid gap-3 sm:grid-cols-2; }
+  .placeholder-grid div { @apply min-h-32 border border-charcoal/10 bg-linen p-4 text-sm text-graphite/60; }
+  .contact-form { @apply grid gap-5 border border-charcoal/10 bg-linen p-7 md:p-10; }
+  .contact-form label { @apply mb-2 block text-xs uppercase tracking-[0.2em] text-champagne; }
+  .contact-form textarea { @apply min-h-36 resize-none; }
+  .contact-aside { @apply border border-charcoal/10 bg-ivory p-8 md:p-10; }
+  .contact-aside h2 { @apply font-serif text-4xl; }
+  .contact-aside h3 { @apply font-serif text-2xl; }
+  .contact-aside p { @apply mt-4 leading-7 text-graphite/70; }
 }

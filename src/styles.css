@@ -54,4 +54,13 @@ body {
   .portfolio-panel {
     @apply relative aspect-[4/5] overflow-hidden shadow-line transition duration-500 group-hover:brightness-105;
   }
+
+  .hero-visual {
+    @apply relative min-h-[470px] overflow-hidden bg-smoke shadow-soft md:min-h-[650px];
+    background:
+      linear-gradient(120deg, rgba(247, 242, 232, 0.92), rgba(189, 184, 174, 0.5)),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.22) 1px, transparent 1px),
+      linear-gradient(rgba(23, 23, 23, 0.08) 1px, transparent 1px);
+    background-size: auto, 44px 44px, 44px 44px;
+  }
 }

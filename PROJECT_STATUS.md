@@ -1,38 +1,39 @@
 # AMBARA Project Status
 
 ## Current Progress
-- Fresh public frontend website preview is complete.
-- Source has been published to GitHub repository `Ferdian-99/ambara-website` on branch `main`.
+- Frontend upgraded to a premium client-ready multi-page visual preview.
+- Source is being prepared for GitHub branch `main`.
 - Visual direction: warm ivory, soft stone gray, charcoal black, champagne gold accent.
 - Backend, authentication, CMS, RBAC, client portal, and project tracking are intentionally not included.
 
 ## Completed Features
-- Vite + React + TypeScript project files created.
-- Tailwind CSS configuration created.
-- Framer Motion added in the React implementation.
-- One-page public website completed: Hero, Tentang Ambara, Layanan, Portofolio, Proses Kerja, Testimoni, Kontak, footer.
-- Premium Bahasa Indonesia copy completed for public-facing sections.
-- Hero visual implemented as a code-native architectural composition for source-only deployment.
-- Responsive navigation and mobile menu implemented.
-- Smooth scroll, polished hover states, portfolio grid, service cards, process timeline, testimonial section, and contact CTA implemented.
-- npm dependencies installed for local verification.
-- Local Vite preview is running at `http://127.0.0.1:5173/`.
-- GitHub repository verified to contain required source files only.
-- `.tools/`, `node_modules/`, `dist/`, generated binaries, and local runtime files are excluded.
+- Vite + React + TypeScript + Tailwind CSS + Framer Motion stack retained.
+- React Router added for a multi-page company profile experience.
+- Dedicated pages added: Home, Tentang Ambara, Layanan, Portofolio, Portfolio Detail, Proses Kerja, Lacak Proyek, Kontak.
+- Homepage upgraded with richer hero, service preview, editorial portfolio preview, process preview, material and craftsmanship section, Why Ambara section, testimonials, and consultation CTA.
+- Layanan page expanded into detailed premium service panels.
+- Portofolio page expanded with filters, asymmetric gallery layout, project metadata, and detail routes.
+- Frontend-only Lacak Proyek mock added with example code `AMB-2026-001`, status card, progress bar, timeline, stages, photo placeholders, document placeholders, and estimated completion preview.
+- Kontak page added with consultation form preview, WhatsApp CTA, inquiry CTA, and studio contact placeholders.
+- Backend not implemented.
+- Authentication not implemented.
+- RBAC not implemented.
+- CMS not implemented.
+- Real client portal not implemented.
+- Real tracking backend/database not implemented.
 
 ## Remaining Features
-- Browser-based visual QA is still recommended once the in-app browser or a local browser is available.
-- Future backend, authentication, CMS, RBAC, client portal, and project tracking remain intentionally out of scope for this preview.
+- Deploy preview after GitHub push.
+- Visual approval pass across desktop and mobile.
+- Next phase after visual approval: Deploy preview, then Phase 2 Auth + RBAC + Admin Dashboard + real tracking system.
 
 ## Known Issues
 - The local machine did not have global `node`, `npm`, or `git` on PATH. A workspace-local portable Node runtime was used for install/build verification and is ignored by git in `.tools/`.
-- The GitHub connector path cannot stream large local binaries, so the generated hero PNG was replaced with a deployable code-native visual block.
-- `package-lock.json` is not required for this preview and was removed from the source scope; Vercel can install from `package.json`.
 - The Codex in-app browser failed to connect in this Windows sandbox, and the local Playwright fallback could not resolve its bundled peer modules. HTTP preview was verified with status `200 OK`.
-- `npm run build` succeeds but prints non-fatal Framer Motion warnings about ignored `"use client"` directives during bundling.
+- `npm run build` succeeds but prints non-fatal React Router and Framer Motion warnings about ignored `"use client"` directives during bundling.
 
 ## Next Task
-- Deploy the public frontend to Vercel from GitHub branch `main`.
+- Push upgraded source to GitHub branch `main`, then deploy preview to Vercel.
 
 ## Exact Command To Run Locally
 ```bash
@@ -43,7 +44,7 @@ npm run dev
 ## Build Status
 - Passed with `npm run build`.
 - Output directory: `dist/`.
-- Non-fatal warnings: Framer Motion `"use client"` directives are ignored by the client bundler.
+- Non-fatal warnings: React Router and Framer Motion `"use client"` directives are ignored by the client bundler.
 
 ## Local Preview Instructions
 - Current preview URL: `http://127.0.0.1:5173/`.

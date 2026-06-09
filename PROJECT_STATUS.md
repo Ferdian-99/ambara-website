@@ -2,7 +2,7 @@
 
 ## Current Progress
 - Frontend upgraded to a premium client-ready multi-page visual preview.
-- Source is being prepared for GitHub branch `main`.
+- Source has been published to GitHub branch `main`.
 - Visual direction: warm ivory, soft stone gray, charcoal black, champagne gold accent.
 - Backend, authentication, CMS, RBAC, client portal, and project tracking are intentionally not included.
 
@@ -33,7 +33,7 @@
 - `npm run build` succeeds but prints non-fatal React Router and Framer Motion warnings about ignored `"use client"` directives during bundling.
 
 ## Next Task
-- Push upgraded source to GitHub branch `main`, then deploy preview to Vercel.
+- Deploy preview to Vercel from GitHub branch `main`.
 
 ## Exact Command To Run Locally
 ```bash

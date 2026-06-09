@@ -1,0 +1,57 @@
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Inter:wght@400;500;600&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color: #171717;
+  background: #f7f2e8;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 88px;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  font-family: Inter, "Avenir Next", "Segoe UI", sans-serif;
+}
+
+::selection {
+  background: #c8a86a;
+  color: #171717;
+}
+
+@layer components {
+  .nav-link {
+    @apply relative transition hover:text-charcoal;
+  }
+
+  .nav-link::after {
+    content: "";
+    @apply absolute -bottom-2 left-0 h-px w-0 bg-champagne transition-all duration-300;
+  }
+
+  .nav-link:hover::after {
+    @apply w-full;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center bg-charcoal px-6 py-3 text-sm font-medium text-linen transition duration-300 hover:bg-champagne hover:text-charcoal;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center border border-charcoal/20 px-6 py-3 text-sm font-medium text-charcoal transition duration-300 hover:border-champagne hover:text-champagne;
+  }
+
+  .portfolio-panel {
+    @apply relative aspect-[4/5] overflow-hidden shadow-line transition duration-500 group-hover:brightness-105;
+  }
+}

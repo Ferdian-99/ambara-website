@@ -1,7 +1,7 @@
 # AMBARA Project Status
 
 ## Current Progress
-- Frontend upgraded to a premium client-ready multi-page visual preview.
+- Final premium frontend detail pass added to the client-ready multi-page visual preview.
 - Source has been published to GitHub branch `main`.
 - Visual direction: warm ivory, soft stone gray, charcoal black, champagne gold accent.
 - Backend, authentication, CMS, RBAC, client portal, and project tracking are intentionally not included.
@@ -14,6 +14,14 @@
 - Layanan page expanded into detailed premium service panels.
 - Portofolio page expanded with filters, asymmetric gallery layout, project metadata, and detail routes.
 - Frontend-only Lacak Proyek mock added with example code `AMB-2026-001`, status card, progress bar, timeline, stages, photo placeholders, document placeholders, and estimated completion preview.
+- Featured Project cinematic section added.
+- Material & finishing detail added.
+- Lacak Proyek frontend mock enhanced with payment status, project PIC, last update, progress notes, documents, and workshop photo placeholders.
+- FAQ added.
+- Floating WhatsApp CTA added.
+- Download Company Profile CTA added.
+- Design Mood Selector added with `Lainnya` option.
+- Project Availability intentionally not added.
 - Kontak page added with consultation form preview, WhatsApp CTA, inquiry CTA, and studio contact placeholders.
 - Backend not implemented.
 - Authentication not implemented.

@@ -1,7 +1,7 @@
 import { PropsWithChildren, useState } from "react";
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
-import { navItems } from "./data";
+import { faqItems, moodOptions, navItems } from "./data";
 
 export function SectionLabel({ children }: PropsWithChildren) {
   return <p className="section-label">{children}</p>;
@@ -52,13 +52,16 @@ function MenuIcon({ open }: { open: boolean }) {
 export function Layout() {
   const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
+
   const closeMenu = () => setMenuOpen(false);
 
   return (
     <div className="min-h-screen bg-ivory text-charcoal">
       <header className="fixed left-0 right-0 top-0 z-50 border-b border-charcoal/10 bg-ivory/82 backdrop-blur-xl">
         <nav className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 md:px-8">
-          <Link to="/" className="text-lg font-semibold tracking-[0.34em]" onClick={closeMenu}>AMBARA</Link>
+          <Link to="/" className="text-lg font-semibold tracking-[0.34em]" onClick={closeMenu}>
+            AMBARA
+          </Link>
           <div className="hidden items-center gap-7 text-sm text-graphite/80 lg:flex">
             {navItems.map((item) => (
               <NavLink key={item.href} to={item.href} className={({ isActive }) => `nav-link ${isActive ? "text-charcoal after:w-full" : ""}`}>
@@ -66,17 +69,32 @@ export function Layout() {
               </NavLink>
             ))}
           </div>
-          <Link to="/kontak" className="hidden border border-charcoal/20 px-5 py-2 text-sm transition hover:border-champagne hover:text-champagne md:inline-flex">Mulai Konsultasi</Link>
-          <button type="button" className="inline-flex h-10 w-10 items-center justify-center border border-charcoal/15 text-charcoal lg:hidden" onClick={() => setMenuOpen((open) => !open)} aria-label={menuOpen ? "Tutup menu" : "Buka menu"} aria-expanded={menuOpen}>
+          <Link to="/kontak" className="hidden border border-charcoal/20 px-5 py-2 text-sm transition hover:border-champagne hover:text-champagne md:inline-flex">
+            Mulai Konsultasi
+          </Link>
+          <button
+            type="button"
+            className="inline-flex h-10 w-10 items-center justify-center border border-charcoal/15 text-charcoal lg:hidden"
+            onClick={() => setMenuOpen((open) => !open)}
+            aria-label={menuOpen ? "Tutup menu" : "Buka menu"}
+            aria-expanded={menuOpen}
+          >
             <MenuIcon open={menuOpen} />
           </button>
         </nav>
         <AnimatePresence>
           {menuOpen && (
-            <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="border-t border-charcoal/10 bg-ivory px-5 py-5 lg:hidden">
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="border-t border-charcoal/10 bg-ivory px-5 py-5 lg:hidden"
+            >
               <div className="flex flex-col gap-4 text-sm">
                 {navItems.map((item) => (
-                  <NavLink key={item.href} to={item.href} onClick={closeMenu} className={({ isActive }) => (isActive ? "text-champagne" : "")}>{item.label}</NavLink>
+                  <NavLink key={item.href} to={item.href} onClick={closeMenu} className={({ isActive }) => (isActive ? "text-champagne" : "")}>
+                    {item.label}
+                  </NavLink>
                 ))}
               </div>
             </motion.div>
@@ -85,10 +103,18 @@ export function Layout() {
       </header>
 
       <AnimatePresence mode="wait">
-        <motion.div key={location.pathname} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.28 }}>
+        <motion.div
+          key={location.pathname}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.28 }}
+        >
           <Outlet />
         </motion.div>
       </AnimatePresence>
+
+      <FloatingWhatsApp />
       <Footer />
     </div>
   );
@@ -100,7 +126,10 @@ export function Footer() {
       <div className="mx-auto grid max-w-7xl gap-8 text-sm text-graphite/65 md:grid-cols-[1fr_1.2fr_1fr]">
         <p className="font-semibold tracking-[0.28em] text-charcoal">AMBARA</p>
         <p>Studio furnitur premium dan desain interior untuk ruang privat, residensial, hospitality, dan komersial terkurasi.</p>
-        <div className="md:text-right"><p>Jakarta, Indonesia</p><p>(c) 2026 AMBARA Studio</p></div>
+        <div className="md:text-right">
+          <p>Jakarta, Indonesia</p>
+          <p>(c) 2026 AMBARA Studio</p>
+        </div>
       </div>
     </footer>
   );
@@ -122,13 +151,128 @@ export function CTASection() {
     <section className="px-5 py-20 md:px-8 md:py-28">
       <div className="mx-auto max-w-7xl border border-charcoal/10 bg-linen px-6 py-12 md:px-14 md:py-18">
         <div className="grid gap-10 md:grid-cols-[1.15fr_0.85fr] md:items-end">
-          <div><SectionLabel>Konsultasi</SectionLabel><h2 className="max-w-3xl font-serif text-4xl leading-tight md:text-6xl">Mari mulai dari ruang yang ingin Anda rasakan setiap hari.</h2></div>
+          <div>
+            <SectionLabel>Konsultasi</SectionLabel>
+            <h2 className="max-w-3xl font-serif text-4xl leading-tight md:text-6xl">Mari mulai dari ruang yang ingin Anda rasakan setiap hari.</h2>
+          </div>
           <div>
             <p className="text-lg leading-8 text-graphite/72">Ceritakan kebutuhan ruang, furnitur, atau arah interior yang sedang Anda bayangkan. Kami akan menanggapinya dengan tenang dan terukur.</p>
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row"><Link className="btn-primary" to="/kontak">Ajukan Proyek</Link><a className="btn-secondary" href="https://wa.me/6280000000000">WhatsApp</a></div>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <Link className="btn-primary" to="/kontak">Ajukan Proyek</Link>
+              <a className="btn-secondary" href="https://wa.me/6280000000000">WhatsApp</a>
+            </div>
           </div>
         </div>
       </div>
     </section>
+  );
+}
+
+export function CompanyProfileCTA() {
+  return (
+    <div className="company-profile-cta">
+      <div>
+        <SectionLabel>Company Profile</SectionLabel>
+        <h2>Download Company Profile</h2>
+        <p>
+          Berisi ringkasan layanan, overview portofolio, pendekatan material, dan alur kerja proyek AMBARA.
+          Tombol ini masih berupa placeholder frontend dan belum menghasilkan PDF.
+        </p>
+      </div>
+      <button type="button">Download Company Profile</button>
+    </div>
+  );
+}
+
+export function FAQSection() {
+  const [openIndex, setOpenIndex] = useState(0);
+
+  return (
+    <section className="section-wrap">
+      <div className="content-grid">
+        <div>
+          <SectionLabel>FAQ</SectionLabel>
+          <h2 className="section-title">Pertanyaan yang biasanya muncul sebelum memulai proyek.</h2>
+        </div>
+        <div className="faq-list">
+          {faqItems.map((item, index) => (
+            <div key={item.question} className="faq-item">
+              <button type="button" onClick={() => setOpenIndex(openIndex === index ? -1 : index)}>
+                <span>{item.question}</span>
+                <strong>{openIndex === index ? "-" : "+"}</strong>
+              </button>
+              <AnimatePresence initial={false}>
+                {openIndex === index && (
+                  <motion.p
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                  >
+                    {item.answer}
+                  </motion.p>
+                )}
+              </AnimatePresence>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export function DesignMoodSelector() {
+  const [selected, setSelected] = useState(moodOptions[0]);
+
+  return (
+    <section className="bg-linen py-20 md:py-28">
+      <div className="mx-auto max-w-7xl px-5 md:px-8">
+        <div className="section-heading">
+          <div>
+            <SectionLabel>Design Mood Selector</SectionLabel>
+            <h2 className="section-title">Pilih arah rasa ruang yang paling dekat dengan kebutuhan Anda.</h2>
+          </div>
+          <p className="max-w-md leading-7 text-graphite/65">
+            Preview frontend ini membantu calon klien membaca kemungkinan arah desain sebelum konsultasi.
+          </p>
+        </div>
+        <div className="mood-selector">
+          <div className="mood-options">
+            {moodOptions.map((mood) => (
+              <button
+                key={mood.name}
+                type="button"
+                onClick={() => setSelected(mood)}
+                className={selected.name === mood.name ? "is-active" : ""}
+              >
+                {mood.name}
+              </button>
+            ))}
+          </div>
+          <motion.div key={selected.name} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="mood-preview">
+            <p className="text-xs uppercase tracking-[0.24em] text-champagne">Preview mood</p>
+            <h3>{selected.name}</h3>
+            <p>{selected.description}</p>
+            <div>
+              <span>Arah warna/material</span>
+              <strong>{selected.direction}</strong>
+            </div>
+            <div>
+              <span>Rekomendasi layanan</span>
+              <strong>{selected.service}</strong>
+            </div>
+            <Link className="btn-primary mt-8" to="/kontak">Konsultasi Mood</Link>
+          </motion.div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export function FloatingWhatsApp() {
+  return (
+    <a className="floating-whatsapp" href="https://wa.me/6280000000000" aria-label="Chat Ambara via WhatsApp">
+      <span>Butuh konsultasi ruang?</span>
+      <strong>Chat Ambara</strong>
+    </a>
   );
 }

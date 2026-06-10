@@ -99,8 +99,11 @@ export function Tracking() {
             <p className="mb-6 leading-7 text-graphite/70">
               Fitur monitoring proyek ini akan membantu klien membaca perkembangan workshop secara visual pada fase sistem real berikutnya.
             </p>
-            <div className="workshop-grid">
-              {["Rangka kabinet", "Proses veneer", "Hardware fitting", "Finishing sample"].map((item) => <div key={item}>{item}</div>)}
+            <div className="workshop-visual">
+              <img src="/assets/workshop-progress.png" alt="Preview foto progress workshop furnitur Ambara" loading="lazy" />
+              <div className="workshop-grid">
+                {["Rangka kabinet", "Proses veneer", "Hardware fitting", "Finishing sample"].map((item) => <div key={item}>{item}</div>)}
+              </div>
             </div>
           </section>
         </Reveal>

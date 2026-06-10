@@ -1,55 +1,55 @@
 # AMBARA Project Status
 
 ## Current Progress
-- Final premium frontend detail pass added to the client-ready multi-page visual preview.
-- Real visual assets integrated into the approved frontend.
-- Final visual QA pass completed with minor image framing refinements.
+- Phase 2A backend foundation has started on top of the approved public frontend.
+- Public frontend visual direction and existing public pages are preserved.
+- Supabase client integration, role model, protected routes, dashboard shells, project schema, and setup docs have been added.
+- Public `/lacak-proyek` can attempt real project lookup when Supabase is configured and falls back gracefully to the approved mock preview.
 - Source has been published to GitHub branch `main`.
-- Visual direction: warm ivory, soft stone gray, charcoal black, champagne gold accent.
-- Backend, authentication, CMS, RBAC, client portal, and project tracking are intentionally not included.
 
 ## Completed Features
 - Vite + React + TypeScript + Tailwind CSS + Framer Motion stack retained.
-- React Router added for a multi-page company profile experience.
-- Dedicated pages added: Home, Tentang Ambara, Layanan, Portofolio, Portfolio Detail, Proses Kerja, Lacak Proyek, Kontak.
-- Homepage upgraded with richer hero, service preview, editorial portfolio preview, process preview, material and craftsmanship section, Why Ambara section, testimonials, and consultation CTA.
-- Layanan page expanded into detailed premium service panels.
-- Portofolio page expanded with filters, asymmetric gallery layout, project metadata, and detail routes.
-- Frontend-only Lacak Proyek mock added with example code `AMB-2026-001`, status card, progress bar, timeline, stages, photo placeholders, document placeholders, and estimated completion preview.
-- Featured Project cinematic section added.
-- Material & finishing detail added.
-- Lacak Proyek frontend mock enhanced with payment status, project PIC, last update, progress notes, documents, and workshop photo placeholders.
-- FAQ added.
-- Floating WhatsApp CTA added.
-- Download Company Profile CTA added.
-- Design Mood Selector added with `Lainnya` option.
-- Project Availability intentionally not added.
-- Hero image replaced with real AMBARA visual asset.
-- Portfolio images replaced with real project visual assets.
-- Material and finishing image added.
-- Lacak Proyek workshop image added.
-- Final visual QA checked image cropping, hero readability, portfolio image consistency, mobile responsiveness, Lacak Proyek clarity, spacing, typography hierarchy, button alignment, and premium visual feel.
-- Kontak page added with consultation form preview, WhatsApp CTA, inquiry CTA, and studio contact placeholders.
-- Backend not implemented.
-- Authentication not implemented.
-- RBAC not implemented.
+- React Router retained for public pages and expanded for protected admin/client routes.
+- Existing public routes preserved: `/`, `/tentang`, `/layanan`, `/portofolio`, `/proses`, `/lacak-proyek`, `/kontak`.
+- Supabase dependency added for Auth, Database, Storage, and RLS integration.
+- `src/lib/supabase.ts` added with typed database model and env-safe client initialization.
+- `src/lib/auth.ts` added for login, logout, session lookup, and profile role resolution.
+- `src/lib/rbac.ts` added for roles and frontend permission helpers.
+- `src/routes/ProtectedRoute.tsx` added for protected route checks and role-based access.
+- Admin login route added at `/admin/login`.
+- Admin dashboard shell added at `/admin`.
+- Admin routes added: `/admin/projects`, `/admin/projects/new`, `/admin/projects/:id`, `/admin/clients`, `/admin/documents`.
+- Client login route added at `/client/login`.
+- Client dashboard shell added at `/client`.
+- Client routes added: `/client/projects`, `/client/projects/:id`.
+- Project tracking schema added for profiles, clients, projects, project updates, documents, and photos.
+- Row Level Security policies added in `supabase/schema.sql`.
+- Seed template added in `supabase/seed.sql`.
+- Environment example added in `.env.example`.
+- Backend setup guide added in `BACKEND_SETUP.md`.
+- Backend not fully implemented beyond Phase 2A shell/foundation.
 - CMS not implemented.
-- Real client portal not implemented.
-- Real tracking backend/database not implemented.
+- Payment gateway not implemented.
+- Complex analytics not implemented.
 
 ## Remaining Features
-- Vercel redeploy from GitHub branch `main` after this visual QA polish push.
-- Final live visual smoke check across desktop and mobile.
-- Next phase after visual approval: Phase 2 Auth + RBAC + Admin Dashboard + real tracking system.
+- Configure Supabase project and Vercel environment variables.
+- Run `supabase/schema.sql` and adapt `supabase/seed.sql` with real auth user IDs.
+- Replace dashboard placeholder lists with live Supabase queries.
+- Implement real create/update mutations for clients, projects, project updates, photos, and documents.
+- Implement Supabase Storage upload flows.
+- Add admin user management and invite flow.
+- Add production security review for RLS policies.
+- Later phase: CMS, richer admin dashboard, and full client portal polish.
 
 ## Known Issues
-- The local machine did not have global `node`, `npm`, or `git` on PATH. A workspace-local portable Node runtime was used for install/build verification and is ignored by git in `.tools/`.
-- The Codex in-app browser failed to connect in this Windows sandbox, and the local Playwright fallback could not resolve its bundled peer modules.
+- The local machine does not have global `node`, `npm`, or `git` on PATH. A workspace-local portable Node runtime was used for install/build verification and is ignored by git in `.tools/`.
+- The Codex in-app browser previously failed to connect in this Windows sandbox.
 - `npm run build` succeeds but prints non-fatal React Router and Framer Motion warnings about ignored `"use client"` directives during bundling.
-- Image assets are present in GitHub as `.png` files, so the frontend references the existing production paths under `/assets/*.png`.
+- The production JS bundle is above Vite's default 500 kB warning threshold after adding Supabase. This is a warning, not a build failure; route-level code splitting can be added later.
 
 ## Next Task
-- Let Vercel redeploy from GitHub branch `main`, then perform a live visual smoke check.
+- Configure Supabase and Vercel environment variables, then implement Phase 2B: live dashboard data queries and project create/update actions.
 
 ## Exact Command To Run Locally
 ```bash
@@ -60,7 +60,7 @@ npm run dev
 ## Build Status
 - Passed with `npm run build`.
 - Output directory: `dist/`.
-- Non-fatal warnings: React Router and Framer Motion `"use client"` directives are ignored by the client bundler.
+- Non-fatal warnings: React Router and Framer Motion `"use client"` directives, plus Vite chunk-size warning after adding Supabase.
 
 ## Local Preview Instructions
 - Current preview URL: `http://127.0.0.1:5173/`.

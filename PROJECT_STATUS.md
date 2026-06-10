@@ -3,6 +3,7 @@
 ## Current Progress
 - Final premium frontend detail pass added to the client-ready multi-page visual preview.
 - Real visual assets integrated into the approved frontend.
+- Final visual QA pass completed with minor image framing refinements.
 - Source has been published to GitHub branch `main`.
 - Visual direction: warm ivory, soft stone gray, charcoal black, champagne gold accent.
 - Backend, authentication, CMS, RBAC, client portal, and project tracking are intentionally not included.
@@ -27,6 +28,7 @@
 - Portfolio images replaced with real project visual assets.
 - Material and finishing image added.
 - Lacak Proyek workshop image added.
+- Final visual QA checked image cropping, hero readability, portfolio image consistency, mobile responsiveness, Lacak Proyek clarity, spacing, typography hierarchy, button alignment, and premium visual feel.
 - Kontak page added with consultation form preview, WhatsApp CTA, inquiry CTA, and studio contact placeholders.
 - Backend not implemented.
 - Authentication not implemented.
@@ -36,7 +38,7 @@
 - Real tracking backend/database not implemented.
 
 ## Remaining Features
-- Vercel redeploy from GitHub branch `main` after this visual asset integration push.
+- Vercel redeploy from GitHub branch `main` after this visual QA polish push.
 - Final live visual smoke check across desktop and mobile.
 - Next phase after visual approval: Phase 2 Auth + RBAC + Admin Dashboard + real tracking system.
 

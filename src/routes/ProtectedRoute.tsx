@@ -64,7 +64,7 @@ function BackendSetupGate() {
           <Link className="btn-primary" to="/">
             Kembali ke Website
           </Link>
-          <a className="btn-secondary" href="/BACKEND_SETUP.md">
+          <a className="btn-secondary" href="https://github.com/Ferdian-99/ambara-website/blob/main/BACKEND_SETUP.md">
             Baca Setup
           </a>
         </div>

@@ -41,15 +41,12 @@ export function Home() {
             </div>
           </motion.div>
           <motion.div initial={{ opacity: 0, scale: 0.985 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1, ease: "easeOut", delay: 0.12 }} className="hero-visual min-h-[520px] md:min-h-[680px]">
+            <img src="/assets/ambara-hero.png" alt="Interior premium Ambara dengan furnitur kustom dan suasana hangat" className="h-full w-full object-cover" />
+            <div className="absolute inset-0 bg-gradient-to-t from-ivory/78 via-ivory/18 to-charcoal/10" />
             <div className="absolute inset-6 border border-white/45" />
-            <div className="absolute left-[10%] top-[12%] h-[48%] w-[34%] border border-charcoal/20 bg-linen/64 backdrop-blur-sm" />
-            <div className="absolute right-[9%] top-[16%] h-[64%] w-[34%] bg-charcoal/90" />
-            <div className="absolute bottom-[17%] left-[16%] h-[20%] w-[64%] bg-ivory shadow-soft" />
-            <div className="absolute bottom-[25%] left-[22%] h-px w-[50%] bg-champagne" />
-            <div className="absolute bottom-[31%] right-[18%] h-20 w-20 rounded-full border border-champagne/70" />
-            <div className="absolute bottom-5 left-5 right-5 flex items-end justify-between border-t border-charcoal/15 pt-4 text-charcoal">
-              <span className="max-w-[13rem] text-sm leading-5">Komposisi visual ruang privat dan furnitur kustom</span>
-              <span className="text-xs uppercase tracking-[0.24em]">Jakarta</span>
+            <div className="absolute bottom-5 left-5 right-5 flex items-end justify-between border-t border-white/45 pt-4 text-charcoal">
+              <span className="max-w-[13rem] bg-ivory/72 px-3 py-2 text-sm leading-5 backdrop-blur-sm">Komposisi visual ruang privat dan furnitur kustom</span>
+              <span className="bg-ivory/72 px-3 py-2 text-xs uppercase tracking-[0.24em] backdrop-blur-sm">Jakarta</span>
             </div>
           </motion.div>
         </div>
@@ -102,7 +99,7 @@ export function Home() {
           <div className="mt-12 grid gap-5 md:grid-cols-12">
             {portfolioProjects.slice(0, 3).map((project, index) => (
               <Link key={project.slug} to={`/portofolio/${project.slug}`} className={`group ${index === 0 ? "md:col-span-7" : "md:col-span-5"}`}>
-                <VisualBlock tone={project.tone} tall={index === 0} />
+                <VisualBlock tone={project.tone} tall={index === 0} imageSrc={project.imageSrc} imageAlt={project.imageAlt} />
                 <div className="mt-5 flex items-start justify-between gap-4">
                   <div>
                     <p className="text-xs uppercase tracking-[0.22em] text-champagne">{project.category}</p>
@@ -134,7 +131,7 @@ export function Home() {
               </div>
               <Link className="btn-primary mt-8" to={`/portofolio/${featuredProject.slug}`}>View Project Detail</Link>
             </div>
-            <VisualBlock tone={featuredProject.tone} tall />
+            <VisualBlock tone={featuredProject.tone} tall imageSrc={featuredProject.imageSrc} imageAlt={featuredProject.imageAlt} />
           </div>
         </Reveal>
       </section>
@@ -168,16 +165,21 @@ export function Home() {
               Setiap pilihan finishing dipertimbangkan dari ketahanan, rasa sentuhan, kemudahan perawatan, dan kesesuaian dengan karakter ruang.
             </p>
           </div>
-          <div className="finishing-grid">
-            {finishingDetails.map((item, index) => (
-              <Reveal key={item.title} delay={index * 0.04}>
-                <article className="finishing-card">
-                  <span>{String(index + 1).padStart(2, "0")}</span>
-                  <h3>{item.title}</h3>
-                  <p>{item.body}</p>
-                </article>
-              </Reveal>
-            ))}
+          <div className="material-finishing-layout">
+            <Reveal className="material-finishing-image">
+              <img src="/assets/material-finishing.png" alt="Detail material dan finishing furnitur premium Ambara" loading="lazy" />
+            </Reveal>
+            <div className="finishing-grid">
+              {finishingDetails.map((item, index) => (
+                <Reveal key={item.title} delay={index * 0.04}>
+                  <article className="finishing-card">
+                    <span>{String(index + 1).padStart(2, "0")}</span>
+                    <h3>{item.title}</h3>
+                    <p>{item.body}</p>
+                  </article>
+                </Reveal>
+              ))}
+            </div>
           </div>
         </div>
       </section>

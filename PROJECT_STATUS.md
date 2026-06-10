@@ -2,6 +2,7 @@
 
 ## Current Progress
 - Final premium frontend detail pass added to the client-ready multi-page visual preview.
+- Real visual assets integrated into the approved frontend.
 - Source has been published to GitHub branch `main`.
 - Visual direction: warm ivory, soft stone gray, charcoal black, champagne gold accent.
 - Backend, authentication, CMS, RBAC, client portal, and project tracking are intentionally not included.
@@ -22,6 +23,10 @@
 - Download Company Profile CTA added.
 - Design Mood Selector added with `Lainnya` option.
 - Project Availability intentionally not added.
+- Hero image replaced with real AMBARA visual asset.
+- Portfolio images replaced with real project visual assets.
+- Material and finishing image added.
+- Lacak Proyek workshop image added.
 - Kontak page added with consultation form preview, WhatsApp CTA, inquiry CTA, and studio contact placeholders.
 - Backend not implemented.
 - Authentication not implemented.
@@ -31,17 +36,18 @@
 - Real tracking backend/database not implemented.
 
 ## Remaining Features
-- Deploy preview after GitHub push.
-- Visual approval pass across desktop and mobile.
-- Next phase after visual approval: Deploy preview, then Phase 2 Auth + RBAC + Admin Dashboard + real tracking system.
+- Vercel redeploy from GitHub branch `main` after this visual asset integration push.
+- Final live visual smoke check across desktop and mobile.
+- Next phase after visual approval: Phase 2 Auth + RBAC + Admin Dashboard + real tracking system.
 
 ## Known Issues
 - The local machine did not have global `node`, `npm`, or `git` on PATH. A workspace-local portable Node runtime was used for install/build verification and is ignored by git in `.tools/`.
-- The Codex in-app browser failed to connect in this Windows sandbox, and the local Playwright fallback could not resolve its bundled peer modules. HTTP preview was verified with status `200 OK`.
+- The Codex in-app browser failed to connect in this Windows sandbox, and the local Playwright fallback could not resolve its bundled peer modules.
 - `npm run build` succeeds but prints non-fatal React Router and Framer Motion warnings about ignored `"use client"` directives during bundling.
+- Image assets are present in GitHub as `.png` files, so the frontend references the existing production paths under `/assets/*.png`.
 
 ## Next Task
-- Deploy preview to Vercel from GitHub branch `main`.
+- Let Vercel redeploy from GitHub branch `main`, then perform a live visual smoke check.
 
 ## Exact Command To Run Locally
 ```bash

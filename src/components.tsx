@@ -135,7 +135,26 @@ export function Footer() {
   );
 }
 
-export function VisualBlock({ tone = "from-[#efe8da] via-[#c9c1b3] to-[#282723]", tall = false }: { tone?: string; tall?: boolean }) {
+export function VisualBlock({
+  tone = "from-[#efe8da] via-[#c9c1b3] to-[#282723]",
+  tall = false,
+  imageSrc,
+  imageAlt = "Visual interior premium Ambara",
+}: {
+  tone?: string;
+  tall?: boolean;
+  imageSrc?: string;
+  imageAlt?: string;
+}) {
+  if (imageSrc) {
+    return (
+      <div className={`visual-image-block ${tall ? "min-h-[540px]" : "min-h-[360px]"}`}>
+        <img src={imageSrc} alt={imageAlt} loading="lazy" className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.035]" />
+        <div className="absolute inset-0 bg-gradient-to-t from-charcoal/28 via-charcoal/5 to-ivory/12" />
+      </div>
+    );
+  }
+
   return (
     <div className={`visual-block bg-gradient-to-br ${tone} ${tall ? "min-h-[540px]" : "min-h-[360px]"}`}>
       <div className="absolute inset-6 border border-white/40" />

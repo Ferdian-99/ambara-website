@@ -4,6 +4,7 @@ import App from "./App";
 import "./styles.css";
 import "./imageStyles.css";
 import "./dashboardStyles.css";
+import "./trackingStyles.css";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>

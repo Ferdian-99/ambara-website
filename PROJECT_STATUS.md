@@ -12,6 +12,10 @@
 - `/admin/login` and `/client/login` are preserved and redirect to the unified login route.
 - Client/admin onboarding flow improved: `/admin/clients` now shows portal account status and supports manual Supabase User UID linking.
 - Password recovery routes added at `/forgot-password` and `/update-password`.
+- Phase 2C client invitation flow added: `/admin/clients` can send `Kirim Undangan Portal` through the `invite-client` Supabase Edge Function when deployed.
+- `invite-client` Edge Function source added with server-side Supabase Admin Auth usage and `service_role` kept out of Vite/browser code.
+- Manual Supabase User UID linking remains available as a fallback if the Edge Function is not deployed.
+- Client multi-project visibility remains based on `auth.users.id -> clients.user_id -> clients.id -> projects.client_id`, so one linked client account can see all assigned projects.
 - Final frontend polish pass completed for public brand alignment, spacing, CTA hierarchy, and copy tone.
 - Official AMBARA logo integration fixed: public header/navbar uses `/assets/ambara-logo-dark-v2.png`, and footer/dark usage uses `/assets/ambara-logo-light.png`.
 - Header logo sizing increased for clearer readability while preserving object-contain rendering and balanced navbar spacing.
@@ -66,7 +70,11 @@
 - Admin users with client permissions can manually save `clients.user_id` using the Supabase User UID from Supabase Authentication.
 - Forgot password flow added using Supabase password reset email.
 - Update password flow added for reset links that return to `/update-password`.
-- Admin-managed client registration remains manual through Supabase Dashboard for now.
+- Admin-managed client invitation flow added with `Kirim Undangan Portal` action on `/admin/clients`.
+- Supabase Edge Function source added at `supabase/functions/invite-client/index.ts`.
+- Invitation flow can create/invite a client auth user, upsert the client profile role, and link `clients.user_id` when the Edge Function is deployed.
+- `/admin/clients` now has invitation loading, success, and error states.
+- Manual Supabase User UID linking remains available for fallback and operational recovery.
 - Public header and footer brand presentation refined with a charcoal-forward AMBARA identity.
 - Official logo presentation adjusted for desktop and mobile navbar readability.
 - Public homepage and Tentang copy refined toward custom interior, built-in furniture, workshop production, and installation.
@@ -80,7 +88,8 @@
 - Run `supabase/schema.sql` and adapt `supabase/seed.sql` with real auth user IDs if not already done.
 - Test admin/client dashboard flows with real Supabase roles and RLS.
 - Configure Supabase password reset redirect URLs for production and local development.
-- Create/invite Supabase Auth users manually, then link client records through `clients.user_id`.
+- Deploy and configure the `invite-client` Supabase Edge Function for production invitations.
+- If the Edge Function is not deployed, create/invite Supabase Auth users manually, then link client records through `clients.user_id`.
 - Implement Supabase Storage upload flows.
 - Add admin user management and invite flow.
 - Add production security review for RLS policies.
@@ -93,7 +102,7 @@
 - The production JS bundle is above Vite's default 500 kB warning threshold after adding Supabase. This is a warning, not a build failure; route-level code splitting can be added later.
 
 ## Next Task
-- Test the deployed homepage and Tentang page after Vercel redeploy, especially the company profile YouTube embed and future official logo asset placement.
+- Deploy the `invite-client` Supabase Edge Function, set its required secrets, then test sending an invitation from `/admin/clients` to a real client email.
 
 ## Exact Command To Run Locally
 ```bash
@@ -102,7 +111,7 @@ npm run dev
 ```
 
 ## Build Status
-- Passed with `npm run build`.
+- Passed with `npm run build` after the Phase 2C client invitation changes.
 - Output directory: `dist/`.
 - Non-fatal warnings: React Router and Framer Motion `"use client"` directives, plus Vite chunk-size warning after adding Supabase.
 

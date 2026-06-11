@@ -5,7 +5,8 @@
 - Public frontend visual direction and existing public pages are preserved.
 - Supabase client integration, role model, protected routes, dashboard shells, project schema, and setup docs have been added.
 - Public `/lacak-proyek` can attempt real project lookup when Supabase is configured and falls back gracefully to the approved mock preview.
-- Source has been published to GitHub branch `main`.
+- Public `/lacak-proyek` no longer auto-loads `AMB-2026-001`; project data only appears after the user submits a code.
+- Source is being published to GitHub branch `main`.
 
 ## Completed Features
 - Vite + React + TypeScript + Tailwind CSS + Framer Motion stack retained.
@@ -27,6 +28,7 @@
 - Seed template added in `supabase/seed.sql`.
 - Environment example added in `.env.example`.
 - Backend setup guide added in `BACKEND_SETUP.md`.
+- `/lacak-proyek` manual search behavior added with premium idle, not-found, and graceful fallback states.
 - Backend not fully implemented beyond Phase 2A shell/foundation.
 - CMS not implemented.
 - Payment gateway not implemented.

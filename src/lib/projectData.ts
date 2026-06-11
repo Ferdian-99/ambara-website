@@ -100,14 +100,14 @@ export async function fetchClients() {
   const client = requireSupabase();
   const { data, error } = await client.from("clients").select("*").order("created_at", { ascending: false });
   if (error) throw error;
-  return data ?? [];
+  return (data ?? []) as ClientRow[];
 }
 
 export async function fetchClientLinkProfiles() {
   const client = requireSupabase();
   const { data, error } = await client.from("profiles").select("*").order("full_name", { ascending: true });
   if (error) throw error;
-  return data ?? [];
+  return (data ?? []) as ProfileRow[];
 }
 
 export async function createClientRecord(input: CreateClientInput) {
@@ -115,6 +115,19 @@ export async function createClientRecord(input: CreateClientInput) {
   const { data, error } = await client.from("clients").insert(input).select("*").single();
   if (error) throw error;
   return data;
+}
+
+export async function updateClientPortalUser(clientId: string, userId: string | null) {
+  const client = requireSupabase();
+  const { data, error } = await client
+    .from("clients")
+    .update({ user_id: userId })
+    .eq("id", clientId)
+    .select("*")
+    .single();
+
+  if (error) throw error;
+  return data as ClientRow;
 }
 
 export async function createProjectRecord(input: CreateProjectInput) {

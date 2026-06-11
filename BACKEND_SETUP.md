@@ -1,6 +1,6 @@
 # AMBARA Backend Setup
 
-Phase 2A adds the Supabase foundation for authentication, roles, protected dashboard routes, and project tracking data. The public website remains unchanged.
+Phase 2A added the Supabase foundation for authentication, roles, protected dashboard routes, and project tracking data. Phase 2B connects the admin and client dashboards to live Supabase project data. The public website remains unchanged.
 
 ## Supabase Setup
 
@@ -72,10 +72,29 @@ Then open the Vite URL, usually `http://localhost:5173/`.
 - Project schema, RLS policies, and seed file.
 - Public `/lacak-proyek` can read real project data when Supabase is configured, with mock fallback when it is not.
 
-## Remaining After Phase 2A
+## Completed In Phase 2B
 
-- Replace dashboard placeholder lists with live CRUD queries.
-- Implement real project create/update mutations.
+- Admin overview loads live project, client, and recent update data.
+- Admin project list loads real project records from Supabase.
+- Admin project creation writes to the `projects` table and assigns a `client_id`.
+- Admin project detail loads real project summary, timeline updates, documents, and photos.
+- Permitted admin roles can add progress updates through `project_updates`.
+- Progress updates also refresh `projects.current_stage`, `projects.progress_percentage`, and `projects.updated_at`.
+- Admin clients page loads real clients and can create client records.
+- Client records can optionally link to an existing auth profile through `clients.user_id`.
+- Client dashboard and project pages only request projects linked to the authenticated user's client record.
+- Client project detail is read-only and displays status, timeline, documents, and photos when available.
+
+## Role Notes For Phase 2B
+
+- `super_admin`: can view and manage projects, clients, and updates.
+- `project_manager`: can create/manage projects and add project updates.
+- `sales`: can create clients and project records, and view project status.
+- `content_manager`: can access the admin dashboard placeholder only; CMS remains future scope.
+- `client`: can access only client routes and view linked project data.
+
+## Remaining After Phase 2B
+
 - Implement Supabase Storage upload flows.
 - Add complete admin user management.
 - Add stronger production RLS review and security test pass.

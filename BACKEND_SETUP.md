@@ -93,10 +93,11 @@ Manual fallback if the Edge Function is not deployed:
 
 The admin clients page shows portal status for each client:
 
-- `Portal aktif`: `clients.user_id` is linked.
+- `Undangan terkirim`: `clients.user_id` is linked, but the app does not yet track whether the client has accepted the email and created a password.
 - `Belum terhubung`: no Auth user UID is linked yet.
-- `Email available`: the client record has an email that can be used for manual invitation.
-- `Missing email`: add an email before preparing a portal account.
+- `Email belum tersedia`: add an email before preparing a portal account.
+
+Use `Portal aktif` only after a future accepted/confirmed signal is available.
 
 Do not use a Supabase `service_role` key in the frontend. The service role key belongs only in the Supabase Edge Function environment.
 
@@ -117,6 +118,18 @@ supabase secrets set SUPABASE_URL=https://your-project-ref.supabase.co
 supabase secrets set SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 supabase secrets set SITE_URL=https://ambara-website.vercel.app
 supabase functions deploy invite-client
+```
+
+`SITE_URL` controls the invitation redirect target. The function sends invite and reset links to:
+
+```text
+SITE_URL + /update-password
+```
+
+If `SITE_URL` is missing, the function falls back to:
+
+```text
+https://ambara-website.vercel.app
 ```
 
 For local Edge Function testing, set `SITE_URL` to:
@@ -174,16 +187,32 @@ In Supabase Dashboard, open:
 
 Authentication -> URL Configuration
 
+Set Site URL:
+
+```text
+https://ambara-website.vercel.app
+```
+
 Add these redirect URLs:
 
 ```text
 https://ambara-website.vercel.app/update-password
+https://ambara-website.vercel.app/**
 http://localhost:5173/update-password
+http://localhost:5173/**
 ```
 
 Password reset emails also require Supabase email settings/templates to be configured for the project.
 
 Invitation emails from `invite-client` also redirect to `/update-password`. Use production `SITE_URL=https://ambara-website.vercel.app` for deployed invitations and local `SITE_URL=http://localhost:5173` while testing locally.
+
+## Supabase Invite Email Template
+
+In Supabase Dashboard, open:
+
+Authentication -> Email Templates -> Invite user
+
+The default Supabase invitation email can be customized there. Keep the invitation link based on Supabase's confirmation/action URL variable so the `redirectTo` value from `invite-client` is respected. Avoid hardcoded localhost URLs in the template.
 
 ## Completed In Phase 2A
 

@@ -10,6 +10,8 @@
 - Unified `/login` portal route added for admin, internal team, and client users.
 - Public navigation now includes a subtle `Portal` entry that points to `/login`.
 - `/admin/login` and `/client/login` are preserved and redirect to the unified login route.
+- Client/admin onboarding flow improved: `/admin/clients` now shows portal account status and supports manual Supabase User UID linking.
+- Password recovery routes added at `/forgot-password` and `/update-password`.
 - Vercel SPA routing fixed with `vercel.json` rewrites so direct React Router routes fall back to `index.html`.
 - Direct routes like `/admin/login` and `/client/login` should now work after redeploy.
 - Public `/lacak-proyek` can attempt real project lookup when Supabase is configured and falls back gracefully to the approved mock preview.
@@ -53,6 +55,12 @@
 - Login now redirects `super_admin`, `project_manager`, `sales`, and `content_manager` to `/admin`, and `client` to `/client`.
 - Missing profiles show a clear configuration error after authentication.
 - Invalid credentials show a user-friendly login error.
+- `/admin/clients` now clarifies that client records are not automatically login accounts.
+- `/admin/clients` now shows account states: portal active, not linked, email available, and missing email.
+- Admin users with client permissions can manually save `clients.user_id` using the Supabase User UID from Supabase Authentication.
+- Forgot password flow added using Supabase password reset email.
+- Update password flow added for reset links that return to `/update-password`.
+- Admin-managed client registration remains manual through Supabase Dashboard for now.
 - Backend file upload UI remains informational only; real upload is not implemented yet.
 - CMS not implemented.
 - Payment gateway not implemented.
@@ -61,6 +69,8 @@
 ## Remaining Features
 - Run `supabase/schema.sql` and adapt `supabase/seed.sql` with real auth user IDs if not already done.
 - Test admin/client dashboard flows with real Supabase roles and RLS.
+- Configure Supabase password reset redirect URLs for production and local development.
+- Create/invite Supabase Auth users manually, then link client records through `clients.user_id`.
 - Implement Supabase Storage upload flows.
 - Add admin user management and invite flow.
 - Add production security review for RLS policies.
@@ -73,7 +83,7 @@
 - The production JS bundle is above Vite's default 500 kB warning threshold after adding Supabase. This is a warning, not a build failure; route-level code splitting can be added later.
 
 ## Next Task
-- Test unified `/login` with real Supabase roles, then implement Phase 2C: Supabase Storage upload flows for project documents and progress photos.
+- Test Phase 2B with real Supabase users, then implement Phase 2C: Supabase Storage upload flows for project documents and progress photos.
 
 ## Exact Command To Run Locally
 ```bash

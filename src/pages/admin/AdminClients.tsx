@@ -3,6 +3,7 @@ import {
   createClientRecord,
   fetchClientLinkProfiles,
   fetchClients,
+  inviteClientToPortal,
   updateClientPortalUser,
   type ClientRow,
   type ProfileRow,
@@ -26,6 +27,7 @@ export function AdminClients() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [linkingId, setLinkingId] = useState<string | null>(null);
+  const [invitingId, setInvitingId] = useState<string | null>(null);
   const [linkInputs, setLinkInputs] = useState<Record<string, string>>({});
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -117,6 +119,28 @@ export function AdminClients() {
     }
   };
 
+  const handleInviteClient = async (client: ClientRow) => {
+    setError("");
+    setSuccess("");
+
+    if (!client.email?.trim()) {
+      setError("Email client wajib diisi sebelum mengirim undangan portal.");
+      return;
+    }
+
+    setInvitingId(client.id);
+    try {
+      const result = await inviteClientToPortal(client.id);
+      setSuccess(result.message ?? "Undangan portal berhasil dikirim.");
+      setLinkInputs((current) => ({ ...current, [client.id]: result.user_id }));
+      await loadClients();
+    } catch (inviteError) {
+      setError(inviteError instanceof Error ? inviteError.message : "Undangan portal belum dapat dikirim.");
+    } finally {
+      setInvitingId(null);
+    }
+  };
+
   const getAccountMeta = (client: ClientRow) => {
     if (client.user_id) {
       return {
@@ -125,9 +149,16 @@ export function AdminClients() {
       };
     }
 
+    if (!client.email?.trim()) {
+      return {
+        status: "Email belum tersedia",
+        detail: "Missing email",
+      };
+    }
+
     return {
       status: "Belum terhubung",
-      detail: client.email?.trim() ? "Not linked / Email available" : "Not linked / Missing email",
+      detail: "Email available",
     };
   };
 
@@ -151,6 +182,7 @@ export function AdminClients() {
           <h1>Client records untuk proyek AMBARA.</h1>
           <p className="mt-5 max-w-3xl leading-7 text-graphite/70">
             Data client menyimpan informasi proyek. Akun portal dibuat melalui Supabase Auth dan harus dihubungkan dengan User UID client.
+            Undangan portal memungkinkan client membuat password sendiri melalui email.
           </p>
         </div>
       </div>
@@ -160,6 +192,7 @@ export function AdminClients() {
           <h2>Daftar Client</h2>
           {loading && <p className="dashboard-muted">Memuat client...</p>}
           {error && <p className="dashboard-alert">{error}</p>}
+          {success && <p className="dashboard-success">{success}</p>}
           {!loading && !error && clients.length === 0 && (
             <div className="dashboard-empty">
               <span>Belum ada client</span>
@@ -182,6 +215,17 @@ export function AdminClients() {
                 <strong>{client.name}</strong> - {client.email}
               </p>
               <p>{client.phone ?? "Nomor telepon belum diisi"}</p>
+              {canCreate && !client.user_id && client.email?.trim() && (
+                <button
+                  type="button"
+                  className="dashboard-invite-button"
+                  onClick={() => void handleInviteClient(client)}
+                  disabled={invitingId === client.id}
+                >
+                  {invitingId === client.id ? "Mengirim undangan..." : "Kirim Undangan Portal"}
+                </button>
+              )}
+              {client.user_id && <p className="dashboard-muted compact">Portal aktif. Client dapat login dan melihat semua proyek yang terhubung ke client record ini.</p>}
               {canCreate && (
                 <form className="dashboard-link-form" onSubmit={(event) => handleLinkSubmit(event, client)}>
                   <label>

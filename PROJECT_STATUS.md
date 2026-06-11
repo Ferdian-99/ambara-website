@@ -1,9 +1,12 @@
 # AMBARA Project Status
 
 ## Current Progress
-- Phase 2A backend foundation has started on top of the approved public frontend.
+- Phase 2B backend dashboard functionality has started on top of the approved public frontend.
 - Public frontend visual direction and existing public pages are preserved.
 - Supabase client integration, role model, protected routes, dashboard shells, project schema, and setup docs have been added.
+- Admin and client dashboards now use live Supabase data for projects, clients, project timeline updates, documents, and photos.
+- Admin project create and project progress update actions are now connected to Supabase.
+- Client dashboard now only shows projects linked to the authenticated user's client record.
 - Public `/lacak-proyek` can attempt real project lookup when Supabase is configured and falls back gracefully to the approved mock preview.
 - Public `/lacak-proyek` no longer auto-loads `AMB-2026-001`; project data only appears after the user submits a code.
 - Public `/lacak-proyek` result UI now has premium empty states for missing timeline updates, documents, and progress photos.
@@ -31,16 +34,23 @@
 - Backend setup guide added in `BACKEND_SETUP.md`.
 - `/lacak-proyek` manual search behavior added with premium idle, not-found, and graceful fallback states.
 - `/lacak-proyek` empty related-data sections refined with editorial placeholders that do not fake Supabase records.
-- Backend not fully implemented beyond Phase 2A shell/foundation.
+- Shared Supabase data access helper added for dashboard project/client queries and mutations.
+- `/admin` overview now loads live project, client, and recent update data.
+- `/admin/projects` now lists real project records from Supabase.
+- `/admin/projects/new` now creates real project records and assigns them to client records.
+- `/admin/projects/:id` now shows real project detail, timeline, documents, and photos.
+- `/admin/projects/:id` now allows permitted admin roles to add project timeline updates and update current project stage/progress.
+- `/admin/clients` now lists and creates real client records, with optional auth profile linking.
+- `/client` and `/client/projects` now show only projects assigned to the authenticated client user.
+- `/client/projects/:id` now shows read-only live project status, timeline, documents, and photos for the authenticated client.
+- Backend file upload UI remains informational only; real upload is not implemented yet.
 - CMS not implemented.
 - Payment gateway not implemented.
 - Complex analytics not implemented.
 
 ## Remaining Features
-- Configure Supabase project and Vercel environment variables.
-- Run `supabase/schema.sql` and adapt `supabase/seed.sql` with real auth user IDs.
-- Replace dashboard placeholder lists with live Supabase queries.
-- Implement real create/update mutations for clients, projects, project updates, photos, and documents.
+- Run `supabase/schema.sql` and adapt `supabase/seed.sql` with real auth user IDs if not already done.
+- Test admin/client dashboard flows with real Supabase roles and RLS.
 - Implement Supabase Storage upload flows.
 - Add admin user management and invite flow.
 - Add production security review for RLS policies.
@@ -53,7 +63,7 @@
 - The production JS bundle is above Vite's default 500 kB warning threshold after adding Supabase. This is a warning, not a build failure; route-level code splitting can be added later.
 
 ## Next Task
-- Configure Supabase and Vercel environment variables, then implement Phase 2B: live dashboard data queries and project create/update actions.
+- Test Phase 2B with real Supabase users, then implement Phase 2C: Supabase Storage upload flows for project documents and progress photos.
 
 ## Exact Command To Run Locally
 ```bash

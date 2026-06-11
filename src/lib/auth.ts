@@ -32,6 +32,22 @@ export async function signInWithEmail(email: string, password: string) {
   return supabase.auth.signInWithPassword({ email, password });
 }
 
+export async function requestPasswordReset(email: string, redirectTo: string) {
+  if (!supabase) {
+    return { error: new Error("Supabase belum dikonfigurasi.") };
+  }
+
+  return supabase.auth.resetPasswordForEmail(email, { redirectTo });
+}
+
+export async function updatePassword(password: string) {
+  if (!supabase) {
+    return { error: new Error("Supabase belum dikonfigurasi.") };
+  }
+
+  return supabase.auth.updateUser({ password });
+}
+
 export async function signOut() {
   if (!supabase) return;
   await supabase.auth.signOut();

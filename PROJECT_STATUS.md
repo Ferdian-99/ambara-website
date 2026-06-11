@@ -16,6 +16,7 @@
 - `invite-client` Edge Function source added with server-side Supabase Admin Auth usage and `service_role` kept out of Vite/browser code.
 - Manual Supabase User UID linking remains available as a fallback if the Edge Function is not deployed.
 - `/admin/clients` invitation UI refined so normal admins see clear portal status and invite actions first, while manual Supabase User UID linking is tucked into an advanced fallback section.
+- `/admin/clients` client card layout spacing refined so the portal status panel no longer overlaps email, phone, or address text.
 - Client multi-project visibility remains based on `auth.users.id -> clients.user_id -> clients.id -> projects.client_id`, so one linked client account can see all assigned projects.
 - Final frontend polish pass completed for public brand alignment, spacing, CTA hierarchy, and copy tone.
 - Official AMBARA logo integration fixed: public header/navbar uses `/assets/ambara-logo-dark-v2.png`, and footer/dark usage uses `/assets/ambara-logo-light.png`.
@@ -76,6 +77,7 @@
 - Invitation flow can create/invite a client auth user, upsert the client profile role, and link `clients.user_id` when the Edge Function is deployed.
 - `/admin/clients` now has invitation loading, success, and error states.
 - `/admin/clients` client cards now prioritize client name, email, phone, address, portal status, and contextual invitation guidance.
+- `/admin/clients` client cards now stack safely on narrower dashboard widths and use a bounded two-column layout on wide desktop screens.
 - `Kirim Undangan Portal` now appears only for unlinked clients with an email, while missing-email clients see a disabled invite action and helper copy.
 - Manual Supabase User UID linking remains available inside `Advanced: Manual UID Linking`.
 - Manual Supabase User UID linking remains available for fallback and operational recovery.
@@ -115,7 +117,7 @@ npm run dev
 ```
 
 ## Build Status
-- Passed with `npm run build` after the `/admin/clients` invitation UI refinement.
+- Passed with `npm run build` after the `/admin/clients` client card layout fix.
 - Output directory: `dist/`.
 - Non-fatal warnings: React Router and Framer Motion `"use client"` directives, plus Vite chunk-size warning after adding Supabase.
 

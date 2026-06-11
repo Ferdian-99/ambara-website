@@ -22,7 +22,7 @@
 - Public `/lacak-proyek` can attempt real project lookup when Supabase is configured and falls back gracefully to the approved mock preview.
 - Public `/lacak-proyek` no longer auto-loads `AMB-2026-001`; project data only appears after the user submits a code.
 - Public `/lacak-proyek` result UI now has premium empty states for missing timeline updates, documents, and progress photos.
-- Source is being published to GitHub branch `main`.
+- Final frontend polish source has been published to GitHub branch `main`.
 
 ## Completed Features
 - Vite + React + TypeScript + Tailwind CSS + Framer Motion stack retained.

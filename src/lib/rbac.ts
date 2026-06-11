@@ -58,6 +58,10 @@ export function dashboardPathForRole(role: UserRole | null | undefined) {
   return role === "client" ? "/client" : "/admin";
 }
 
+export function getDashboardPathForRole(role: UserRole | null | undefined) {
+  return dashboardPathForRole(role);
+}
+
 export function isUserRole(value: string | null | undefined): value is UserRole {
   return roles.includes(value as UserRole);
 }

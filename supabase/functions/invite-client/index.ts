@@ -30,6 +30,10 @@ function getEnv(name: string) {
   return value;
 }
 
+function getSiteUrl() {
+  return (Deno.env.get("SITE_URL") ?? "https://ambara-website.vercel.app").replace(/\/$/, "");
+}
+
 async function findUserByEmail(adminClient: ReturnType<typeof createClient>, email: string) {
   const normalizedEmail = email.trim().toLowerCase();
 
@@ -57,7 +61,7 @@ Deno.serve(async (req) => {
   try {
     const supabaseUrl = getEnv("SUPABASE_URL");
     const serviceRoleKey = getEnv("SUPABASE_SERVICE_ROLE_KEY");
-    const siteUrl = getEnv("SITE_URL").replace(/\/$/, "");
+    const siteUrl = getSiteUrl();
     const redirectTo = `${siteUrl}/update-password`;
 
     const authorization = req.headers.get("Authorization");
@@ -119,7 +123,7 @@ Deno.serve(async (req) => {
         client: clientRecord,
         user_id: clientRecord.user_id,
         already_linked: true,
-        message: "Portal client sudah aktif.",
+        message: "Akses portal client sudah terhubung.",
       });
     }
 

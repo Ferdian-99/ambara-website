@@ -3,6 +3,7 @@ import {
   createClientRecord,
   fetchClientLinkProfiles,
   fetchClients,
+  updateClientPortalUser,
   type ClientRow,
   type ProfileRow,
 } from "../../lib/projectData";
@@ -24,6 +25,8 @@ export function AdminClients() {
   const [form, setForm] = useState(initialForm);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [linkingId, setLinkingId] = useState<string | null>(null);
+  const [linkInputs, setLinkInputs] = useState<Record<string, string>>({});
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
@@ -42,6 +45,7 @@ export function AdminClients() {
       const [clientRows, profileRows] = await Promise.all([fetchClients(), fetchClientLinkProfiles()]);
       setClients(clientRows);
       setProfiles(profileRows);
+      setLinkInputs(Object.fromEntries(clientRows.map((client) => [client.id, client.user_id ?? ""])));
     } catch {
       setError("Data client belum dapat dimuat. Periksa koneksi atau konfigurasi RLS.");
     } finally {
@@ -56,6 +60,12 @@ export function AdminClients() {
 
   const updateField = (field: keyof typeof form, value: string) => {
     setForm((current) => ({ ...current, [field]: value }));
+    setError("");
+    setSuccess("");
+  };
+
+  const updateLinkInput = (clientId: string, value: string) => {
+    setLinkInputs((current) => ({ ...current, [clientId]: value }));
     setError("");
     setSuccess("");
   };
@@ -89,6 +99,38 @@ export function AdminClients() {
     }
   };
 
+  const handleLinkSubmit = async (event: FormEvent, client: ClientRow) => {
+    event.preventDefault();
+    setError("");
+    setSuccess("");
+    setLinkingId(client.id);
+
+    try {
+      const nextUserId = linkInputs[client.id]?.trim() || null;
+      await updateClientPortalUser(client.id, nextUserId);
+      setSuccess(nextUserId ? `Portal client ${client.name} berhasil dihubungkan.` : `Portal client ${client.name} dilepas dari User UID.`);
+      await loadClients();
+    } catch {
+      setError("User UID belum dapat disimpan. Pastikan UID valid dan role memiliki akses update client.");
+    } finally {
+      setLinkingId(null);
+    }
+  };
+
+  const getAccountMeta = (client: ClientRow) => {
+    if (client.user_id) {
+      return {
+        status: "Portal aktif",
+        detail: "Linked account",
+      };
+    }
+
+    return {
+      status: "Belum terhubung",
+      detail: client.email?.trim() ? "Not linked / Email available" : "Not linked / Missing email",
+    };
+  };
+
   if (!canView) {
     return (
       <main className="dashboard-content">
@@ -107,6 +149,9 @@ export function AdminClients() {
         <div>
           <p className="section-label">Clients</p>
           <h1>Client records untuk proyek AMBARA.</h1>
+          <p className="mt-5 max-w-3xl leading-7 text-graphite/70">
+            Data client menyimpan informasi proyek. Akun portal dibuat melalui Supabase Auth dan harus dihubungkan dengan User UID client.
+          </p>
         </div>
       </div>
 
@@ -123,30 +168,62 @@ export function AdminClients() {
           )}
           {!loading && clients.map((client) => (
             <div key={client.id} className="dashboard-row">
+              {(() => {
+                const account = getAccountMeta(client);
+                return (
+                  <div className="mb-4 flex flex-wrap items-center gap-3">
+                    <span className="dashboard-status-pill">{account.status}</span>
+                    <span>{account.detail}</span>
+                  </div>
+                );
+              })()}
               <span>{client.address ?? "Alamat belum diisi"}</span>
               <p>
                 <strong>{client.name}</strong> - {client.email}
               </p>
-              <p>{client.phone ?? "Nomor telepon belum diisi"} {client.user_id ? "/ Terhubung ke auth user" : "/ Belum terhubung ke auth user"}</p>
+              <p>{client.phone ?? "Nomor telepon belum diisi"}</p>
+              {canCreate && (
+                <form className="dashboard-link-form" onSubmit={(event) => handleLinkSubmit(event, client)}>
+                  <label>
+                    Supabase User UID
+                    <input
+                      value={linkInputs[client.id] ?? ""}
+                      onChange={(event) => updateLinkInput(client.id, event.target.value)}
+                      placeholder="00000000-0000-0000-0000-000000000000"
+                    />
+                  </label>
+                  <p>Isi dengan User UID dari Supabase Authentication agar client dapat login ke portal.</p>
+                  <button type="submit" disabled={linkingId === client.id}>
+                    {linkingId === client.id ? "Menyimpan..." : "Simpan UID"}
+                  </button>
+                </form>
+              )}
             </div>
           ))}
         </article>
 
         <article className="dashboard-panel">
           <h2>Buat Client</h2>
+          <p>
+            Data client menyimpan informasi proyek. Akun portal dibuat melalui Supabase Auth dan harus dihubungkan dengan User UID client.
+          </p>
           {canCreate ? (
             <form className="dashboard-form compact" onSubmit={handleSubmit}>
               {success && <p className="dashboard-success">{success}</p>}
               <label>
-                Link ke auth user
-                <select value={form.user_id} onChange={(event) => updateField("user_id", event.target.value)}>
-                  <option value="">Tidak dihubungkan dulu</option>
+                Supabase User UID
+                <input
+                  list="client-profile-uids"
+                  value={form.user_id}
+                  onChange={(event) => updateField("user_id", event.target.value)}
+                  placeholder="Kosongkan jika akun portal belum dibuat"
+                />
+                <datalist id="client-profile-uids">
                   {profiles.map((profile) => (
-                    <option key={profile.id} value={profile.id}>
-                      {profile.full_name} - {profile.email} ({profile.role})
-                    </option>
+                    <option key={profile.id} value={profile.id} label={`${profile.full_name} - ${profile.email} (${profile.role})`} />
                   ))}
-                </select>
+                </datalist>
+                <small>Isi dengan User UID dari Supabase Authentication agar client dapat login ke portal.</small>
               </label>
               <label>
                 Nama

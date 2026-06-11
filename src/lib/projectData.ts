@@ -50,6 +50,14 @@ export type CreateProjectUpdateInput = {
   created_by: string | null;
 };
 
+export type InviteClientResult = {
+  client: ClientRow;
+  user_id: string;
+  already_linked?: boolean;
+  delivery?: "invite" | "password_reset";
+  message?: string;
+};
+
 const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 type SupabaseQueryClient = {
   from: (table: string) => any;
@@ -128,6 +136,21 @@ export async function updateClientPortalUser(clientId: string, userId: string | 
 
   if (error) throw error;
   return data as ClientRow;
+}
+
+export async function inviteClientToPortal(clientId: string) {
+  if (!supabase) throw new Error("Supabase belum dikonfigurasi.");
+
+  const { data, error } = await supabase.functions.invoke("invite-client", {
+    body: { client_id: clientId },
+  });
+
+  if (error) throw new Error(error.message);
+
+  const payload = data as InviteClientResult & { error?: string };
+  if (payload.error) throw new Error(payload.error);
+
+  return payload as InviteClientResult;
 }
 
 export async function createProjectRecord(input: CreateProjectInput) {

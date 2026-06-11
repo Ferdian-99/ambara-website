@@ -1,11 +1,11 @@
-import { PropsWithChildren, useEffect, useState } from "react";
+import { PropsWithChildren, useState } from "react";
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { faqItems, moodOptions, navItems } from "./data";
 
 const logoCandidates = {
-  dark: ["/assets/ambara-logo-dark.png", "/assets/ambara-logo-primary.png", "/assets/ambara-logo.png"],
-  light: ["/assets/ambara-logo-light.png", "/assets/ambara-logo.png"],
+  dark: "/assets/ambara-logo-dark-v2.png",
+  light: "/assets/ambara-logo-light.png",
 };
 
 export function SectionLabel({ children }: PropsWithChildren) {
@@ -46,41 +46,14 @@ export function PageShell({ eyebrow, title, intro, children }: PropsWithChildren
 }
 
 function BrandMark({ variant = "dark", compact = false }: { variant?: "dark" | "light"; compact?: boolean }) {
-  const [logoSrc, setLogoSrc] = useState<string | null>(null);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    async function findLogo() {
-      for (const candidate of logoCandidates[variant]) {
-        const image = new Image();
-        const loaded = await new Promise<boolean>((resolve) => {
-          image.onload = () => resolve(true);
-          image.onerror = () => resolve(false);
-          image.src = candidate;
-        });
-
-        if (cancelled) return;
-        if (loaded) {
-          setLogoSrc(candidate);
-          return;
-        }
-      }
-    }
-
-    void findLogo();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [variant]);
+  const logoSrc = logoCandidates[variant];
 
   if (logoSrc) {
     return (
       <img
         src={logoSrc}
         alt="Logo AMBARA"
-        className={`${compact ? "h-8 max-w-[132px]" : "h-10 max-w-[160px]"} w-auto object-contain`}
+        className={`${compact ? "h-11 max-w-[176px] md:h-14 md:max-w-[224px]" : "h-12 max-w-[190px] md:h-14 md:max-w-[224px]"} w-auto object-contain`}
         loading="eager"
       />
     );

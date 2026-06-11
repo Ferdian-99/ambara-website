@@ -1,6 +1,6 @@
 # AMBARA Backend Setup
 
-Phase 2A added the Supabase foundation for authentication, roles, protected dashboard routes, and project tracking data. Phase 2B connects the admin and client dashboards to live Supabase project data. The public website remains unchanged.
+Phase 2A added the Supabase foundation for authentication, roles, protected dashboard routes, and project tracking data. Phase 2B connects the admin and client dashboards to live Supabase project data. Phase 2C adds a deployable admin-managed client invitation Edge Function while keeping the public website unchanged.
 
 ## Supabase Setup
 
@@ -73,7 +73,16 @@ Then open the Vite URL, usually `http://localhost:5173/`.
 
 A row in `public.clients` stores project/client information only. It does not automatically create a login account.
 
-For a client to log in:
+Preferred invitation flow after deploying the Edge Function:
+
+1. Create a client record in `/admin/clients`.
+2. Click `Kirim Undangan Portal`.
+3. The Edge Function invites or password-reset-links the client email through Supabase Auth.
+4. The function upserts `public.profiles` with `role = client`.
+5. The function links `clients.user_id` to the Auth User UID.
+6. The client opens the email link, lands on `/update-password`, sets a password, then logs in at `/login`.
+
+Manual fallback if the Edge Function is not deployed:
 
 1. Create or invite the client user in Supabase Authentication.
 2. Create a matching `public.profiles` row with role `client`.
@@ -89,7 +98,70 @@ The admin clients page shows portal status for each client:
 - `Email available`: the client record has an email that can be used for manual invitation.
 - `Missing email`: add an email before preparing a portal account.
 
-Do not use a Supabase `service_role` key in the frontend. Creating/inviting Auth users remains manual through Supabase Dashboard for now.
+Do not use a Supabase `service_role` key in the frontend. The service role key belongs only in the Supabase Edge Function environment.
+
+## Client Invitation Edge Function
+
+Function source:
+
+```text
+supabase/functions/invite-client/index.ts
+```
+
+Deploy with Supabase CLI:
+
+```bash
+supabase login
+supabase link --project-ref YOUR_PROJECT_REF
+supabase secrets set SUPABASE_URL=https://your-project-ref.supabase.co
+supabase secrets set SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+supabase secrets set SITE_URL=https://ambara-website.vercel.app
+supabase functions deploy invite-client
+```
+
+For local Edge Function testing, set `SITE_URL` to:
+
+```bash
+supabase secrets set SITE_URL=http://localhost:5173
+```
+
+Required Edge Function environment variables:
+
+- `SUPABASE_URL`
+- `SUPABASE_SERVICE_ROLE_KEY`
+- `SITE_URL`
+
+The `invite-client` function:
+
+- Accepts `client_id`.
+- Verifies the logged-in admin JWT from the request.
+- Allows only `super_admin` and `sales` profiles to send invitations.
+- Reads the client record.
+- Sends a Supabase Auth invite for a new email, or a password reset email if the Auth user already exists.
+- Upserts `public.profiles` with `role = client`.
+- Updates `clients.user_id` with the Auth User UID.
+
+If the Edge Function is not deployed, `/admin/clients` still supports the existing manual `Supabase User UID` linking flow.
+
+## Client Multi-Project Assignment
+
+A client can have multiple projects. The important relationship is:
+
+```text
+auth.users.id -> clients.user_id -> clients.id -> projects.client_id
+```
+
+Example:
+
+```text
+clients.id = client_001
+clients.user_id = auth user UID
+
+AMB-2026-001 -> projects.client_id = client_001
+AMB-2026-002 -> projects.client_id = client_001
+```
+
+When that client logs in, `/client`, `/client/projects`, and `/client/projects/:id` load all projects assigned to the linked `clients.id`. Projects assigned to another client record remain hidden by the frontend query and Supabase RLS.
 
 ## Password Reset Setup
 
@@ -110,6 +182,8 @@ http://localhost:5173/update-password
 ```
 
 Password reset emails also require Supabase email settings/templates to be configured for the project.
+
+Invitation emails from `invite-client` also redirect to `/update-password`. Use production `SITE_URL=https://ambara-website.vercel.app` for deployed invitations and local `SITE_URL=http://localhost:5173` while testing locally.
 
 ## Completed In Phase 2A
 
@@ -137,6 +211,14 @@ Password reset emails also require Supabase email settings/templates to be confi
 - Client records can optionally link to an existing auth profile through `clients.user_id`.
 - Client dashboard and project pages only request projects linked to the authenticated user's client record.
 - Client project detail is read-only and displays status, timeline, documents, and photos when available.
+
+## Completed In Phase 2C
+
+- `invite-client` Supabase Edge Function source added.
+- Admin clients page can call the Edge Function with `Kirim Undangan Portal`.
+- Invitation success/error/loading states added.
+- Existing manual Supabase User UID linking remains available.
+- Client dashboard multi-project visibility confirmed through `auth user id -> clients.user_id -> clients.id -> projects.client_id`.
 
 ## Role Notes For Phase 2B
 

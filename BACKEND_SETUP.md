@@ -69,6 +69,48 @@ Then open the Vite URL, usually `http://localhost:5173/`.
 - If authentication succeeds but no `profiles` row is configured, the app shows: `Akun berhasil masuk, tetapi profil belum dikonfigurasi. Hubungi tim Ambara.`
 - If credentials are invalid, the app shows: `Email atau password tidak sesuai.`
 
+## Client Account Linking
+
+A row in `public.clients` stores project/client information only. It does not automatically create a login account.
+
+For a client to log in:
+
+1. Create or invite the client user in Supabase Authentication.
+2. Create a matching `public.profiles` row with role `client`.
+3. Copy the Auth user UID.
+4. Open `/admin/clients`.
+5. Paste the UID into `Supabase User UID` for the matching client record.
+6. Save the UID so `clients.user_id` points to that Auth user.
+
+The admin clients page shows portal status for each client:
+
+- `Portal aktif`: `clients.user_id` is linked.
+- `Belum terhubung`: no Auth user UID is linked yet.
+- `Email available`: the client record has an email that can be used for manual invitation.
+- `Missing email`: add an email before preparing a portal account.
+
+Do not use a Supabase `service_role` key in the frontend. Creating/inviting Auth users remains manual through Supabase Dashboard for now.
+
+## Password Reset Setup
+
+The app includes:
+
+- `/forgot-password`: sends Supabase reset password email.
+- `/update-password`: accepts the reset session and saves the new password.
+
+In Supabase Dashboard, open:
+
+Authentication -> URL Configuration
+
+Add these redirect URLs:
+
+```text
+https://ambara-website.vercel.app/update-password
+http://localhost:5173/update-password
+```
+
+Password reset emails also require Supabase email settings/templates to be configured for the project.
+
 ## Completed In Phase 2A
 
 - Supabase client integration.

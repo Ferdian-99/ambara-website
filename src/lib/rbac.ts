@@ -35,7 +35,7 @@ const permissionsByRole: Record<UserRole, Permission[]> = {
     "documents:view",
     "cms:placeholder",
   ],
-  project_manager: ["dashboard:view", "projects:manage", "projects:view_all", "documents:upload", "documents:view"],
+  project_manager: ["dashboard:view", "projects:create", "projects:manage", "projects:view_all", "documents:upload", "documents:view"],
   sales: ["dashboard:view", "projects:create", "projects:view_all", "clients:create", "clients:view", "documents:view"],
   content_manager: ["dashboard:view", "cms:placeholder"],
   client: ["dashboard:view", "projects:view_own", "documents:view"],

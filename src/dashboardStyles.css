@@ -169,11 +169,11 @@
   }
 
   .dashboard-client-main {
-    @apply grid gap-5 lg:grid-cols-[1fr_300px] lg:items-start;
+    @apply grid gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(260px,300px)] xl:items-start;
   }
 
   .dashboard-client-profile {
-    @apply min-w-0;
+    @apply min-w-0 overflow-hidden;
   }
 
   .dashboard-client-profile span {
@@ -181,19 +181,19 @@
   }
 
   .dashboard-client-profile h3 {
-    @apply mt-3 font-serif text-3xl leading-tight text-charcoal;
+    @apply mt-3 break-words font-serif text-3xl leading-tight text-charcoal;
   }
 
   .dashboard-client-meta {
-    @apply mt-4 grid gap-2 text-sm leading-6 text-graphite/70;
+    @apply mt-4 grid min-w-0 gap-2 text-sm leading-6 text-graphite/70;
   }
 
   .dashboard-client-meta p {
-    @apply mt-0;
+    @apply mt-0 break-words;
   }
 
   .dashboard-portal-panel {
-    @apply border border-charcoal/10 bg-ivory p-5;
+    @apply w-full min-w-0 border border-charcoal/10 bg-ivory p-5;
   }
 
   .dashboard-portal-panel p {

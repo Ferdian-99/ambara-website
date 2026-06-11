@@ -14,8 +14,10 @@
 - Password recovery routes added at `/forgot-password` and `/update-password`.
 - Phase 2C client invitation flow added: `/admin/clients` can send `Kirim Undangan Portal` through the `invite-client` Supabase Edge Function when deployed.
 - `invite-client` Edge Function source added with server-side Supabase Admin Auth usage and `service_role` kept out of Vite/browser code.
+- `invite-client` now builds invite/reset redirects from `SITE_URL + /update-password`, with production fallback to `https://ambara-website.vercel.app`.
 - Manual Supabase User UID linking remains available as a fallback if the Edge Function is not deployed.
 - `/admin/clients` invitation UI refined so normal admins see clear portal status and invite actions first, while manual Supabase User UID linking is tucked into an advanced fallback section.
+- `/admin/clients` now uses `Undangan terkirim` for linked invited accounts instead of implying the portal is already active before acceptance is tracked.
 - `/admin/clients` client card layout spacing refined so the portal status panel no longer overlaps email, phone, or address text.
 - Client multi-project visibility remains based on `auth.users.id -> clients.user_id -> clients.id -> projects.client_id`, so one linked client account can see all assigned projects.
 - Final frontend polish pass completed for public brand alignment, spacing, CTA hierarchy, and copy tone.
@@ -75,6 +77,7 @@
 - Admin-managed client invitation flow added with `Kirim Undangan Portal` action on `/admin/clients`.
 - Supabase Edge Function source added at `supabase/functions/invite-client/index.ts`.
 - Invitation flow can create/invite a client auth user, upsert the client profile role, and link `clients.user_id` when the Edge Function is deployed.
+- Invitation redirect behavior documented for Supabase `SITE_URL`, Auth URL Configuration, redirect URLs, and the Invite user email template.
 - `/admin/clients` now has invitation loading, success, and error states.
 - `/admin/clients` client cards now prioritize client name, email, phone, address, portal status, and contextual invitation guidance.
 - `/admin/clients` client cards now stack safely on narrower dashboard widths and use a bounded two-column layout on wide desktop screens.
@@ -95,6 +98,7 @@
 - Test admin/client dashboard flows with real Supabase roles and RLS.
 - Configure Supabase password reset redirect URLs for production and local development.
 - Deploy and configure the `invite-client` Supabase Edge Function for production invitations.
+- In Supabase Auth URL Configuration, set Site URL to `https://ambara-website.vercel.app` and add the production/local wildcard redirect URLs documented in `BACKEND_SETUP.md`.
 - If the Edge Function is not deployed, create/invite Supabase Auth users manually, then link client records through `clients.user_id`.
 - Implement Supabase Storage upload flows.
 - Add admin user management and invite flow.
@@ -108,7 +112,7 @@
 - The production JS bundle is above Vite's default 500 kB warning threshold after adding Supabase. This is a warning, not a build failure; route-level code splitting can be added later.
 
 ## Next Task
-- Deploy the `invite-client` Supabase Edge Function, set its required secrets, then test sending an invitation from `/admin/clients` to a real client email.
+- Deploy the updated `invite-client` Supabase Edge Function, confirm `SITE_URL=https://ambara-website.vercel.app`, then send a fresh invitation to verify the email lands on `/update-password`.
 
 ## Exact Command To Run Locally
 ```bash
@@ -117,7 +121,7 @@ npm run dev
 ```
 
 ## Build Status
-- Passed with `npm run build` after the `/admin/clients` client card layout fix.
+- Passed with `npm run build` after the invite redirect and portal status wording fix.
 - Output directory: `dist/`.
 - Non-fatal warnings: React Router and Framer Motion `"use client"` directives, plus Vite chunk-size warning after adding Supabase.
 

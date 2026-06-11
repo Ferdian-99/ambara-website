@@ -8,6 +8,8 @@ type ProjectUpdateRow = Database["public"]["Tables"]["project_updates"]["Row"];
 type ProjectDocumentRow = Database["public"]["Tables"]["project_documents"]["Row"];
 type ProjectPhotoRow = Database["public"]["Tables"]["project_photos"]["Row"];
 type LookupState = "idle" | "loading" | "real" | "not_found" | "fallback";
+const upcomingDocuments = ["Quotation", "Desain Final", "Invoice"];
+const workflowPreview = ["Konsultasi", "Konsep Desain", "Produksi", "Finishing", "Instalasi"];
 
 function formatDate(value: string | null) {
   if (!value) return "Menunggu konfirmasi";
@@ -178,6 +180,10 @@ export function Tracking() {
                     <p>{project.notes}</p>
                   </div>
                 )}
+
+                <div className="tracking-result-note">
+                  Data berikut mengikuti pembaruan terakhir dari tim Ambara.
+                </div>
               </article>
             </Reveal>
 
@@ -193,7 +199,16 @@ export function Tracking() {
                       </div>
                     ))
                   ) : (
-                    <p>Belum ada pembaruan timeline untuk kode proyek ini.</p>
+                    <div className="tracking-empty-state">
+                      <div className="tracking-empty-marker" aria-hidden="true" />
+                      <h3>Timeline belum diperbarui</h3>
+                      <p>Tim Ambara akan menambahkan pembaruan setelah progress proyek berikutnya tersedia.</p>
+                      <div className="workflow-preview" aria-label="Alur kerja proyek">
+                        {workflowPreview.map((stage) => (
+                          <span key={stage}>Alur kerja: {stage}</span>
+                        ))}
+                      </div>
+                    </div>
                   )}
                 </section>
               </Reveal>
@@ -209,7 +224,16 @@ export function Tracking() {
                       ))}
                     </div>
                   ) : (
-                    <p>Belum ada dokumen yang tersedia untuk proyek ini.</p>
+                    <div className="tracking-empty-state">
+                      <div className="tracking-empty-marker" aria-hidden="true" />
+                      <h3>Dokumen belum tersedia</h3>
+                      <p>Quotation, desain final, dan invoice akan tampil di sini setelah diunggah oleh tim Ambara.</p>
+                      <div className="document-chip-list" aria-label="Dokumen yang akan tersedia">
+                        {upcomingDocuments.map((item) => (
+                          <span key={item}>{item}</span>
+                        ))}
+                      </div>
+                    </div>
                   )}
                 </section>
               </Reveal>
@@ -231,7 +255,13 @@ export function Tracking() {
                     ))}
                   </div>
                 ) : (
-                  <p>Belum ada foto progres yang tersedia untuk proyek ini.</p>
+                  <div className="workshop-placeholder">
+                    <img src="/assets/workshop-progress.png" alt="Dokumentasi workshop Ambara sebagai placeholder progres" loading="lazy" />
+                    <div>
+                      <span>Dokumentasi workshop</span>
+                      <p>Foto progress akan muncul setelah tim mengunggah pembaruan terbaru.</p>
+                    </div>
+                  </div>
                 )}
               </section>
             </Reveal>

@@ -230,6 +230,14 @@
     @apply border border-charcoal/10 bg-linen p-5 text-sm leading-7 text-graphite/65;
   }
 
+  .dashboard-muted.compact {
+    @apply mt-5 bg-ivory p-4;
+  }
+
+  .dashboard-invite-button {
+    @apply mt-5 inline-flex border border-champagne/60 bg-charcoal px-4 py-2 text-sm text-linen transition hover:bg-champagne hover:text-charcoal disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
   .dashboard-alert,
   .dashboard-success {
     @apply mb-5 border border-red-300 bg-ivory p-4 text-sm leading-6 text-red-700;

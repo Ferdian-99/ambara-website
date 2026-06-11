@@ -61,19 +61,19 @@ on conflict (project_code) do update set
 
 insert into public.project_updates (project_id, title, description, stage, progress_percentage, created_by)
 values
-  ('20000000-0000-0000-0000-000000000001', 'Produksi dimulai', 'Produksi kabinet utama dimulai setelah approval material.', 'Produksi', 58, '00000000-0000-0000-0000-000000000001'),
-  ('20000000-0000-0000-0000-000000000001', 'Revisi disetujui', 'Revisi detail handle dan proporsi panel disetujui.', 'Persetujuan', 42, '00000000-0000-0000-0000-000000000001');
+  ('20000000-0000-0000-0000-000000000001', 'Produksi dimulai', 'Produksi kabinet utama dimulai setelah approval material.', 'Produksi', 58, 'a38ec8e0-71b4-4693-a9c2-9736e3dbec6d'),
+  ('20000000-0000-0000-0000-000000000001', 'Revisi disetujui', 'Revisi detail handle dan proporsi panel disetujui.', 'Persetujuan', 42, 'a38ec8e0-71b4-4693-a9c2-9736e3dbec6d');
 
 insert into public.project_documents (project_id, file_name, file_url, file_type, uploaded_by)
 values
-  ('20000000-0000-0000-0000-000000000001', 'Quotation', 'https://example.com/quotation.pdf', 'pdf', '00000000-0000-0000-0000-000000000001'),
-  ('20000000-0000-0000-0000-000000000001', 'Desain Final', 'https://example.com/desain-final.pdf', 'pdf', '00000000-0000-0000-0000-000000000001'),
-  ('20000000-0000-0000-0000-000000000001', 'Invoice', 'https://example.com/invoice.pdf', 'pdf', '00000000-0000-0000-0000-000000000001');
+  ('20000000-0000-0000-0000-000000000001', 'Quotation', 'https://example.com/quotation.pdf', 'pdf', 'a38ec8e0-71b4-4693-a9c2-9736e3dbec6d'),
+  ('20000000-0000-0000-0000-000000000001', 'Desain Final', 'https://example.com/desain-final.pdf', 'pdf', 'a38ec8e0-71b4-4693-a9c2-9736e3dbec6d'),
+  ('20000000-0000-0000-0000-000000000001', 'Invoice', 'https://example.com/invoice.pdf', 'pdf', 'a38ec8e0-71b4-4693-a9c2-9736e3dbec6d');
 
 insert into public.project_photos (project_id, image_url, caption, uploaded_by)
 values (
   '20000000-0000-0000-0000-000000000001',
   '/assets/workshop-progress.png',
   'Progress workshop kabinet utama',
-  '00000000-0000-0000-0000-000000000001'
+  'a38ec8e0-71b4-4693-a9c2-9736e3dbec6d'
 );

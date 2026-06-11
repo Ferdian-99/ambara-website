@@ -185,6 +185,31 @@
     @apply mt-6;
   }
 
+  .dashboard-form small,
+  .dashboard-link-form p {
+    @apply text-xs normal-case leading-6 tracking-normal text-graphite/60;
+  }
+
+  .dashboard-status-pill {
+    @apply inline-flex border border-champagne/50 bg-ivory px-3 py-1 text-xs uppercase tracking-[0.18em] text-champagne;
+  }
+
+  .dashboard-link-form {
+    @apply mt-5 grid gap-3 border border-charcoal/10 bg-ivory p-4;
+  }
+
+  .dashboard-link-form label {
+    @apply grid gap-2 text-xs uppercase tracking-[0.2em] text-champagne;
+  }
+
+  .dashboard-link-form input {
+    @apply w-full border border-charcoal/15 bg-linen px-4 py-3 text-sm normal-case tracking-normal text-charcoal outline-none transition focus:border-champagne;
+  }
+
+  .dashboard-link-form button {
+    @apply justify-self-start border border-charcoal/15 px-4 py-2 text-sm text-charcoal transition hover:border-champagne hover:text-champagne disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
   .upload-zone {
     @apply mt-5 border border-dashed border-charcoal/20 bg-ivory p-6 text-sm leading-7 text-graphite/65;
   }

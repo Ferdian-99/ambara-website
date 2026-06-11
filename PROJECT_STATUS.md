@@ -6,6 +6,7 @@
 - Supabase client integration, role model, protected routes, dashboard shells, project schema, and setup docs have been added.
 - Public `/lacak-proyek` can attempt real project lookup when Supabase is configured and falls back gracefully to the approved mock preview.
 - Public `/lacak-proyek` no longer auto-loads `AMB-2026-001`; project data only appears after the user submits a code.
+- Public `/lacak-proyek` result UI now has premium empty states for missing timeline updates, documents, and progress photos.
 - Source is being published to GitHub branch `main`.
 
 ## Completed Features
@@ -29,6 +30,7 @@
 - Environment example added in `.env.example`.
 - Backend setup guide added in `BACKEND_SETUP.md`.
 - `/lacak-proyek` manual search behavior added with premium idle, not-found, and graceful fallback states.
+- `/lacak-proyek` empty related-data sections refined with editorial placeholders that do not fake Supabase records.
 - Backend not fully implemented beyond Phase 2A shell/foundation.
 - CMS not implemented.
 - Payment gateway not implemented.

@@ -12,6 +12,11 @@
 - `/admin/login` and `/client/login` are preserved and redirect to the unified login route.
 - Client/admin onboarding flow improved: `/admin/clients` now shows portal account status and supports manual Supabase User UID linking.
 - Password recovery routes added at `/forgot-password` and `/update-password`.
+- Final frontend polish pass completed for public brand alignment, spacing, CTA hierarchy, and copy tone.
+- Official AMBARA logo integration is prepared with safe header/footer logo detection; no official logo asset is currently present in `public/assets`.
+- Brand alignment refined toward AMBARA's real custom interior, production, installation, residential, office, and cafe identity.
+- Company profile YouTube video embedded on the public homepage and Tentang page.
+- Backend/auth/RBAC/database logic unchanged during this visual polish pass.
 - Vercel SPA routing fixed with `vercel.json` rewrites so direct React Router routes fall back to `index.html`.
 - Direct routes like `/admin/login` and `/client/login` should now work after redeploy.
 - Public `/lacak-proyek` can attempt real project lookup when Supabase is configured and falls back gracefully to the approved mock preview.
@@ -61,6 +66,9 @@
 - Forgot password flow added using Supabase password reset email.
 - Update password flow added for reset links that return to `/update-password`.
 - Admin-managed client registration remains manual through Supabase Dashboard for now.
+- Public header and footer brand presentation refined with a charcoal-forward AMBARA identity.
+- Public homepage and Tentang copy refined toward custom interior, built-in furniture, workshop production, and installation.
+- Company profile video section added with a responsive YouTube embed.
 - Backend file upload UI remains informational only; real upload is not implemented yet.
 - CMS not implemented.
 - Payment gateway not implemented.
@@ -83,7 +91,7 @@
 - The production JS bundle is above Vite's default 500 kB warning threshold after adding Supabase. This is a warning, not a build failure; route-level code splitting can be added later.
 
 ## Next Task
-- Test Phase 2B with real Supabase users, then implement Phase 2C: Supabase Storage upload flows for project documents and progress photos.
+- Test the deployed homepage and Tentang page after Vercel redeploy, especially the company profile YouTube embed and future official logo asset placement.
 
 ## Exact Command To Run Locally
 ```bash

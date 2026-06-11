@@ -1,0 +1,61 @@
+.tracking-result-note {
+  @apply mt-8 border-t border-charcoal/10 pt-5 text-xs uppercase tracking-[0.18em] text-graphite/55;
+}
+
+.tracking-empty-state {
+  @apply border border-charcoal/10 bg-linen p-6;
+}
+
+.tracking-empty-marker {
+  @apply mb-6 h-9 w-9 border border-champagne/60 bg-ivory;
+}
+
+.tracking-empty-state h3 {
+  @apply font-serif text-3xl;
+}
+
+.tracking-empty-state p {
+  @apply mt-4 leading-7 text-graphite/70;
+}
+
+.workflow-preview {
+  @apply mt-6 flex flex-wrap gap-2;
+}
+
+.workflow-preview span,
+.document-chip-list span {
+  @apply border border-charcoal/10 bg-ivory px-3 py-2 text-xs uppercase tracking-[0.16em] text-graphite/55;
+}
+
+.document-chip-list {
+  @apply mt-6 flex flex-wrap gap-2;
+}
+
+.document-chip-list span {
+  @apply cursor-default opacity-70;
+}
+
+.workshop-placeholder {
+  @apply relative min-h-[360px] overflow-hidden border border-charcoal/10 bg-linen;
+}
+
+.workshop-placeholder img {
+  @apply absolute inset-0 h-full w-full object-cover opacity-80;
+}
+
+.workshop-placeholder::after {
+  content: "";
+  @apply absolute inset-0 bg-gradient-to-t from-charcoal/60 via-charcoal/10 to-ivory/10;
+}
+
+.workshop-placeholder div {
+  @apply absolute bottom-0 left-0 right-0 z-10 p-6 text-linen md:p-8;
+}
+
+.workshop-placeholder span {
+  @apply text-xs uppercase tracking-[0.22em] text-champagne;
+}
+
+.workshop-placeholder p {
+  @apply mt-3 max-w-xl font-serif text-3xl leading-tight text-linen;
+}

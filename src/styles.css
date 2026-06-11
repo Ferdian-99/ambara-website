@@ -484,15 +484,39 @@ body {
   }
 
   .floating-whatsapp {
-    @apply fixed bottom-5 right-5 z-40 hidden border border-champagne/50 bg-ivory/90 px-5 py-3 text-sm shadow-soft backdrop-blur-xl transition hover:-translate-y-1 hover:border-champagne md:block;
+    @apply fixed bottom-5 right-5 z-40 hidden border border-champagne/50 bg-charcoal/90 px-5 py-3 text-sm shadow-soft backdrop-blur-xl transition hover:-translate-y-1 hover:border-champagne md:block;
   }
 
   .floating-whatsapp span {
-    @apply block text-xs text-graphite/60;
+    @apply block text-xs text-linen/60;
   }
 
   .floating-whatsapp strong {
-    @apply mt-1 block font-medium text-charcoal;
+    @apply mt-1 block font-medium text-linen;
+  }
+
+  .company-video-panel {
+    @apply grid gap-8 border border-charcoal/10 bg-charcoal p-5 text-linen shadow-soft md:p-8 lg:grid-cols-[0.82fr_1.18fr] lg:items-center;
+  }
+
+  .company-video-copy {
+    @apply p-2 md:p-4;
+  }
+
+  .company-video-copy h2 {
+    @apply font-serif text-4xl leading-tight md:text-5xl;
+  }
+
+  .company-video-copy p {
+    @apply mt-5 max-w-xl leading-8 text-linen/70;
+  }
+
+  .company-video-frame {
+    @apply relative aspect-video overflow-hidden border border-linen/15 bg-black shadow-line;
+  }
+
+  .company-video-frame iframe {
+    @apply absolute inset-0 h-full w-full;
   }
 
   .project-monitor-grid {

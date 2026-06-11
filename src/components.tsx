@@ -1,7 +1,12 @@
-import { PropsWithChildren, useState } from "react";
+import { PropsWithChildren, useEffect, useState } from "react";
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { faqItems, moodOptions, navItems } from "./data";
+
+const logoCandidates = {
+  dark: ["/assets/ambara-logo-dark.png", "/assets/ambara-logo-primary.png", "/assets/ambara-logo.png"],
+  light: ["/assets/ambara-logo-light.png", "/assets/ambara-logo.png"],
+};
 
 export function SectionLabel({ children }: PropsWithChildren) {
   return <p className="section-label">{children}</p>;
@@ -40,6 +45,54 @@ export function PageShell({ eyebrow, title, intro, children }: PropsWithChildren
   );
 }
 
+function BrandMark({ variant = "dark", compact = false }: { variant?: "dark" | "light"; compact?: boolean }) {
+  const [logoSrc, setLogoSrc] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function findLogo() {
+      for (const candidate of logoCandidates[variant]) {
+        const image = new Image();
+        const loaded = await new Promise<boolean>((resolve) => {
+          image.onload = () => resolve(true);
+          image.onerror = () => resolve(false);
+          image.src = candidate;
+        });
+
+        if (cancelled) return;
+        if (loaded) {
+          setLogoSrc(candidate);
+          return;
+        }
+      }
+    }
+
+    void findLogo();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [variant]);
+
+  if (logoSrc) {
+    return (
+      <img
+        src={logoSrc}
+        alt="Logo AMBARA"
+        className={`${compact ? "h-8 max-w-[132px]" : "h-10 max-w-[160px]"} w-auto object-contain`}
+        loading="eager"
+      />
+    );
+  }
+
+  return (
+    <span className={`${compact ? "text-base" : "text-lg"} font-semibold tracking-[0.34em] ${variant === "light" ? "text-linen" : "text-charcoal"}`}>
+      AMBARA
+    </span>
+  );
+}
+
 function MenuIcon({ open }: { open: boolean }) {
   return (
     <span className="relative block h-5 w-5" aria-hidden="true">
@@ -59,8 +112,8 @@ export function Layout() {
     <div className="min-h-screen bg-ivory text-charcoal">
       <header className="fixed left-0 right-0 top-0 z-50 border-b border-charcoal/10 bg-ivory/82 backdrop-blur-xl">
         <nav className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 md:px-8">
-          <Link to="/" className="text-lg font-semibold tracking-[0.34em]" onClick={closeMenu}>
-            AMBARA
+          <Link to="/" className="flex items-center" onClick={closeMenu} aria-label="AMBARA Home">
+            <BrandMark compact />
           </Link>
           <div className="hidden items-center gap-7 text-sm text-graphite/80 lg:flex">
             {navItems.map((item) => (
@@ -128,16 +181,46 @@ export function Layout() {
 
 export function Footer() {
   return (
-    <footer className="border-t border-charcoal/10 px-5 py-10 md:px-8">
-      <div className="mx-auto grid max-w-7xl gap-8 text-sm text-graphite/65 md:grid-cols-[1fr_1.2fr_1fr]">
-        <p className="font-semibold tracking-[0.28em] text-charcoal">AMBARA</p>
-        <p>Studio furnitur premium dan desain interior untuk ruang privat, residensial, hospitality, dan komersial terkurasi.</p>
+    <footer className="border-t border-charcoal/10 bg-charcoal px-5 py-12 text-linen md:px-8">
+      <div className="mx-auto grid max-w-7xl gap-8 text-sm text-linen/62 md:grid-cols-[1fr_1.2fr_1fr]">
+        <div>
+          <BrandMark variant="light" />
+          <p className="mt-5 text-xs uppercase tracking-[0.22em] text-champagne">Custom Interior / Residential / Office / Cafe</p>
+        </div>
+        <p>
+          Studio interior custom yang merancang, memproduksi, dan memasang built-in furniture untuk hunian, kantor, dan ruang usaha dengan alur kerja yang rapi.
+        </p>
         <div className="md:text-right">
           <p>Jakarta, Indonesia</p>
           <p>(c) 2026 AMBARA Studio</p>
         </div>
       </div>
     </footer>
+  );
+}
+
+export function CompanyProfileVideo() {
+  return (
+    <section className="section-wrap">
+      <div className="company-video-panel">
+        <div className="company-video-copy">
+          <SectionLabel>Company Profile</SectionLabel>
+          <h2>Mengenal Ambara Lebih Dekat</h2>
+          <p>
+            Tentang proses, nilai kerja, dan pendekatan Ambara dalam merancang interior custom dari desain, produksi, hingga instalasi.
+          </p>
+        </div>
+        <div className="company-video-frame">
+          <iframe
+            src="https://www.youtube.com/embed/CQDK8Bhcxn8"
+            title="Company Profile AMBARA"
+            loading="lazy"
+            allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowFullScreen
+          />
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -181,7 +264,7 @@ export function CTASection() {
             <h2 className="max-w-3xl font-serif text-4xl leading-tight md:text-6xl">Mari mulai dari ruang yang ingin Anda rasakan setiap hari.</h2>
           </div>
           <div>
-            <p className="text-lg leading-8 text-graphite/72">Ceritakan kebutuhan ruang, furnitur, atau arah interior yang sedang Anda bayangkan. Kami akan menanggapinya dengan tenang dan terukur.</p>
+            <p className="text-lg leading-8 text-graphite/72">Ceritakan kebutuhan interior, built-in furniture, atau area usaha yang ingin dibuat lebih rapi. Kami akan membaca ruang, produksi, dan instalasinya secara terukur.</p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link className="btn-primary" to="/kontak">Ajukan Proyek</Link>
               <a className="btn-secondary" href="https://wa.me/6280000000000">WhatsApp</a>
@@ -200,7 +283,7 @@ export function CompanyProfileCTA() {
         <SectionLabel>Company Profile</SectionLabel>
         <h2>Download Company Profile</h2>
         <p>
-          Berisi ringkasan layanan, overview portofolio, pendekatan material, dan alur kerja proyek AMBARA.
+          Berisi ringkasan layanan custom interior, overview portofolio residensial, office, dan cafe, pendekatan material, serta alur kerja proyek AMBARA.
           Tombol ini masih berupa placeholder frontend dan belum menghasilkan PDF.
         </p>
       </div>
@@ -257,7 +340,7 @@ export function DesignMoodSelector() {
             <h2 className="section-title">Pilih arah rasa ruang yang paling dekat dengan kebutuhan Anda.</h2>
           </div>
           <p className="max-w-md leading-7 text-graphite/65">
-            Preview frontend ini membantu calon klien membaca kemungkinan arah desain sebelum konsultasi.
+            Preview frontend ini membantu calon klien membaca kemungkinan arah desain sebelum konsultasi dan produksi custom.
           </p>
         </div>
         <div className="mood-selector">

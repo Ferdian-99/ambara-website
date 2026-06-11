@@ -16,6 +16,7 @@ import { ClientProjectDetail } from "./pages/client/ClientProjectDetail";
 import { ClientProjects } from "./pages/client/ClientProjects";
 import { About } from "./pages/About";
 import { Contact } from "./pages/Contact";
+import { ForgotPassword } from "./pages/ForgotPassword";
 import { Home } from "./pages/Home";
 import { Login } from "./pages/Login";
 import { Portfolio } from "./pages/Portfolio";
@@ -23,6 +24,7 @@ import { PortfolioDetail } from "./pages/PortfolioDetail";
 import { Process } from "./pages/Process";
 import { Services } from "./pages/Services";
 import { Tracking } from "./pages/Tracking";
+import { UpdatePassword } from "./pages/UpdatePassword";
 
 const router = createBrowserRouter([
   {
@@ -38,6 +40,8 @@ const router = createBrowserRouter([
       { path: "lacak-proyek", element: <Tracking /> },
       { path: "kontak", element: <Contact /> },
       { path: "login", element: <Login /> },
+      { path: "forgot-password", element: <ForgotPassword /> },
+      { path: "update-password", element: <UpdatePassword /> },
     ],
   },
   { path: "/admin/login", element: <AdminLogin /> },

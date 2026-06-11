@@ -200,3 +200,77 @@
 .client-project-card h2 {
     @apply mt-4 font-serif text-3xl;
   }
+
+  .dashboard-muted {
+    @apply border border-charcoal/10 bg-linen p-5 text-sm leading-7 text-graphite/65;
+  }
+
+  .dashboard-alert,
+  .dashboard-success {
+    @apply mb-5 border border-red-300 bg-ivory p-4 text-sm leading-6 text-red-700;
+  }
+
+  .dashboard-success {
+    @apply border-champagne/50 text-graphite/75;
+  }
+
+  .dashboard-empty {
+    @apply border border-dashed border-charcoal/15 bg-ivory p-6;
+  }
+
+  .dashboard-empty span {
+    @apply text-xs uppercase tracking-[0.2em] text-champagne;
+  }
+
+  .dashboard-empty p {
+    @apply mt-3 leading-7 text-graphite/65;
+  }
+
+  .dashboard-link-row {
+    @apply block transition hover:bg-ivory;
+  }
+
+  .dashboard-table-head.project-table,
+  .dashboard-table-row.project-table {
+    @apply grid-cols-[0.95fr_1.4fr_1.1fr_0.95fr_0.7fr_1fr];
+  }
+
+  .form-grid {
+    @apply grid gap-5 md:grid-cols-2;
+  }
+
+  .form-grid.three {
+    @apply md:grid-cols-3;
+  }
+
+  .project-summary-grid {
+    @apply grid gap-px overflow-hidden border border-charcoal/10 bg-charcoal/10 md:grid-cols-4;
+  }
+
+  .project-summary-grid div {
+    @apply bg-ivory p-5;
+  }
+
+  .project-summary-grid span {
+    @apply text-xs uppercase tracking-[0.2em] text-champagne;
+  }
+
+  .project-summary-grid strong {
+    @apply mt-3 block font-serif text-2xl;
+  }
+
+  .admin-photo-grid {
+    @apply mt-6 grid gap-4 md:grid-cols-2;
+  }
+
+  .admin-photo-grid figure {
+    @apply overflow-hidden border border-charcoal/10 bg-ivory;
+  }
+
+  .admin-photo-grid img {
+    @apply aspect-[4/3] w-full object-cover;
+  }
+
+  .admin-photo-grid figcaption {
+    @apply p-4 text-sm leading-6 text-graphite/65;
+  }

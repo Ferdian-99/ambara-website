@@ -110,7 +110,7 @@ export function AdminClients() {
     try {
       const nextUserId = linkInputs[client.id]?.trim() || null;
       await updateClientPortalUser(client.id, nextUserId);
-      setSuccess(nextUserId ? `Portal client ${client.name} berhasil dihubungkan.` : `Portal client ${client.name} dilepas dari User UID.`);
+      setSuccess(nextUserId ? `Akses portal client ${client.name} berhasil dihubungkan.` : `Akses portal client ${client.name} dilepas dari User UID.`);
       await loadClients();
     } catch {
       setError("User UID belum dapat disimpan. Pastikan UID valid dan role memiliki akses update client.");
@@ -144,8 +144,8 @@ export function AdminClients() {
   const getAccountMeta = (client: ClientRow) => {
     if (client.user_id) {
       return {
-        status: "Portal aktif",
-        helper: "Client dapat login dan melihat semua proyek yang terhubung ke data client ini.",
+        status: "Undangan terkirim",
+        helper: "Client sudah dibuatkan akses portal. Setelah menerima email dan membuat password, client dapat login ke portal.",
         canInvite: false,
         canAttemptInvite: false,
       };

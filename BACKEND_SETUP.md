@@ -58,6 +58,17 @@ npm run dev
 
 Then open the Vite URL, usually `http://localhost:5173/`.
 
+## Login Flow
+
+- Public login route: `/login`.
+- The public navigation includes `Portal`, which links to `/login`.
+- Existing `/admin/login` and `/client/login` URLs are preserved and redirect to `/login`.
+- After login, users are redirected by profile role:
+  - `super_admin`, `project_manager`, `sales`, and `content_manager` go to `/admin`.
+  - `client` goes to `/client`.
+- If authentication succeeds but no `profiles` row is configured, the app shows: `Akun berhasil masuk, tetapi profil belum dikonfigurasi. Hubungi tim Ambara.`
+- If credentials are invalid, the app shows: `Email atau password tidak sesuai.`
+
 ## Completed In Phase 2A
 
 - Supabase client integration.

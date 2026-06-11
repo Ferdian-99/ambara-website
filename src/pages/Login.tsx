@@ -93,6 +93,11 @@ export function Login() {
               Password
               <input type="password" value={password} onChange={(event) => setPassword(event.target.value)} required />
             </label>
+            <div className="flex justify-end">
+              <Link className="text-link" to="/forgot-password">
+                Lupa password?
+              </Link>
+            </div>
             {message && <p className="auth-error">{message}</p>}
             <button type="submit" disabled={loading || !isSupabaseConfigured}>
               {loading ? "Memeriksa..." : "Masuk Portal"}

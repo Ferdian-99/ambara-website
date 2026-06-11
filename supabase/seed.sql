@@ -3,8 +3,8 @@
 
 insert into public.profiles (id, full_name, email, role, phone)
 values
-  ('00000000-0000-0000-0000-000000000001', 'AMBARA Super Admin', 'admin@ambara.local', 'super_admin', '+62 800 0000 0000'),
-  ('00000000-0000-0000-0000-000000000002', 'Nadia Pramana', 'client@ambara.local', 'client', '+62 811 0000 0000')
+  ('a38ec8e0-71b4-4693-a9c2-9736e3dbec6d', 'AMBARA Super Admin', 'admin@ambara.local', 'super_admin', '+62 800 0000 0000'),
+  ('3990c748-83bc-4e91-9d4c-0bdb6a6bcf77', 'Nadia Pramana', 'client@ambara.local', 'client', '+62 811 0000 0000')
 on conflict (id) do update set
   full_name = excluded.full_name,
   email = excluded.email,
@@ -14,7 +14,7 @@ on conflict (id) do update set
 insert into public.clients (id, user_id, name, email, phone, address)
 values (
   '10000000-0000-0000-0000-000000000001',
-  '00000000-0000-0000-0000-000000000002',
+  '3990c748-83bc-4e91-9d4c-0bdb6a6bcf77',
   'Nadia Pramana',
   'client@ambara.local',
   '+62 811 0000 0000',

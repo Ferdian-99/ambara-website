@@ -68,6 +68,9 @@ export function Layout() {
                 {item.label}
               </NavLink>
             ))}
+            <NavLink to="/login" className={({ isActive }) => `nav-link text-graphite/60 ${isActive ? "text-charcoal after:w-full" : ""}`}>
+              Portal
+            </NavLink>
           </div>
           <Link to="/kontak" className="hidden border border-charcoal/20 px-5 py-2 text-sm transition hover:border-champagne hover:text-champagne md:inline-flex">
             Mulai Konsultasi
@@ -96,6 +99,9 @@ export function Layout() {
                     {item.label}
                   </NavLink>
                 ))}
+                <NavLink to="/login" onClick={closeMenu} className={({ isActive }) => (isActive ? "text-champagne" : "text-graphite/70")}>
+                  Portal
+                </NavLink>
               </div>
             </motion.div>
           )}

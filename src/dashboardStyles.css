@@ -164,6 +164,54 @@
     @apply mt-2;
   }
 
+  .dashboard-client-card {
+    @apply border-t border-charcoal/10 py-6;
+  }
+
+  .dashboard-client-main {
+    @apply grid gap-5 lg:grid-cols-[1fr_300px] lg:items-start;
+  }
+
+  .dashboard-client-profile {
+    @apply min-w-0;
+  }
+
+  .dashboard-client-profile span {
+    @apply text-xs uppercase tracking-[0.2em] text-champagne;
+  }
+
+  .dashboard-client-profile h3 {
+    @apply mt-3 font-serif text-3xl leading-tight text-charcoal;
+  }
+
+  .dashboard-client-meta {
+    @apply mt-4 grid gap-2 text-sm leading-6 text-graphite/70;
+  }
+
+  .dashboard-client-meta p {
+    @apply mt-0;
+  }
+
+  .dashboard-portal-panel {
+    @apply border border-charcoal/10 bg-ivory p-5;
+  }
+
+  .dashboard-portal-panel p {
+    @apply mt-4 text-sm leading-6 text-graphite/65;
+  }
+
+  .dashboard-advanced {
+    @apply mt-5 border border-charcoal/10 bg-ivory;
+  }
+
+  .dashboard-advanced summary {
+    @apply cursor-pointer px-4 py-3 text-xs uppercase tracking-[0.18em] text-graphite/55 transition hover:text-champagne;
+  }
+
+  .dashboard-advanced[open] summary {
+    @apply border-b border-charcoal/10 text-champagne;
+  }
+
   .dashboard-table {
     @apply overflow-hidden;
   }
@@ -195,7 +243,7 @@
   }
 
   .dashboard-link-form {
-    @apply mt-5 grid gap-3 border border-charcoal/10 bg-ivory p-4;
+    @apply grid gap-3 bg-ivory p-4;
   }
 
   .dashboard-link-form label {
@@ -235,7 +283,7 @@
   }
 
   .dashboard-invite-button {
-    @apply mt-5 inline-flex border border-champagne/60 bg-charcoal px-4 py-2 text-sm text-linen transition hover:bg-champagne hover:text-charcoal disabled:cursor-not-allowed disabled:opacity-50;
+    @apply mt-5 inline-flex w-full justify-center border border-champagne/60 bg-charcoal px-4 py-2 text-sm text-linen transition hover:bg-champagne hover:text-charcoal disabled:cursor-not-allowed disabled:border-charcoal/15 disabled:bg-linen disabled:text-graphite/45;
   }
 
   .dashboard-alert,

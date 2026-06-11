@@ -330,6 +330,10 @@ body {
     @apply min-h-32 border border-charcoal/10 bg-linen p-4 text-sm text-graphite/60;
   }
 
+  .placeholder-grid a {
+    @apply min-h-32 border border-charcoal/10 bg-linen p-4 text-sm text-graphite/60 transition hover:border-champagne hover:text-charcoal;
+  }
+
   .contact-form {
     @apply grid gap-5 border border-charcoal/10 bg-linen p-7 md:p-10;
   }
@@ -511,6 +515,10 @@ body {
     @apply mt-8 block text-xs uppercase tracking-[0.18em] text-champagne;
   }
 
+  .placeholder-grid a span {
+    @apply mt-8 block text-xs uppercase tracking-[0.18em] text-champagne;
+  }
+
   .workshop-grid {
     @apply grid gap-3 sm:grid-cols-2 lg:grid-cols-4;
   }
@@ -518,4 +526,5 @@ body {
   .workshop-grid div {
     @apply min-h-44 border border-charcoal/10 bg-linen p-4 text-sm text-graphite/65;
   }
+
 }

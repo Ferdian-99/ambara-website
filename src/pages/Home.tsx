@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   CompanyProfileCTA,
+  CompanyProfileVideo,
   CTASection,
   DesignMoodSelector,
   FAQSection,
@@ -25,18 +26,18 @@ export function Home() {
       <section className="relative overflow-hidden pt-24">
         <div className="mx-auto grid min-h-[92svh] max-w-7xl gap-10 px-5 pb-14 pt-12 md:grid-cols-[0.86fr_1.14fr] md:px-8 md:pb-20 md:pt-20">
           <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: "easeOut" }} className="flex flex-col justify-center">
-            <p className="mb-5 text-xs font-medium uppercase tracking-[0.32em] text-champagne">Custom Furniture / Interior Studio / Project-Based Craftsmanship</p>
-            <h1 className="max-w-2xl font-serif text-4xl leading-[1.04] text-charcoal sm:text-5xl lg:text-6xl">Ruang yang dirancang dengan tenang, dibuat untuk bertahan.</h1>
+            <p className="mb-5 text-xs font-medium uppercase tracking-[0.32em] text-champagne">Custom Interior / Built-in Furniture / Production & Installation</p>
+            <h1 className="max-w-2xl font-serif text-4xl leading-[1.04] text-charcoal sm:text-5xl lg:text-6xl">Interior custom yang dirancang rapi, diproduksi presisi, dan dipasang terukur.</h1>
             <p className="mt-7 max-w-xl text-base leading-8 text-graphite/72 md:text-lg">
-              AMBARA merancang furnitur premium dan interior yang terasa lapang, tertata, dan berumur panjang. Setiap garis dibuat seperlunya, setiap material dipilih dengan sabar.
+              AMBARA menangani hunian, kantor, dan cafe melalui desain interior, built-in furniture, produksi workshop, dan instalasi yang jelas dari awal sampai serah terima.
             </p>
             <div className="mt-10 flex flex-col gap-3 sm:flex-row">
               <Link className="btn-primary" to="/portofolio">Lihat Portofolio</Link>
-              <Link className="btn-secondary" to="/lacak-proyek">Preview Lacak Proyek</Link>
+              <Link className="btn-secondary" to="/lacak-proyek">Lacak Proyek</Link>
             </div>
             <div className="mt-12 grid max-w-xl grid-cols-3 border-y border-charcoal/10 py-5 text-xs uppercase tracking-[0.18em] text-graphite/60">
               <span>Residensial</span>
-              <span>Hospitality</span>
+              <span>Office</span>
               <span>Built-in</span>
             </div>
           </motion.div>
@@ -45,8 +46,8 @@ export function Home() {
             <div className="absolute inset-0 bg-gradient-to-t from-ivory/78 via-ivory/18 to-charcoal/10" />
             <div className="absolute inset-6 border border-white/45" />
             <div className="absolute bottom-5 left-5 right-5 flex items-end justify-between border-t border-white/45 pt-4 text-charcoal">
-              <span className="max-w-[13rem] bg-ivory/72 px-3 py-2 text-sm leading-5 backdrop-blur-sm">Komposisi visual ruang privat dan furnitur kustom</span>
-              <span className="bg-ivory/72 px-3 py-2 text-xs uppercase tracking-[0.24em] backdrop-blur-sm">Jakarta</span>
+              <span className="max-w-[13rem] bg-ivory/72 px-3 py-2 text-sm leading-5 backdrop-blur-sm">Interior custom, built-in, dan instalasi rapi</span>
+              <span className="bg-ivory/72 px-3 py-2 text-xs uppercase tracking-[0.24em] backdrop-blur-sm">AMBARA</span>
             </div>
           </motion.div>
         </div>
@@ -56,20 +57,22 @@ export function Home() {
         <div className="content-grid">
           <Reveal>
             <SectionLabel>Tentang Ambara</SectionLabel>
-            <h2 className="section-title">Studio yang menata ruang melalui proporsi, material, dan ritme hidup pemiliknya.</h2>
+            <h2 className="section-title">Studio custom interior yang menyatukan desain, produksi, dan pemasangan.</h2>
           </Reveal>
           <Reveal delay={0.08}>
-            <p className="lead-copy">Kami bekerja seperti studio arsitektur kecil: mendengar, mengukur, menyusun, lalu membuat detail yang bisa dihuni lama. Tidak berlebihan, tidak tergesa, dan tidak mengikuti tren sesaat.</p>
+            <p className="lead-copy">Kami bekerja dari kebutuhan ruang nyata: mendengar, mengukur, menyusun gambar kerja, memproduksi di workshop, lalu memastikan instalasi selesai rapi di lokasi.</p>
             <Link className="text-link mt-8 inline-flex" to="/tentang">Mengenal AMBARA</Link>
           </Reveal>
         </div>
       </section>
 
+      <CompanyProfileVideo />
+
       <section className="section-wrap">
         <div className="section-heading">
           <div>
             <SectionLabel>Layanan Pilihan</SectionLabel>
-            <h2 className="section-title">Panel layanan untuk ruang yang membutuhkan rasa dan presisi.</h2>
+            <h2 className="section-title">Layanan untuk interior custom yang harus indah sekaligus siap diproduksi.</h2>
           </div>
           <Link className="text-link" to="/layanan">Lihat semua layanan</Link>
         </div>
@@ -92,7 +95,7 @@ export function Home() {
           <div className="section-heading">
             <div>
               <SectionLabel>Portofolio Pilihan</SectionLabel>
-              <h2 className="section-title text-linen">Galeri terkurasi, tenang, dan berlapis.</h2>
+              <h2 className="section-title text-linen">Portofolio hunian, kantor, cafe, dan built-in yang dibuat terukur.</h2>
             </div>
             <Link className="text-link text-champagne" to="/portofolio">Jelajahi portofolio</Link>
           </div>
@@ -140,14 +143,14 @@ export function Home() {
         <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr]">
           <div>
             <SectionLabel>Material & Craftsmanship</SectionLabel>
-            <h2 className="section-title">Detail dibuat untuk terasa halus, bukan untuk memanggil perhatian.</h2>
+            <h2 className="section-title">Detail dibuat agar kuat dipakai, rapi dipasang, dan tetap terasa premium.</h2>
           </div>
           <div className="grid gap-px bg-charcoal/10 sm:grid-cols-2">
             {materialNotes.map((item, index) => (
               <Reveal key={item} delay={index * 0.05} className="bg-ivory p-8">
                 <span className="text-sm text-champagne">0{index + 1}</span>
                 <h3 className="mt-12 font-serif text-2xl">{item}</h3>
-                <p className="mt-4 leading-7 text-graphite/68">Keputusan kecil yang menentukan rasa ruang: sentuhan tangan, ketebalan garis, pertemuan bidang, dan ketahanan harian.</p>
+                <p className="mt-4 leading-7 text-graphite/68">Keputusan kecil yang menentukan hasil: ukuran modul, ketebalan bidang, pertemuan panel, hardware, dan ketahanan harian.</p>
               </Reveal>
             ))}
           </div>
@@ -159,10 +162,10 @@ export function Home() {
           <div className="section-heading">
             <div>
               <SectionLabel>Material & Finishing Detail</SectionLabel>
-              <h2 className="section-title">Material dipilih bukan hanya karena tampak premium, tetapi karena bekerja baik di ruang nyata.</h2>
+            <h2 className="section-title">Material dipilih bukan hanya karena tampak premium, tetapi karena siap bekerja di ruang nyata.</h2>
             </div>
             <p className="max-w-md leading-7 text-graphite/65">
-              Setiap pilihan finishing dipertimbangkan dari ketahanan, rasa sentuhan, kemudahan perawatan, dan kesesuaian dengan karakter ruang.
+              Setiap pilihan finishing dipertimbangkan dari ketahanan, rasa sentuhan, kemudahan perawatan, proses produksi, dan kualitas pemasangan di lokasi.
             </p>
           </div>
           <div className="material-finishing-layout">
@@ -204,7 +207,7 @@ export function Home() {
         <div className="content-grid">
           <div>
             <SectionLabel>Why Ambara</SectionLabel>
-            <h2 className="section-title">Karena ruang premium membutuhkan komunikasi yang sama rapinya dengan hasil akhirnya.</h2>
+            <h2 className="section-title">Karena proyek custom interior membutuhkan komunikasi yang sama rapinya dengan hasil akhirnya.</h2>
           </div>
           <div className="space-y-4">
             {whyAmbara.map((item, index) => (

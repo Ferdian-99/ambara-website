@@ -12,8 +12,8 @@ export const services = [
     number: "01",
     title: "Custom Furniture",
     slug: "custom-furniture",
-    summary: "Furnitur lepas dan statement piece yang dibuat sesuai ukuran, material, dan karakter ruang.",
-    suitable: "Pemilik hunian, villa, butik, dan ruang privat yang membutuhkan furnitur presisi.",
+    summary: "Furnitur custom yang dibuat sesuai ukuran ruang, kebutuhan pakai, material, dan detail produksi.",
+    suitable: "Pemilik hunian, kantor privat, cafe, dan ruang usaha yang membutuhkan furnitur presisi.",
     deliverables: ["Sketsa arah desain", "Gambar produksi", "Kurasi material", "Finishing sample"],
     process: ["Brief ruang", "Proporsi dan material", "Produksi workshop", "Quality control"],
   },
@@ -21,9 +21,9 @@ export const services = [
     number: "02",
     title: "Interior Design",
     slug: "interior-design",
-    summary: "Perencanaan interior menyeluruh dengan bahasa ruang yang tenang, hangat, dan tahan lama.",
-    suitable: "Residensial baru, renovasi ruang utama, suite privat, dan ruang representatif.",
-    deliverables: ["Mood direction", "Layout", "Material board", "Styling direction"],
+    summary: "Perencanaan interior menyeluruh dari layout, konsep visual, material, hingga arahan produksi.",
+    suitable: "Residensial baru, renovasi ruang utama, kantor, cafe, dan ruang representatif.",
+    deliverables: ["Mood direction", "Layout", "Material board", "Arahan produksi"],
     process: ["Konsultasi", "Konsep desain", "Revisi terarah", "Finalisasi dokumen"],
   },
   {
@@ -31,7 +31,7 @@ export const services = [
     title: "Built-in Furniture",
     slug: "built-in-furniture",
     summary: "Kabinet, wardrobe, kitchen, panel dinding, dan storage yang menyatu dengan arsitektur ruang.",
-    suitable: "Ruang yang membutuhkan penyimpanan rapi tanpa mengorbankan proporsi visual.",
+    suitable: "Hunian, pantry, kantor, dan cafe yang membutuhkan penyimpanan rapi tanpa mengorbankan proporsi visual.",
     deliverables: ["Pengukuran", "Shop drawing", "Material specification", "Instalasi"],
     process: ["Site survey", "Detail teknis", "Produksi", "Pemasangan"],
   },
@@ -48,8 +48,8 @@ export const services = [
     number: "05",
     title: "Commercial Projects",
     slug: "commercial-projects",
-    summary: "Interior dan furnitur untuk butik, lounge, kantor privat, hospitality, dan ruang brand.",
-    suitable: "Bisnis yang membutuhkan pengalaman ruang premium dan konsisten dengan identitas brand.",
+    summary: "Interior dan furnitur untuk cafe, office, butik, lounge, hospitality, dan ruang brand.",
+    suitable: "Bisnis yang membutuhkan ruang premium, fungsional, dan konsisten dengan identitas brand.",
     deliverables: ["Brand spatial direction", "Furnitur kustom", "Fixture", "Installation guide"],
     process: ["Brand brief", "Konsep pengalaman", "Prototype detail", "Implementasi"],
   },
@@ -175,11 +175,11 @@ export const materialNotes = [
 ];
 
 export const whyAmbara = [
-  "Desain personal sesuai ruang",
-  "Produksi terukur",
+  "Desain personal sesuai ruang dan fungsi",
+  "Produksi workshop yang terukur",
   "Material terkurasi",
-  "Komunikasi proyek yang jelas",
-  "Hasil akhir rapi dan tahan lama",
+  "Komunikasi progress yang jelas",
+  "Instalasi rapi dan tahan lama",
 ];
 
 export const featuredProject = {

@@ -145,20 +145,26 @@ export function AdminClients() {
     if (client.user_id) {
       return {
         status: "Portal aktif",
-        detail: "Linked account",
+        helper: "Client dapat login dan melihat semua proyek yang terhubung ke data client ini.",
+        canInvite: false,
+        canAttemptInvite: false,
       };
     }
 
     if (!client.email?.trim()) {
       return {
         status: "Email belum tersedia",
-        detail: "Missing email",
+        helper: "Tambahkan email client sebelum mengirim undangan portal.",
+        canInvite: false,
+        canAttemptInvite: true,
       };
     }
 
     return {
       status: "Belum terhubung",
-      detail: "Email available",
+      helper: "Kirim undangan agar client dapat membuat password sendiri melalui email.",
+      canInvite: true,
+      canAttemptInvite: true,
     };
   };
 
@@ -200,47 +206,56 @@ export function AdminClients() {
             </div>
           )}
           {!loading && clients.map((client) => (
-            <div key={client.id} className="dashboard-row">
+            <div key={client.id} className="dashboard-client-card">
               {(() => {
                 const account = getAccountMeta(client);
                 return (
-                  <div className="mb-4 flex flex-wrap items-center gap-3">
-                    <span className="dashboard-status-pill">{account.status}</span>
-                    <span>{account.detail}</span>
+                  <div className="dashboard-client-main">
+                    <div className="dashboard-client-profile">
+                      <span>Client</span>
+                      <h3>{client.name}</h3>
+                      <div className="dashboard-client-meta">
+                        <p>{client.email || "Email belum diisi"}</p>
+                        <p>{client.phone ?? "Nomor telepon belum diisi"}</p>
+                        <p>{client.address ?? "Alamat belum diisi"}</p>
+                      </div>
+                    </div>
+
+                    <div className="dashboard-portal-panel">
+                      <span className="dashboard-status-pill">{account.status}</span>
+                      <p>{account.helper}</p>
+                      {canCreate && account.canAttemptInvite && (
+                        <button
+                          type="button"
+                          className="dashboard-invite-button"
+                          onClick={() => void handleInviteClient(client)}
+                          disabled={!account.canInvite || invitingId === client.id}
+                        >
+                          {invitingId === client.id ? "Mengirim undangan..." : "Kirim Undangan Portal"}
+                        </button>
+                      )}
+                    </div>
                   </div>
                 );
               })()}
-              <span>{client.address ?? "Alamat belum diisi"}</span>
-              <p>
-                <strong>{client.name}</strong> - {client.email}
-              </p>
-              <p>{client.phone ?? "Nomor telepon belum diisi"}</p>
-              {canCreate && !client.user_id && client.email?.trim() && (
-                <button
-                  type="button"
-                  className="dashboard-invite-button"
-                  onClick={() => void handleInviteClient(client)}
-                  disabled={invitingId === client.id}
-                >
-                  {invitingId === client.id ? "Mengirim undangan..." : "Kirim Undangan Portal"}
-                </button>
-              )}
-              {client.user_id && <p className="dashboard-muted compact">Portal aktif. Client dapat login dan melihat semua proyek yang terhubung ke client record ini.</p>}
               {canCreate && (
-                <form className="dashboard-link-form" onSubmit={(event) => handleLinkSubmit(event, client)}>
-                  <label>
-                    Supabase User UID
-                    <input
-                      value={linkInputs[client.id] ?? ""}
-                      onChange={(event) => updateLinkInput(client.id, event.target.value)}
-                      placeholder="00000000-0000-0000-0000-000000000000"
-                    />
-                  </label>
-                  <p>Isi dengan User UID dari Supabase Authentication agar client dapat login ke portal.</p>
-                  <button type="submit" disabled={linkingId === client.id}>
-                    {linkingId === client.id ? "Menyimpan..." : "Simpan UID"}
-                  </button>
-                </form>
+                <details className="dashboard-advanced">
+                  <summary>Advanced: Manual UID Linking</summary>
+                  <form className="dashboard-link-form" onSubmit={(event) => handleLinkSubmit(event, client)}>
+                    <label>
+                      Supabase User UID
+                      <input
+                        value={linkInputs[client.id] ?? ""}
+                        onChange={(event) => updateLinkInput(client.id, event.target.value)}
+                        placeholder="00000000-0000-0000-0000-000000000000"
+                      />
+                    </label>
+                    <p>Isi dengan User UID dari Supabase Authentication agar client dapat login ke portal.</p>
+                    <button type="submit" disabled={linkingId === client.id}>
+                      {linkingId === client.id ? "Menyimpan..." : "Simpan UID"}
+                    </button>
+                  </form>
+                </details>
               )}
             </div>
           ))}
@@ -260,14 +275,14 @@ export function AdminClients() {
                   list="client-profile-uids"
                   value={form.user_id}
                   onChange={(event) => updateField("user_id", event.target.value)}
-                  placeholder="Kosongkan jika akun portal belum dibuat"
+                  placeholder="Opsional"
                 />
                 <datalist id="client-profile-uids">
                   {profiles.map((profile) => (
                     <option key={profile.id} value={profile.id} label={`${profile.full_name} - ${profile.email} (${profile.role})`} />
                   ))}
                 </datalist>
-                <small>Isi dengan User UID dari Supabase Authentication agar client dapat login ke portal.</small>
+                <small>Kosongkan jika ingin mengirim undangan portal setelah client dibuat.</small>
               </label>
               <label>
                 Nama

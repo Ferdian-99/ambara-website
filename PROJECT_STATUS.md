@@ -7,6 +7,9 @@
 - Admin and client dashboards now use live Supabase data for projects, clients, project timeline updates, documents, and photos.
 - Admin project create and project progress update actions are now connected to Supabase.
 - Client dashboard now only shows projects linked to the authenticated user's client record.
+- Unified `/login` portal route added for admin, internal team, and client users.
+- Public navigation now includes a subtle `Portal` entry that points to `/login`.
+- `/admin/login` and `/client/login` are preserved and redirect to the unified login route.
 - Vercel SPA routing fixed with `vercel.json` rewrites so direct React Router routes fall back to `index.html`.
 - Direct routes like `/admin/login` and `/client/login` should now work after redeploy.
 - Public `/lacak-proyek` can attempt real project lookup when Supabase is configured and falls back gracefully to the approved mock preview.
@@ -24,6 +27,7 @@
 - `src/lib/rbac.ts` added for roles and frontend permission helpers.
 - `src/routes/ProtectedRoute.tsx` added for protected route checks and role-based access.
 - Admin login route added at `/admin/login`.
+- Unified public login route added at `/login` with role-based redirects.
 - Admin dashboard shell added at `/admin`.
 - Admin routes added: `/admin/projects`, `/admin/projects/new`, `/admin/projects/:id`, `/admin/clients`, `/admin/documents`.
 - Client login route added at `/client/login`.
@@ -46,6 +50,9 @@
 - `/client` and `/client/projects` now show only projects assigned to the authenticated client user.
 - `/client/projects/:id` now shows read-only live project status, timeline, documents, and photos for the authenticated client.
 - Vercel SPA fallback routing added for production deep links.
+- Login now redirects `super_admin`, `project_manager`, `sales`, and `content_manager` to `/admin`, and `client` to `/client`.
+- Missing profiles show a clear configuration error after authentication.
+- Invalid credentials show a user-friendly login error.
 - Backend file upload UI remains informational only; real upload is not implemented yet.
 - CMS not implemented.
 - Payment gateway not implemented.
@@ -66,7 +73,7 @@
 - The production JS bundle is above Vite's default 500 kB warning threshold after adding Supabase. This is a warning, not a build failure; route-level code splitting can be added later.
 
 ## Next Task
-- Test Phase 2B with real Supabase users, then implement Phase 2C: Supabase Storage upload flows for project documents and progress photos.
+- Test unified `/login` with real Supabase roles, then implement Phase 2C: Supabase Storage upload flows for project documents and progress photos.
 
 ## Exact Command To Run Locally
 ```bash

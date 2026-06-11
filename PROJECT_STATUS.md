@@ -15,6 +15,7 @@
 - Phase 2C client invitation flow added: `/admin/clients` can send `Kirim Undangan Portal` through the `invite-client` Supabase Edge Function when deployed.
 - `invite-client` Edge Function source added with server-side Supabase Admin Auth usage and `service_role` kept out of Vite/browser code.
 - Manual Supabase User UID linking remains available as a fallback if the Edge Function is not deployed.
+- `/admin/clients` invitation UI refined so normal admins see clear portal status and invite actions first, while manual Supabase User UID linking is tucked into an advanced fallback section.
 - Client multi-project visibility remains based on `auth.users.id -> clients.user_id -> clients.id -> projects.client_id`, so one linked client account can see all assigned projects.
 - Final frontend polish pass completed for public brand alignment, spacing, CTA hierarchy, and copy tone.
 - Official AMBARA logo integration fixed: public header/navbar uses `/assets/ambara-logo-dark-v2.png`, and footer/dark usage uses `/assets/ambara-logo-light.png`.
@@ -74,6 +75,9 @@
 - Supabase Edge Function source added at `supabase/functions/invite-client/index.ts`.
 - Invitation flow can create/invite a client auth user, upsert the client profile role, and link `clients.user_id` when the Edge Function is deployed.
 - `/admin/clients` now has invitation loading, success, and error states.
+- `/admin/clients` client cards now prioritize client name, email, phone, address, portal status, and contextual invitation guidance.
+- `Kirim Undangan Portal` now appears only for unlinked clients with an email, while missing-email clients see a disabled invite action and helper copy.
+- Manual Supabase User UID linking remains available inside `Advanced: Manual UID Linking`.
 - Manual Supabase User UID linking remains available for fallback and operational recovery.
 - Public header and footer brand presentation refined with a charcoal-forward AMBARA identity.
 - Official logo presentation adjusted for desktop and mobile navbar readability.
@@ -111,7 +115,7 @@ npm run dev
 ```
 
 ## Build Status
-- Passed with `npm run build` after the Phase 2C client invitation changes.
+- Passed with `npm run build` after the `/admin/clients` invitation UI refinement.
 - Output directory: `dist/`.
 - Non-fatal warnings: React Router and Framer Motion `"use client"` directives, plus Vite chunk-size warning after adding Supabase.
 

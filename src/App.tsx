@@ -17,6 +17,7 @@ import { ClientProjects } from "./pages/client/ClientProjects";
 import { About } from "./pages/About";
 import { Contact } from "./pages/Contact";
 import { Home } from "./pages/Home";
+import { Login } from "./pages/Login";
 import { Portfolio } from "./pages/Portfolio";
 import { PortfolioDetail } from "./pages/PortfolioDetail";
 import { Process } from "./pages/Process";
@@ -36,12 +37,13 @@ const router = createBrowserRouter([
       { path: "proses", element: <Process /> },
       { path: "lacak-proyek", element: <Tracking /> },
       { path: "kontak", element: <Contact /> },
+      { path: "login", element: <Login /> },
     ],
   },
   { path: "/admin/login", element: <AdminLogin /> },
   {
     path: "/admin",
-    element: <ProtectedRoute allowedRoles={["super_admin", "content_manager", "project_manager", "sales"]} loginPath="/admin/login" />,
+    element: <ProtectedRoute allowedRoles={["super_admin", "content_manager", "project_manager", "sales"]} loginPath="/login" />,
     children: [
       {
         element: <AdminLayout />,
@@ -59,7 +61,7 @@ const router = createBrowserRouter([
   { path: "/client/login", element: <ClientLogin /> },
   {
     path: "/client",
-    element: <ProtectedRoute allowedRoles={["client"]} loginPath="/client/login" />,
+    element: <ProtectedRoute allowedRoles={["client"]} loginPath="/login" />,
     children: [
       {
         element: <ClientLayout />,

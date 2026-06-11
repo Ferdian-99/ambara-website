@@ -7,6 +7,8 @@
 - Admin and client dashboards now use live Supabase data for projects, clients, project timeline updates, documents, and photos.
 - Admin project create and project progress update actions are now connected to Supabase.
 - Client dashboard now only shows projects linked to the authenticated user's client record.
+- Vercel SPA routing fixed with `vercel.json` rewrites so direct React Router routes fall back to `index.html`.
+- Direct routes like `/admin/login` and `/client/login` should now work after redeploy.
 - Public `/lacak-proyek` can attempt real project lookup when Supabase is configured and falls back gracefully to the approved mock preview.
 - Public `/lacak-proyek` no longer auto-loads `AMB-2026-001`; project data only appears after the user submits a code.
 - Public `/lacak-proyek` result UI now has premium empty states for missing timeline updates, documents, and progress photos.
@@ -43,6 +45,7 @@
 - `/admin/clients` now lists and creates real client records, with optional auth profile linking.
 - `/client` and `/client/projects` now show only projects assigned to the authenticated client user.
 - `/client/projects/:id` now shows read-only live project status, timeline, documents, and photos for the authenticated client.
+- Vercel SPA fallback routing added for production deep links.
 - Backend file upload UI remains informational only; real upload is not implemented yet.
 - CMS not implemented.
 - Payment gateway not implemented.

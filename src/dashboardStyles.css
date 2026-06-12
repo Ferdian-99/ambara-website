@@ -165,11 +165,11 @@
   }
 
   .dashboard-client-card {
-    @apply border-t border-charcoal/10 py-6;
+    @apply border-t border-charcoal/10 py-4;
   }
 
   .dashboard-client-main {
-    @apply grid gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(260px,300px)] xl:items-start;
+    @apply grid gap-4 md:grid-cols-[minmax(0,1fr)_auto] md:items-center;
   }
 
   .dashboard-client-profile {
@@ -181,11 +181,11 @@
   }
 
   .dashboard-client-profile h3 {
-    @apply mt-3 break-words font-serif text-3xl leading-tight text-charcoal;
+    @apply mt-2 break-words font-serif text-2xl leading-tight text-charcoal;
   }
 
   .dashboard-client-meta {
-    @apply mt-4 grid min-w-0 gap-2 text-sm leading-6 text-graphite/70;
+    @apply mt-3 grid min-w-0 gap-1 text-sm leading-6 text-graphite/70;
   }
 
   .dashboard-client-meta p {
@@ -193,7 +193,7 @@
   }
 
   .dashboard-portal-panel {
-    @apply w-full min-w-0 border border-charcoal/10 bg-ivory p-5;
+    @apply flex w-full min-w-0 flex-col items-start gap-3 border border-charcoal/10 bg-ivory p-4 md:w-auto md:min-w-[180px] md:items-end;
   }
 
   .dashboard-portal-panel p {
@@ -239,7 +239,7 @@
   }
 
   .dashboard-status-pill {
-    @apply inline-flex border border-champagne/50 bg-ivory px-3 py-1 text-xs uppercase tracking-[0.18em] text-champagne;
+    @apply inline-flex whitespace-nowrap border border-champagne/50 bg-ivory px-3 py-1 text-[0.68rem] uppercase tracking-[0.18em] text-champagne;
   }
 
   .dashboard-link-form {
@@ -283,7 +283,7 @@
   }
 
   .dashboard-invite-button {
-    @apply mt-5 inline-flex w-full justify-center border border-champagne/60 bg-charcoal px-4 py-2 text-sm text-linen transition hover:bg-champagne hover:text-charcoal disabled:cursor-not-allowed disabled:border-charcoal/15 disabled:bg-linen disabled:text-graphite/45;
+    @apply inline-flex w-full justify-center border border-champagne/60 bg-charcoal px-4 py-2 text-sm text-linen transition hover:bg-champagne hover:text-charcoal disabled:cursor-not-allowed disabled:border-charcoal/15 disabled:bg-linen disabled:text-graphite/45 md:w-auto;
   }
 
   .dashboard-alert,

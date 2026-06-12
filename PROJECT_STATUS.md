@@ -22,6 +22,8 @@
 - `/update-password` now marks the linked client record as activated after a successful password update.
 - Client dashboard/project access also marks older linked client accounts active as a fallback when `portal_activated_at` is still empty.
 - `/admin/clients` now distinguishes `Belum terhubung`, `Undangan terkirim`, `Email belum tersedia`, and `Portal aktif` based on email, `user_id`, and `portal_activated_at`.
+- `/admin/clients` UI polished into more compact client cards with short portal status badges and no long helper descriptions.
+- Visible per-card `Advanced: Manual UID Linking` controls were removed from normal admin workflow now that email invitations and activation tracking are working.
 - Phase 2C Storage upload foundation added for project documents and progress photos.
 - `/admin/projects/:id` now allows `super_admin` and `project_manager` to upload project documents and progress photos through Supabase Storage.
 - Uploaded document metadata is saved to `project_documents`; uploaded photo metadata is saved to `project_photos`.
@@ -94,10 +96,10 @@
 - Upload validation added for supported file types and size limits.
 - `/admin/clients` now has invitation loading, success, and error states.
 - `/admin/clients` client cards now prioritize client name, email, phone, address, portal status, and contextual invitation guidance.
+- `/admin/clients` client cards now use compact uppercase portal badges and show `Kirim Undangan Portal` only where an unlinked client has an email.
 - `/admin/clients` client cards now stack safely on narrower dashboard widths and use a bounded two-column layout on wide desktop screens.
 - `Kirim Undangan Portal` now appears only for unlinked clients with an email, while missing-email clients see a disabled invite action and helper copy.
-- Manual Supabase User UID linking remains available inside `Advanced: Manual UID Linking`.
-- Manual Supabase User UID linking remains available for fallback and operational recovery.
+- Manual Supabase User UID helpers remain in the data layer for operational fallback, but the visible per-card advanced linking UI is no longer shown to normal admins.
 - Public header and footer brand presentation refined with a charcoal-forward AMBARA identity.
 - Official logo presentation adjusted for desktop and mobile navbar readability.
 - Public homepage and Tentang copy refined toward custom interior, built-in furniture, workshop production, and installation.
@@ -137,7 +139,7 @@ npm run dev
 ```
 
 ## Build Status
-- Passed with `npm run build` after the Phase 2C Supabase Storage upload update.
+- Passed with `npm run build` after the compact `/admin/clients` UI polish.
 - Output directory: `dist/`.
 - Non-fatal warnings: React Router and Framer Motion `"use client"` directives, plus Vite chunk-size warning after adding Supabase.
 

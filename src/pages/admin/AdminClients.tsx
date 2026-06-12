@@ -1,12 +1,9 @@
 import { FormEvent, useEffect, useState } from "react";
 import {
   createClientRecord,
-  fetchClientLinkProfiles,
   fetchClients,
   inviteClientToPortal,
-  updateClientPortalUser,
   type ClientRow,
-  type ProfileRow,
 } from "../../lib/projectData";
 import { hasPermission } from "../../lib/rbac";
 import { useDashboardContext } from "./AdminLayout";
@@ -22,13 +19,10 @@ const initialForm = {
 export function AdminClients() {
   const { role } = useDashboardContext();
   const [clients, setClients] = useState<ClientRow[]>([]);
-  const [profiles, setProfiles] = useState<ProfileRow[]>([]);
   const [form, setForm] = useState(initialForm);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [linkingId, setLinkingId] = useState<string | null>(null);
   const [invitingId, setInvitingId] = useState<string | null>(null);
-  const [linkInputs, setLinkInputs] = useState<Record<string, string>>({});
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
@@ -44,10 +38,8 @@ export function AdminClients() {
     setLoading(true);
     setError("");
     try {
-      const [clientRows, profileRows] = await Promise.all([fetchClients(), fetchClientLinkProfiles()]);
+      const clientRows = await fetchClients();
       setClients(clientRows);
-      setProfiles(profileRows);
-      setLinkInputs(Object.fromEntries(clientRows.map((client) => [client.id, client.user_id ?? ""])));
     } catch {
       setError("Data client belum dapat dimuat. Periksa koneksi atau konfigurasi RLS.");
     } finally {
@@ -62,12 +54,6 @@ export function AdminClients() {
 
   const updateField = (field: keyof typeof form, value: string) => {
     setForm((current) => ({ ...current, [field]: value }));
-    setError("");
-    setSuccess("");
-  };
-
-  const updateLinkInput = (clientId: string, value: string) => {
-    setLinkInputs((current) => ({ ...current, [clientId]: value }));
     setError("");
     setSuccess("");
   };
@@ -101,24 +87,6 @@ export function AdminClients() {
     }
   };
 
-  const handleLinkSubmit = async (event: FormEvent, client: ClientRow) => {
-    event.preventDefault();
-    setError("");
-    setSuccess("");
-    setLinkingId(client.id);
-
-    try {
-      const nextUserId = linkInputs[client.id]?.trim() || null;
-      await updateClientPortalUser(client.id, nextUserId);
-      setSuccess(nextUserId ? `Akses portal client ${client.name} berhasil dihubungkan.` : `Akses portal client ${client.name} dilepas dari User UID.`);
-      await loadClients();
-    } catch {
-      setError("User UID belum dapat disimpan. Pastikan UID valid dan role memiliki akses update client.");
-    } finally {
-      setLinkingId(null);
-    }
-  };
-
   const handleInviteClient = async (client: ClientRow) => {
     setError("");
     setSuccess("");
@@ -132,7 +100,6 @@ export function AdminClients() {
     try {
       const result = await inviteClientToPortal(client.id);
       setSuccess(result.message ?? "Undangan portal berhasil dikirim.");
-      setLinkInputs((current) => ({ ...current, [client.id]: result.user_id }));
       await loadClients();
     } catch (inviteError) {
       setError(inviteError instanceof Error ? inviteError.message : "Undangan portal belum dapat dikirim.");
@@ -144,8 +111,7 @@ export function AdminClients() {
   const getAccountMeta = (client: ClientRow) => {
     if (!client.email?.trim()) {
       return {
-        status: "Email belum tersedia",
-        helper: "Tambahkan email client sebelum mengirim undangan portal.",
+        status: "EMAIL BELUM TERSEDIA",
         canInvite: false,
         canAttemptInvite: true,
       };
@@ -153,8 +119,7 @@ export function AdminClients() {
 
     if (!client.user_id) {
       return {
-        status: "Belum terhubung",
-        helper: "Kirim undangan agar client dapat membuat password sendiri melalui email.",
+        status: "BELUM TERHUBUNG",
         canInvite: true,
         canAttemptInvite: true,
       };
@@ -162,16 +127,14 @@ export function AdminClients() {
 
     if (!client.portal_activated_at) {
       return {
-        status: "Undangan terkirim",
-        helper: "Undangan sudah dikirim. Menunggu client membuat password dan mengaktifkan portal.",
+        status: "UNDANGAN TERKIRIM",
         canInvite: false,
         canAttemptInvite: false,
       };
     }
 
     return {
-      status: "Portal aktif",
-      helper: "Client sudah mengaktifkan portal dan dapat melihat semua proyek yang terhubung ke data client ini.",
+      status: "PORTAL AKTIF",
       canInvite: false,
       canAttemptInvite: false,
     };
@@ -196,8 +159,7 @@ export function AdminClients() {
           <p className="section-label">Clients</p>
           <h1>Client records untuk proyek AMBARA.</h1>
           <p className="mt-5 max-w-3xl leading-7 text-graphite/70">
-            Data client menyimpan informasi proyek. Akun portal dibuat melalui Supabase Auth dan harus dihubungkan dengan User UID client.
-            Undangan portal memungkinkan client membuat password sendiri melalui email.
+            Kelola data client, kirim undangan portal, dan pantau status aktivasi akun dengan ringkas.
           </p>
         </div>
       </div>
@@ -232,7 +194,6 @@ export function AdminClients() {
 
                     <div className="dashboard-portal-panel">
                       <span className="dashboard-status-pill">{account.status}</span>
-                      <p>{account.helper}</p>
                       {canCreate && account.canAttemptInvite && (
                         <button
                           type="button"
@@ -247,25 +208,6 @@ export function AdminClients() {
                   </div>
                 );
               })()}
-              {canCreate && (
-                <details className="dashboard-advanced">
-                  <summary>Advanced: Manual UID Linking</summary>
-                  <form className="dashboard-link-form" onSubmit={(event) => handleLinkSubmit(event, client)}>
-                    <label>
-                      Supabase User UID
-                      <input
-                        value={linkInputs[client.id] ?? ""}
-                        onChange={(event) => updateLinkInput(client.id, event.target.value)}
-                        placeholder="00000000-0000-0000-0000-000000000000"
-                      />
-                    </label>
-                    <p>Isi dengan User UID dari Supabase Authentication agar client dapat login ke portal.</p>
-                    <button type="submit" disabled={linkingId === client.id}>
-                      {linkingId === client.id ? "Menyimpan..." : "Simpan UID"}
-                    </button>
-                  </form>
-                </details>
-              )}
             </div>
           ))}
         </article>
@@ -273,26 +215,11 @@ export function AdminClients() {
         <article className="dashboard-panel">
           <h2>Buat Client</h2>
           <p>
-            Data client menyimpan informasi proyek. Akun portal dibuat melalui Supabase Auth dan harus dihubungkan dengan User UID client.
+            Buat data client terlebih dahulu, lalu kirim undangan portal melalui daftar client setelah email tersedia.
           </p>
           {canCreate ? (
             <form className="dashboard-form compact" onSubmit={handleSubmit}>
               {success && <p className="dashboard-success">{success}</p>}
-              <label>
-                Supabase User UID
-                <input
-                  list="client-profile-uids"
-                  value={form.user_id}
-                  onChange={(event) => updateField("user_id", event.target.value)}
-                  placeholder="Opsional"
-                />
-                <datalist id="client-profile-uids">
-                  {profiles.map((profile) => (
-                    <option key={profile.id} value={profile.id} label={`${profile.full_name} - ${profile.email} (${profile.role})`} />
-                  ))}
-                </datalist>
-                <small>Kosongkan jika ingin mengirim undangan portal setelah client dibuat.</small>
-              </label>
               <label>
                 Nama
                 <input value={form.name} onChange={(event) => updateField("name", event.target.value)} placeholder="Nama client" />

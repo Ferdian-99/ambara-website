@@ -36,6 +36,10 @@ function hasAllowedExtension(file: File, extensions: string[]) {
   return extensions.some((extension) => name.endsWith(extension));
 }
 
+function getErrorMessage(error: unknown) {
+  return error instanceof Error ? error.message : "Terjadi kendala yang belum diketahui.";
+}
+
 export function AdminProjectDetail() {
   const { id } = useParams();
   const { authState, role } = useDashboardContext();
@@ -242,8 +246,8 @@ export function AdminProjectDetail() {
       await deleteProjectUpdate(item.id);
       setDeleteSuccess("Timeline update berhasil dihapus.");
       await loadProject();
-    } catch {
-      setDeleteError("Timeline update belum dapat dihapus. Periksa akses role dan policy database.");
+    } catch (deleteError) {
+      setDeleteError(getErrorMessage(deleteError));
     } finally {
       setDeleteTargetId(null);
     }
@@ -259,8 +263,8 @@ export function AdminProjectDetail() {
       const result = await deleteProjectDocument(item);
       setDeleteSuccess(result.storageWarning ?? "Dokumen proyek berhasil dihapus.");
       await loadProject();
-    } catch {
-      setDeleteError("Dokumen belum dapat dihapus. Periksa akses role, policy database, dan policy Storage.");
+    } catch (deleteError) {
+      setDeleteError(getErrorMessage(deleteError));
     } finally {
       setDeleteTargetId(null);
     }
@@ -276,8 +280,8 @@ export function AdminProjectDetail() {
       const result = await deleteProjectPhoto(item);
       setDeleteSuccess(result.storageWarning ?? "Foto progress berhasil dihapus.");
       await loadProject();
-    } catch {
-      setDeleteError("Foto progress belum dapat dihapus. Periksa akses role, policy database, dan policy Storage.");
+    } catch (deleteError) {
+      setDeleteError(getErrorMessage(deleteError));
     } finally {
       setDeleteTargetId(null);
     }

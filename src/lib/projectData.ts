@@ -84,6 +84,16 @@ type SupabaseQueryClient = {
   from: (table: string) => any;
 };
 
+function describeSupabaseError(error: { message?: string; details?: string; hint?: string } | null | undefined) {
+  if (!error) return "";
+  return [error.message, error.details, error.hint].filter(Boolean).join(" ");
+}
+
+function toDeleteError(label: string, error: { message?: string; details?: string; hint?: string } | null | undefined) {
+  const message = describeSupabaseError(error);
+  return new Error(message ? `${label}: ${message}` : label);
+}
+
 function safeStorageName(fileName: string) {
   return fileName
     .trim()
@@ -337,8 +347,9 @@ export async function uploadProjectPhoto(input: UploadProjectPhotoInput) {
 
 export async function deleteProjectUpdate(updateId: string) {
   const client = requireSupabase();
-  const { error } = await client.from("project_updates").delete().eq("id", updateId);
-  if (error) throw error;
+  const { data, error } = await client.from("project_updates").delete().eq("id", updateId).select("id").maybeSingle();
+  if (error) throw toDeleteError("Timeline update belum dapat dihapus", error);
+  if (!data) throw new Error("Timeline update tidak terhapus. Record tidak ditemukan atau akses RLS menolak penghapusan.");
 }
 
 export async function deleteProjectDocument(document: ProjectDocumentRow): Promise<DeleteStorageBackedRecordResult> {
@@ -347,16 +358,17 @@ export async function deleteProjectDocument(document: ProjectDocumentRow): Promi
   const storagePath = storagePathFromPublicUrl(document.file_url, "project-documents");
   let storageWarning: string | undefined;
 
-  const { error } = await client.from("project_documents").delete().eq("id", document.id);
-  if (error) throw error;
+  const { data, error } = await client.from("project_documents").delete().eq("id", document.id).select("id").maybeSingle();
+  if (error) throw toDeleteError("Dokumen belum dapat dihapus dari database", error);
+  if (!data) throw new Error("Dokumen tidak terhapus. Record tidak ditemukan atau akses RLS menolak penghapusan.");
 
   if (storagePath) {
     const { error: storageError } = await supabase.storage.from("project-documents").remove([storagePath]);
     if (storageError) {
-      storageWarning = "Metadata dokumen dihapus, tetapi file Storage belum dapat dihapus otomatis.";
+      storageWarning = `Dokumen sudah dihapus dari database, tetapi file storage mungkin masih tersisa. ${describeSupabaseError(storageError)}`;
     }
   } else {
-    storageWarning = "Metadata dokumen dihapus, tetapi path file Storage tidak dapat dibaca otomatis.";
+    storageWarning = "Dokumen sudah dihapus dari database, tetapi path file storage tidak dapat dibaca otomatis.";
   }
 
   return { storageWarning };
@@ -368,16 +380,17 @@ export async function deleteProjectPhoto(photo: ProjectPhotoRow): Promise<Delete
   const storagePath = storagePathFromPublicUrl(photo.image_url, "project-photos");
   let storageWarning: string | undefined;
 
-  const { error } = await client.from("project_photos").delete().eq("id", photo.id);
-  if (error) throw error;
+  const { data, error } = await client.from("project_photos").delete().eq("id", photo.id).select("id").maybeSingle();
+  if (error) throw toDeleteError("Foto belum dapat dihapus dari database", error);
+  if (!data) throw new Error("Foto tidak terhapus. Record tidak ditemukan atau akses RLS menolak penghapusan.");
 
   if (storagePath) {
     const { error: storageError } = await supabase.storage.from("project-photos").remove([storagePath]);
     if (storageError) {
-      storageWarning = "Metadata foto dihapus, tetapi file Storage belum dapat dihapus otomatis.";
+      storageWarning = `Foto sudah dihapus dari database, tetapi file storage mungkin masih tersisa. ${describeSupabaseError(storageError)}`;
     }
   } else {
-    storageWarning = "Metadata foto dihapus, tetapi path file Storage tidak dapat dibaca otomatis.";
+    storageWarning = "Foto sudah dihapus dari database, tetapi path file storage tidak dapat dibaca otomatis.";
   }
 
   return { storageWarning };

@@ -140,6 +140,12 @@ Run this follow-up migration when enabling delete actions from the admin project
 supabase/migrations/20260612020000_add_project_delete_policies.sql
 ```
 
+If photo/document deletes return success but records still appear after refresh, also run the hardened delete policy migration:
+
+```text
+supabase/migrations/20260612030000_fix_project_delete_policies.sql
+```
+
 It creates or updates these buckets:
 
 - `project-documents`
@@ -151,7 +157,7 @@ MVP bucket settings:
 - `project-photos`: public bucket, max file size 8 MB.
 - Admin uploads use the logged-in Supabase session, never a service role key.
 - Upload policies allow only users where `public.can_manage_projects()` is true, currently `super_admin` and `project_manager`.
-- Delete policies allow the same manager roles to remove timeline updates, document/photo metadata, and Storage objects from the two project buckets.
+- Delete policies allow only authenticated `super_admin` and `project_manager` profiles to remove timeline updates, document/photo metadata, and Storage objects from the two project buckets.
 - Public read policies are included because the app stores direct public URLs in `project_documents.file_url` and `project_photos.image_url`.
 
 Recommended file types:
@@ -177,6 +183,7 @@ Storage delete behavior:
 
 - `/admin/projects/:id` removes the metadata record first, then attempts to delete the related Storage object.
 - If Storage removal fails but metadata deletion succeeds, the document/photo disappears from admin, client dashboard, and public tracking lists; the app shows a non-blocking warning so the orphaned object can be checked in Supabase Storage if needed.
+- The frontend verifies that the metadata delete actually removed one row. If RLS blocks the delete, the admin UI now shows the Supabase/RLS error instead of showing a false success message.
 
 ## Client Invitation Edge Function
 
@@ -350,6 +357,7 @@ The default Supabase invitation email can be customized there. Keep the invitati
 
 - Run the Storage bucket/policy migration in Supabase if not already applied.
 - Run the project delete policy migration in Supabase before testing delete actions in production.
+- Run `supabase/migrations/20260612030000_fix_project_delete_policies.sql` if delete actions appear successful but records still return after refresh.
 - Review whether production documents should move from public bucket URLs to private buckets with signed URLs.
 - Add complete admin user management.
 - Add stronger production RLS review and security test pass.

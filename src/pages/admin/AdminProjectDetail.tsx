@@ -5,15 +5,29 @@ import {
   addProjectUpdate,
   fetchProjectBundle,
   normalizeProgress,
+  uploadProjectDocument,
+  uploadProjectPhoto,
+  type DocumentCategory,
   type ProjectBundle,
 } from "../../lib/projectData";
 import { hasPermission } from "../../lib/rbac";
 import type { ProjectStage } from "../../lib/supabase";
 import { useDashboardContext } from "./AdminLayout";
 
+const documentCategories: DocumentCategory[] = ["Quotation", "Desain Final", "Invoice", "Kontrak", "Lainnya"];
+const documentExtensions = [".pdf", ".doc", ".docx", ".jpg", ".jpeg", ".png"];
+const photoExtensions = [".jpg", ".jpeg", ".png", ".webp"];
+const maxDocumentSize = 10 * 1024 * 1024;
+const maxPhotoSize = 8 * 1024 * 1024;
+
 function formatDate(value: string | null) {
   if (!value) return "Belum ditentukan";
   return new Intl.DateTimeFormat("id-ID", { day: "2-digit", month: "long", year: "numeric" }).format(new Date(value));
+}
+
+function hasAllowedExtension(file: File, extensions: string[]) {
+  const name = file.name.toLowerCase();
+  return extensions.some((extension) => name.endsWith(extension));
 }
 
 export function AdminProjectDetail() {
@@ -28,9 +42,23 @@ export function AdminProjectDetail() {
   const [description, setDescription] = useState("");
   const [stage, setStage] = useState<ProjectStage>("Konsultasi");
   const [progress, setProgress] = useState("0");
+  const [documentFile, setDocumentFile] = useState<File | null>(null);
+  const [documentName, setDocumentName] = useState("");
+  const [documentCategory, setDocumentCategory] = useState<DocumentCategory>("Quotation");
+  const [photoFile, setPhotoFile] = useState<File | null>(null);
+  const [photoCaption, setPhotoCaption] = useState("");
+  const [uploadingDocument, setUploadingDocument] = useState(false);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const [documentUploadError, setDocumentUploadError] = useState("");
+  const [documentUploadSuccess, setDocumentUploadSuccess] = useState("");
+  const [photoUploadError, setPhotoUploadError] = useState("");
+  const [photoUploadSuccess, setPhotoUploadSuccess] = useState("");
+  const [documentInputKey, setDocumentInputKey] = useState(0);
+  const [photoInputKey, setPhotoInputKey] = useState(0);
 
   const canView = hasPermission(role, "projects:view_all");
   const canManage = hasPermission(role, "projects:manage");
+  const canUpload = hasPermission(role, "documents:upload");
 
   const loadProject = async () => {
     if (!id || !canView) return;
@@ -90,6 +118,89 @@ export function AdminProjectDetail() {
       setError("Progress belum dapat disimpan. Pastikan role memiliki akses update proyek.");
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleDocumentUpload = async (event: FormEvent) => {
+    event.preventDefault();
+    if (!bundle || !documentFile) {
+      setDocumentUploadError("Pilih file dokumen terlebih dahulu.");
+      return;
+    }
+
+    setDocumentUploadError("");
+    setDocumentUploadSuccess("");
+
+    if (!hasAllowedExtension(documentFile, documentExtensions)) {
+      setDocumentUploadError("Format dokumen belum didukung. Gunakan PDF, DOC, DOCX, JPG, atau PNG.");
+      return;
+    }
+
+    if (documentFile.size > maxDocumentSize) {
+      setDocumentUploadError("Ukuran dokumen maksimal 10 MB.");
+      return;
+    }
+
+    const finalName = documentName.trim() || documentFile.name;
+    setUploadingDocument(true);
+    try {
+      await uploadProjectDocument({
+        project_id: bundle.project.id,
+        file: documentFile,
+        file_name: finalName,
+        file_type: documentCategory,
+        uploaded_by: authState.user?.id ?? null,
+      });
+      setDocumentFile(null);
+      setDocumentName("");
+      setDocumentCategory("Quotation");
+      setDocumentInputKey((current) => current + 1);
+      setDocumentUploadSuccess("Dokumen proyek berhasil diunggah.");
+      await loadProject();
+    } catch {
+      setDocumentUploadError("Dokumen belum dapat diunggah. Periksa bucket Storage dan policy upload.");
+    } finally {
+      setUploadingDocument(false);
+    }
+  };
+
+  const handlePhotoUpload = async (event: FormEvent) => {
+    event.preventDefault();
+    if (!bundle || !photoFile) {
+      setPhotoUploadError("Pilih foto progress terlebih dahulu.");
+      return;
+    }
+
+    setPhotoUploadError("");
+    setPhotoUploadSuccess("");
+
+    if (!hasAllowedExtension(photoFile, photoExtensions)) {
+      setPhotoUploadError("Format foto belum didukung. Gunakan JPG, JPEG, PNG, atau WEBP.");
+      return;
+    }
+
+    if (photoFile.size > maxPhotoSize) {
+      setPhotoUploadError("Ukuran foto maksimal 8 MB.");
+      return;
+    }
+
+    setUploadingPhoto(true);
+    try {
+      await uploadProjectPhoto({
+        project_id: bundle.project.id,
+        file: photoFile,
+        caption: photoCaption.trim() || null,
+        uploaded_by: authState.user?.id ?? null,
+      });
+      setPhotoFile(null);
+      setPhotoCaption("");
+      setPhotoInputKey((current) => current + 1);
+      setPhotoUploadSuccess("Foto progress berhasil diunggah.");
+      await loadProject();
+    } catch {
+      setPhotoUploadError("Foto progress belum dapat diunggah. Periksa bucket Storage dan policy upload.");
+    } finally {
+      setUploadingPhoto(false);
     }
   };
 
@@ -237,6 +348,39 @@ export function AdminProjectDetail() {
       <section className="dashboard-grid">
         <article className="dashboard-panel">
           <h2>Documents</h2>
+          {canUpload ? (
+            <form className="dashboard-form compact" onSubmit={handleDocumentUpload}>
+              {documentUploadError && <p className="dashboard-alert">{documentUploadError}</p>}
+              {documentUploadSuccess && <p className="dashboard-success">{documentUploadSuccess}</p>}
+              <label>
+                File dokumen
+                <input
+                  key={documentInputKey}
+                  type="file"
+                  accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/jpeg,image/png"
+                  onChange={(event) => setDocumentFile(event.target.files?.[0] ?? null)}
+                />
+                <small>PDF, DOC, DOCX, JPG, atau PNG. Maksimal 10 MB.</small>
+              </label>
+              <label>
+                Nama dokumen
+                <input value={documentName} onChange={(event) => setDocumentName(event.target.value)} placeholder="Quotation final" />
+              </label>
+              <label>
+                Kategori dokumen
+                <select value={documentCategory} onChange={(event) => setDocumentCategory(event.target.value as DocumentCategory)}>
+                  {documentCategories.map((category) => (
+                    <option key={category}>{category}</option>
+                  ))}
+                </select>
+              </label>
+              <button type="submit" disabled={uploadingDocument}>
+                {uploadingDocument ? "Mengunggah dokumen..." : "Upload Dokumen"}
+              </button>
+            </form>
+          ) : (
+            <p>Role ini dapat melihat dokumen proyek, tetapi tidak dapat mengunggah dokumen baru.</p>
+          )}
           {documents.length ? (
             <div className="placeholder-grid">
               {documents.map((item) => (
@@ -246,12 +390,37 @@ export function AdminProjectDetail() {
               ))}
             </div>
           ) : (
-            <div className="upload-zone">Belum ada dokumen. Upload file akan diaktifkan pada fase berikutnya.</div>
+            <div className="upload-zone">Belum ada dokumen proyek yang diunggah.</div>
           )}
         </article>
 
         <article className="dashboard-panel">
           <h2>Progress Photos</h2>
+          {canUpload ? (
+            <form className="dashboard-form compact" onSubmit={handlePhotoUpload}>
+              {photoUploadError && <p className="dashboard-alert">{photoUploadError}</p>}
+              {photoUploadSuccess && <p className="dashboard-success">{photoUploadSuccess}</p>}
+              <label>
+                Foto progress
+                <input
+                  key={photoInputKey}
+                  type="file"
+                  accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+                  onChange={(event) => setPhotoFile(event.target.files?.[0] ?? null)}
+                />
+                <small>JPG, JPEG, PNG, atau WEBP. Maksimal 8 MB.</small>
+              </label>
+              <label>
+                Caption
+                <input value={photoCaption} onChange={(event) => setPhotoCaption(event.target.value)} placeholder="Finishing kabinet area pantry" />
+              </label>
+              <button type="submit" disabled={uploadingPhoto}>
+                {uploadingPhoto ? "Mengunggah foto..." : "Upload Foto Progress"}
+              </button>
+            </form>
+          ) : (
+            <p>Role ini dapat melihat foto progress, tetapi tidak dapat mengunggah foto baru.</p>
+          )}
           {photos.length ? (
             <div className="admin-photo-grid">
               {photos.map((item) => (
@@ -262,7 +431,7 @@ export function AdminProjectDetail() {
               ))}
             </div>
           ) : (
-            <div className="upload-zone">Belum ada foto progress. Upload foto akan diaktifkan pada fase berikutnya.</div>
+            <div className="upload-zone">Belum ada foto progress yang diunggah.</div>
           )}
         </article>
       </section>

@@ -124,6 +124,48 @@ supabase/migrations/20260612000000_add_client_portal_activation.sql
 
 The migration also creates `public.mark_own_client_portal_active()`, a narrow authenticated RPC used by the frontend after `/update-password` succeeds and as a fallback when a client dashboard loads. It only updates client rows where `clients.user_id = auth.uid()`.
 
+## Project Storage Setup
+
+Phase 2C adds Supabase Storage upload for project documents and progress photos.
+
+Run this migration after the base schema:
+
+```text
+supabase/migrations/20260612010000_add_project_storage_buckets.sql
+```
+
+It creates or updates these buckets:
+
+- `project-documents`
+- `project-photos`
+
+MVP bucket settings:
+
+- `project-documents`: public bucket, max file size 10 MB.
+- `project-photos`: public bucket, max file size 8 MB.
+- Admin uploads use the logged-in Supabase session, never a service role key.
+- Upload policies allow only users where `public.can_manage_projects()` is true, currently `super_admin` and `project_manager`.
+- Public read policies are included because the app stores direct public URLs in `project_documents.file_url` and `project_photos.image_url`.
+
+Recommended file types:
+
+- Documents: PDF, DOC, DOCX, JPG, PNG.
+- Photos: JPG, JPEG, PNG, WEBP.
+
+Dashboard setup alternative:
+
+1. Open Supabase Dashboard -> Storage.
+2. Create bucket `project-documents`.
+3. Create bucket `project-photos`.
+4. For this MVP, set both buckets to public if you want the existing direct file URLs to work immediately.
+5. Add Storage policies equivalent to the migration so only `super_admin` and `project_manager` can upload.
+
+Production recommendation:
+
+- Use private buckets for sensitive quotations, invoices, contracts, and design files.
+- Replace public URLs with signed URLs generated server-side or through a controlled Edge Function.
+- Keep `SUPABASE_SERVICE_ROLE_KEY` only in server/Edge Function environments.
+
 ## Client Invitation Edge Function
 
 Function source:
@@ -271,6 +313,10 @@ The default Supabase invitation email can be customized there. Keep the invitati
 - Invitation success/error/loading states added.
 - Existing manual Supabase User UID linking remains available.
 - Client dashboard multi-project visibility confirmed through `auth user id -> clients.user_id -> clients.id -> projects.client_id`.
+- Supabase Storage upload helpers added for project documents and progress photos.
+- Admin project detail can upload documents to `project-documents` and save metadata in `project_documents`.
+- Admin project detail can upload progress photos to `project-photos` and save metadata in `project_photos`.
+- Client dashboard and public project tracking display uploaded file records read-only.
 
 ## Role Notes For Phase 2B
 
@@ -280,9 +326,10 @@ The default Supabase invitation email can be customized there. Keep the invitati
 - `content_manager`: can access the admin dashboard placeholder only; CMS remains future scope.
 - `client`: can access only client routes and view linked project data.
 
-## Remaining After Phase 2B
+## Remaining After Phase 2C
 
-- Implement Supabase Storage upload flows.
+- Run the Storage bucket/policy migration in Supabase if not already applied.
+- Review whether production documents should move from public bucket URLs to private buckets with signed URLs.
 - Add complete admin user management.
 - Add stronger production RLS review and security test pass.
 - Add CMS in a later phase.

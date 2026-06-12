@@ -58,10 +58,43 @@ export type InviteClientResult = {
   message?: string;
 };
 
+export type DocumentCategory = "Quotation" | "Desain Final" | "Invoice" | "Kontrak" | "Lainnya";
+
+export type UploadProjectDocumentInput = {
+  project_id: string;
+  file: File;
+  file_name: string;
+  file_type: DocumentCategory;
+  uploaded_by: string | null;
+};
+
+export type UploadProjectPhotoInput = {
+  project_id: string;
+  file: File;
+  caption: string | null;
+  uploaded_by: string | null;
+};
+
 const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 type SupabaseQueryClient = {
   from: (table: string) => any;
 };
+
+function safeStorageName(fileName: string) {
+  return fileName
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9._-]+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+function uniqueStoragePath(projectId: string, folder: "documents" | "photos", fileName: string) {
+  const uniqueId = typeof crypto !== "undefined" && "randomUUID" in crypto
+    ? crypto.randomUUID()
+    : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+  return `${projectId}/${folder}/${Date.now()}-${uniqueId}-${safeStorageName(fileName)}`;
+}
 
 function requireSupabase(): SupabaseQueryClient {
   if (!supabase) throw new Error("Supabase belum dikonfigurasi.");
@@ -218,6 +251,69 @@ export async function addProjectUpdate(input: CreateProjectUpdateInput) {
 
   if (projectError) throw projectError;
   return data;
+}
+
+export async function uploadProjectDocument(input: UploadProjectDocumentInput) {
+  if (!supabase) throw new Error("Supabase belum dikonfigurasi.");
+  const client = requireSupabase();
+  const storagePath = uniqueStoragePath(input.project_id, "documents", input.file.name);
+
+  const { error: uploadError } = await supabase.storage
+    .from("project-documents")
+    .upload(storagePath, input.file, {
+      cacheControl: "3600",
+      contentType: input.file.type || undefined,
+      upsert: false,
+    });
+
+  if (uploadError) throw uploadError;
+
+  const { data: publicUrlData } = supabase.storage.from("project-documents").getPublicUrl(storagePath);
+  const { data, error } = await client
+    .from("project_documents")
+    .insert({
+      project_id: input.project_id,
+      file_name: input.file_name,
+      file_url: publicUrlData.publicUrl,
+      file_type: input.file_type,
+      uploaded_by: input.uploaded_by,
+    })
+    .select("*")
+    .single();
+
+  if (error) throw error;
+  return data as ProjectDocumentRow;
+}
+
+export async function uploadProjectPhoto(input: UploadProjectPhotoInput) {
+  if (!supabase) throw new Error("Supabase belum dikonfigurasi.");
+  const client = requireSupabase();
+  const storagePath = uniqueStoragePath(input.project_id, "photos", input.file.name);
+
+  const { error: uploadError } = await supabase.storage
+    .from("project-photos")
+    .upload(storagePath, input.file, {
+      cacheControl: "3600",
+      contentType: input.file.type || undefined,
+      upsert: false,
+    });
+
+  if (uploadError) throw uploadError;
+
+  const { data: publicUrlData } = supabase.storage.from("project-photos").getPublicUrl(storagePath);
+  const { data, error } = await client
+    .from("project_photos")
+    .insert({
+      project_id: input.project_id,
+      image_url: publicUrlData.publicUrl,
+      caption: input.caption,
+      uploaded_by: input.uploaded_by,
+    })
+    .select("*")
+    .single();
+
+  if (error) throw error;
+  return data as ProjectPhotoRow;
 }
 
 export async function fetchProjectsForClientUser(userId: string) {

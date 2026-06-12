@@ -11,7 +11,7 @@ export function AdminDocuments() {
         {["Quotation", "Desain Final", "Invoice", "Progress Photo"].map((item) => (
           <article key={item} className="dashboard-panel">
             <h2>{item}</h2>
-            <p>Upload UI disiapkan untuk integrasi Supabase Storage pada fase berikutnya.</p>
+            <p>Upload dan pengelolaan file dilakukan dari halaman detail proyek agar setiap dokumen tetap terhubung dengan project record yang tepat.</p>
           </article>
         ))}
       </section>

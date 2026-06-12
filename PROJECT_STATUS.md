@@ -22,6 +22,10 @@
 - `/update-password` now marks the linked client record as activated after a successful password update.
 - Client dashboard/project access also marks older linked client accounts active as a fallback when `portal_activated_at` is still empty.
 - `/admin/clients` now distinguishes `Belum terhubung`, `Undangan terkirim`, `Email belum tersedia`, and `Portal aktif` based on email, `user_id`, and `portal_activated_at`.
+- Phase 2C Storage upload foundation added for project documents and progress photos.
+- `/admin/projects/:id` now allows `super_admin` and `project_manager` to upload project documents and progress photos through Supabase Storage.
+- Uploaded document metadata is saved to `project_documents`; uploaded photo metadata is saved to `project_photos`.
+- `/client/projects/:id` and public `/lacak-proyek` continue to display uploaded documents/photos read-only from the same real Supabase records.
 - `/admin/clients` client card layout spacing refined so the portal status panel no longer overlaps email, phone, or address text.
 - Client multi-project visibility remains based on `auth.users.id -> clients.user_id -> clients.id -> projects.client_id`, so one linked client account can see all assigned projects.
 - Final frontend polish pass completed for public brand alignment, spacing, CTA hierarchy, and copy tone.
@@ -84,6 +88,10 @@
 - Invitation redirect behavior documented for Supabase `SITE_URL`, Auth URL Configuration, redirect URLs, and the Invite user email template.
 - Client portal activation migration added for `clients.portal_activated_at`.
 - `Portal aktif` is now shown only after `portal_activated_at` is set by the password update flow or client dashboard fallback.
+- Supabase Storage migration added for `project-documents` and `project-photos` buckets.
+- Admin document upload added with category support: Quotation, Desain Final, Invoice, Kontrak, and Lainnya.
+- Admin progress photo upload added with caption support.
+- Upload validation added for supported file types and size limits.
 - `/admin/clients` now has invitation loading, success, and error states.
 - `/admin/clients` client cards now prioritize client name, email, phone, address, portal status, and contextual invitation guidance.
 - `/admin/clients` client cards now stack safely on narrower dashboard widths and use a bounded two-column layout on wide desktop screens.
@@ -106,8 +114,9 @@
 - In Supabase Auth URL Configuration, set Site URL to `https://ambara-website.vercel.app` and add the production/local wildcard redirect URLs documented in `BACKEND_SETUP.md`.
 - Deploy and configure the `invite-client` Supabase Edge Function for production invitations.
 - Run the client portal activation migration in Supabase if the production database does not yet have `clients.portal_activated_at`.
+- Run the Storage bucket/policy migration in Supabase if the production project does not yet have upload-ready buckets.
 - If the Edge Function is not deployed, create/invite Supabase Auth users manually, then link client records through `clients.user_id`.
-- Implement Supabase Storage upload flows.
+- Decide whether production documents should remain public MVP URLs or move to private buckets with signed URLs.
 - Add admin user management and invite flow.
 - Add production security review for RLS policies.
 - Later phase: CMS, richer admin dashboard, and full client portal polish.
@@ -119,7 +128,7 @@
 - The production JS bundle is above Vite's default 500 kB warning threshold after adding Supabase. This is a warning, not a build failure; route-level code splitting can be added later.
 
 ## Next Task
-- Run `supabase/migrations/20260612000000_add_client_portal_activation.sql` in Supabase, then test the full invite lifecycle: `Belum terhubung` -> `Undangan terkirim` -> `Portal aktif`.
+- Run `supabase/migrations/20260612010000_add_project_storage_buckets.sql` in Supabase, then upload one test document and one test progress photo from `/admin/projects/:id`.
 
 ## Exact Command To Run Locally
 ```bash
@@ -128,7 +137,7 @@ npm run dev
 ```
 
 ## Build Status
-- Passed with `npm run build` after the portal activation status update.
+- Passed with `npm run build` after the Phase 2C Supabase Storage upload update.
 - Output directory: `dist/`.
 - Non-fatal warnings: React Router and Framer Motion `"use client"` directives, plus Vite chunk-size warning after adding Supabase.
 

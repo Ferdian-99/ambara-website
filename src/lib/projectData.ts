@@ -75,6 +75,10 @@ export type UploadProjectPhotoInput = {
   uploaded_by: string | null;
 };
 
+export type DeleteStorageBackedRecordResult = {
+  storageWarning?: string;
+};
+
 const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 type SupabaseQueryClient = {
   from: (table: string) => any;
@@ -94,6 +98,21 @@ function uniqueStoragePath(projectId: string, folder: "documents" | "photos", fi
     ? crypto.randomUUID()
     : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
   return `${projectId}/${folder}/${Date.now()}-${uniqueId}-${safeStorageName(fileName)}`;
+}
+
+function storagePathFromPublicUrl(fileUrl: string, bucket: "project-documents" | "project-photos") {
+  const marker = `/storage/v1/object/public/${bucket}/`;
+
+  try {
+    const url = new URL(fileUrl);
+    const markerIndex = url.pathname.indexOf(marker);
+    if (markerIndex === -1) return null;
+    return decodeURIComponent(url.pathname.slice(markerIndex + marker.length));
+  } catch {
+    const markerIndex = fileUrl.indexOf(marker);
+    if (markerIndex === -1) return null;
+    return decodeURIComponent(fileUrl.slice(markerIndex + marker.length));
+  }
 }
 
 function requireSupabase(): SupabaseQueryClient {
@@ -314,6 +333,54 @@ export async function uploadProjectPhoto(input: UploadProjectPhotoInput) {
 
   if (error) throw error;
   return data as ProjectPhotoRow;
+}
+
+export async function deleteProjectUpdate(updateId: string) {
+  const client = requireSupabase();
+  const { error } = await client.from("project_updates").delete().eq("id", updateId);
+  if (error) throw error;
+}
+
+export async function deleteProjectDocument(document: ProjectDocumentRow): Promise<DeleteStorageBackedRecordResult> {
+  if (!supabase) throw new Error("Supabase belum dikonfigurasi.");
+  const client = requireSupabase();
+  const storagePath = storagePathFromPublicUrl(document.file_url, "project-documents");
+  let storageWarning: string | undefined;
+
+  const { error } = await client.from("project_documents").delete().eq("id", document.id);
+  if (error) throw error;
+
+  if (storagePath) {
+    const { error: storageError } = await supabase.storage.from("project-documents").remove([storagePath]);
+    if (storageError) {
+      storageWarning = "Metadata dokumen dihapus, tetapi file Storage belum dapat dihapus otomatis.";
+    }
+  } else {
+    storageWarning = "Metadata dokumen dihapus, tetapi path file Storage tidak dapat dibaca otomatis.";
+  }
+
+  return { storageWarning };
+}
+
+export async function deleteProjectPhoto(photo: ProjectPhotoRow): Promise<DeleteStorageBackedRecordResult> {
+  if (!supabase) throw new Error("Supabase belum dikonfigurasi.");
+  const client = requireSupabase();
+  const storagePath = storagePathFromPublicUrl(photo.image_url, "project-photos");
+  let storageWarning: string | undefined;
+
+  const { error } = await client.from("project_photos").delete().eq("id", photo.id);
+  if (error) throw error;
+
+  if (storagePath) {
+    const { error: storageError } = await supabase.storage.from("project-photos").remove([storagePath]);
+    if (storageError) {
+      storageWarning = "Metadata foto dihapus, tetapi file Storage belum dapat dihapus otomatis.";
+    }
+  } else {
+    storageWarning = "Metadata foto dihapus, tetapi path file Storage tidak dapat dibaca otomatis.";
+  }
+
+  return { storageWarning };
 }
 
 export async function fetchProjectsForClientUser(userId: string) {

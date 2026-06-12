@@ -3,12 +3,18 @@ import { Link, useParams } from "react-router-dom";
 import { trackingStages } from "../../data";
 import {
   addProjectUpdate,
+  deleteProjectDocument,
+  deleteProjectPhoto,
+  deleteProjectUpdate,
   fetchProjectBundle,
   normalizeProgress,
   uploadProjectDocument,
   uploadProjectPhoto,
   type DocumentCategory,
   type ProjectBundle,
+  type ProjectDocumentRow,
+  type ProjectPhotoRow,
+  type ProjectUpdateRow,
 } from "../../lib/projectData";
 import { hasPermission } from "../../lib/rbac";
 import type { ProjectStage } from "../../lib/supabase";
@@ -55,6 +61,10 @@ export function AdminProjectDetail() {
   const [photoUploadSuccess, setPhotoUploadSuccess] = useState("");
   const [documentInputKey, setDocumentInputKey] = useState(0);
   const [photoInputKey, setPhotoInputKey] = useState(0);
+  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
+  const [deleteError, setDeleteError] = useState("");
+  const [deleteSuccess, setDeleteSuccess] = useState("");
+  const [copySuccess, setCopySuccess] = useState("");
 
   const canView = hasPermission(role, "projects:view_all");
   const canManage = hasPermission(role, "projects:manage");
@@ -204,6 +214,75 @@ export function AdminProjectDetail() {
     }
   };
 
+  const handleCopyProjectCode = async () => {
+    if (!bundle) return;
+    setCopySuccess("");
+    setDeleteError("");
+
+    if (!navigator.clipboard) {
+      setDeleteError("Kode proyek belum dapat disalin otomatis dari browser ini.");
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(bundle.project.project_code);
+      setCopySuccess("Kode proyek disalin.");
+    } catch {
+      setDeleteError("Kode proyek belum dapat disalin otomatis.");
+    }
+  };
+
+  const handleDeleteUpdate = async (item: ProjectUpdateRow) => {
+    if (!window.confirm("Hapus timeline update ini?")) return;
+
+    setDeleteTargetId(item.id);
+    setDeleteError("");
+    setDeleteSuccess("");
+    try {
+      await deleteProjectUpdate(item.id);
+      setDeleteSuccess("Timeline update berhasil dihapus.");
+      await loadProject();
+    } catch {
+      setDeleteError("Timeline update belum dapat dihapus. Periksa akses role dan policy database.");
+    } finally {
+      setDeleteTargetId(null);
+    }
+  };
+
+  const handleDeleteDocument = async (item: ProjectDocumentRow) => {
+    if (!window.confirm("Hapus dokumen proyek ini?")) return;
+
+    setDeleteTargetId(item.id);
+    setDeleteError("");
+    setDeleteSuccess("");
+    try {
+      const result = await deleteProjectDocument(item);
+      setDeleteSuccess(result.storageWarning ?? "Dokumen proyek berhasil dihapus.");
+      await loadProject();
+    } catch {
+      setDeleteError("Dokumen belum dapat dihapus. Periksa akses role, policy database, dan policy Storage.");
+    } finally {
+      setDeleteTargetId(null);
+    }
+  };
+
+  const handleDeletePhoto = async (item: ProjectPhotoRow) => {
+    if (!window.confirm("Hapus foto progress ini?")) return;
+
+    setDeleteTargetId(item.id);
+    setDeleteError("");
+    setDeleteSuccess("");
+    try {
+      const result = await deleteProjectPhoto(item);
+      setDeleteSuccess(result.storageWarning ?? "Foto progress berhasil dihapus.");
+      await loadProject();
+    } catch {
+      setDeleteError("Foto progress belum dapat dihapus. Periksa akses role, policy database, dan policy Storage.");
+    } finally {
+      setDeleteTargetId(null);
+    }
+  };
+
   if (!canView) {
     return (
       <main className="dashboard-content">
@@ -256,20 +335,27 @@ export function AdminProjectDetail() {
 
   return (
     <main className="dashboard-content">
-      <div className="dashboard-heading">
+      <div className="dashboard-heading project-detail-heading">
         <div>
           <p className="section-label">Project Detail</p>
           <h1>{project.project_name}</h1>
           <p className="mt-4 text-graphite/65">{project.project_code} / {project.clients?.name ?? "Client belum terhubung"}</p>
+          {copySuccess && <p className="project-inline-note">{copySuccess}</p>}
         </div>
-        <span className="status-badge">{project.current_stage}</span>
+        <div className="project-heading-actions">
+          <span className="status-badge">{project.status}</span>
+          <span className="dashboard-status-pill">{project.current_stage}</span>
+          <button className="dashboard-ghost-button" type="button" onClick={handleCopyProjectCode}>
+            Salin kode
+          </button>
+        </div>
       </div>
 
-      <section className="dashboard-panel">
+      <section className="dashboard-panel project-operations-panel">
         <div className="project-summary-grid">
           <div><span>Tipe</span><strong>{project.project_type}</strong></div>
           <div><span>Lokasi</span><strong>{project.location ?? "Belum diisi"}</strong></div>
-          <div><span>Status</span><strong>{project.status}</strong></div>
+          <div><span>Client</span><strong>{project.clients?.name ?? "Belum terhubung"}</strong></div>
           <div><span>Estimasi</span><strong>{formatDate(project.estimated_completion)}</strong></div>
         </div>
         <div className="mt-8">
@@ -288,11 +374,17 @@ export function AdminProjectDetail() {
           ))}
         </div>
         {project.notes && <p className="mt-8 leading-7 text-graphite/70">{project.notes}</p>}
+        {(deleteError || deleteSuccess) && (
+          <div className="mt-6">
+            {deleteError && <p className="dashboard-alert">{deleteError}</p>}
+            {deleteSuccess && <p className="dashboard-success">{deleteSuccess}</p>}
+          </div>
+        )}
       </section>
 
       <section className="dashboard-grid">
         <article className="dashboard-panel">
-          <h2>Update Progress</h2>
+          <h2>Progress Management</h2>
           {canManage ? (
             <form className="dashboard-form compact" onSubmit={handleSubmit}>
               {error && <p className="dashboard-alert">{error}</p>}
@@ -311,7 +403,10 @@ export function AdminProjectDetail() {
               </label>
               <label>
                 Progress Percentage
-                <input type="number" value={progress} onChange={(event) => setProgress(event.target.value)} min={0} max={100} />
+                <div className="progress-input-row">
+                  <input type="range" value={progress} onChange={(event) => setProgress(event.target.value)} min={0} max={100} />
+                  <input type="number" value={progress} onChange={(event) => setProgress(event.target.value)} min={0} max={100} />
+                </div>
               </label>
               <label>
                 Progress Description
@@ -331,7 +426,19 @@ export function AdminProjectDetail() {
           {updates.length ? (
             updates.map((item) => (
               <div key={item.id} className="dashboard-row">
-                <span>{formatDate(item.created_at)} / {item.stage} / {item.progress_percentage}%</span>
+                <div className="dashboard-item-topline">
+                  <span>{formatDate(item.created_at)} / {item.stage} / {item.progress_percentage}%</span>
+                  {canManage && (
+                    <button
+                      className="dashboard-delete-button"
+                      type="button"
+                      disabled={deleteTargetId === item.id}
+                      onClick={() => void handleDeleteUpdate(item)}
+                    >
+                      {deleteTargetId === item.id ? "Menghapus..." : "Hapus"}
+                    </button>
+                  )}
+                </div>
                 <p><strong>{item.title}</strong></p>
                 {item.description && <p>{item.description}</p>}
               </div>
@@ -382,11 +489,23 @@ export function AdminProjectDetail() {
             <p>Role ini dapat melihat dokumen proyek, tetapi tidak dapat mengunggah dokumen baru.</p>
           )}
           {documents.length ? (
-            <div className="placeholder-grid">
+            <div className="dashboard-file-list">
               {documents.map((item) => (
-                <a key={item.id} href={item.file_url} target="_blank" rel="noreferrer">
-                  {item.file_name}<span>{item.file_type ?? "Dokumen"}</span>
-                </a>
+                <div key={item.id} className="dashboard-file-row">
+                  <a href={item.file_url} target="_blank" rel="noreferrer">
+                    {item.file_name}<span>{item.file_type ?? "Dokumen"}</span>
+                  </a>
+                  {canManage && (
+                    <button
+                      className="dashboard-delete-button"
+                      type="button"
+                      disabled={deleteTargetId === item.id}
+                      onClick={() => void handleDeleteDocument(item)}
+                    >
+                      {deleteTargetId === item.id ? "Menghapus..." : "Hapus"}
+                    </button>
+                  )}
+                </div>
               ))}
             </div>
           ) : (
@@ -426,7 +545,19 @@ export function AdminProjectDetail() {
               {photos.map((item) => (
                 <figure key={item.id}>
                   <img src={item.image_url} alt={item.caption ?? "Foto progress proyek Ambara"} loading="lazy" />
-                  <figcaption>{item.caption ?? "Progress proyek"}</figcaption>
+                  <figcaption>
+                    <span>{item.caption ?? "Progress proyek"}</span>
+                    {canManage && (
+                      <button
+                        className="dashboard-delete-button"
+                        type="button"
+                        disabled={deleteTargetId === item.id}
+                        onClick={() => void handleDeletePhoto(item)}
+                      >
+                        {deleteTargetId === item.id ? "Menghapus..." : "Hapus"}
+                      </button>
+                    )}
+                  </figcaption>
                 </figure>
               ))}
             </div>

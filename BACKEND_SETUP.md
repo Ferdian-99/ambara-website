@@ -134,6 +134,12 @@ Run this migration after the base schema:
 supabase/migrations/20260612010000_add_project_storage_buckets.sql
 ```
 
+Run this follow-up migration when enabling delete actions from the admin project detail page:
+
+```text
+supabase/migrations/20260612020000_add_project_delete_policies.sql
+```
+
 It creates or updates these buckets:
 
 - `project-documents`
@@ -145,6 +151,7 @@ MVP bucket settings:
 - `project-photos`: public bucket, max file size 8 MB.
 - Admin uploads use the logged-in Supabase session, never a service role key.
 - Upload policies allow only users where `public.can_manage_projects()` is true, currently `super_admin` and `project_manager`.
+- Delete policies allow the same manager roles to remove timeline updates, document/photo metadata, and Storage objects from the two project buckets.
 - Public read policies are included because the app stores direct public URLs in `project_documents.file_url` and `project_photos.image_url`.
 
 Recommended file types:
@@ -165,6 +172,11 @@ Production recommendation:
 - Use private buckets for sensitive quotations, invoices, contracts, and design files.
 - Replace public URLs with signed URLs generated server-side or through a controlled Edge Function.
 - Keep `SUPABASE_SERVICE_ROLE_KEY` only in server/Edge Function environments.
+
+Storage delete behavior:
+
+- `/admin/projects/:id` attempts to delete the Storage object and then removes the metadata record.
+- If Storage removal fails but metadata deletion succeeds, the document/photo disappears from admin, client dashboard, and public tracking lists; the app shows a non-blocking warning so the orphaned object can be checked in Supabase Storage if needed.
 
 ## Client Invitation Edge Function
 
@@ -318,6 +330,14 @@ The default Supabase invitation email can be customized there. Keep the invitati
 - Admin project detail can upload progress photos to `project-photos` and save metadata in `project_photos`.
 - Client dashboard and public project tracking display uploaded file records read-only.
 
+## Completed In Phase 2D
+
+- Admin project detail layout polished for daily operations with clearer project header, progress management, timeline, documents, and progress photo sections.
+- `super_admin` and `project_manager` can delete project timeline updates.
+- `super_admin` and `project_manager` can delete project document metadata and attempt Storage object cleanup from `project-documents`.
+- `super_admin` and `project_manager` can delete progress photo metadata and attempt Storage object cleanup from `project-photos`.
+- Delete policy migration added for timeline updates, document/photo metadata, and Storage objects.
+
 ## Role Notes For Phase 2B
 
 - `super_admin`: can view and manage projects, clients, and updates.
@@ -329,6 +349,7 @@ The default Supabase invitation email can be customized there. Keep the invitati
 ## Remaining After Phase 2C
 
 - Run the Storage bucket/policy migration in Supabase if not already applied.
+- Run the project delete policy migration in Supabase before testing delete actions in production.
 - Review whether production documents should move from public bucket URLs to private buckets with signed URLs.
 - Add complete admin user management.
 - Add stronger production RLS review and security test pass.

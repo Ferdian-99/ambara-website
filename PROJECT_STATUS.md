@@ -28,6 +28,12 @@
 - `/admin/projects/:id` now allows `super_admin` and `project_manager` to upload project documents and progress photos through Supabase Storage.
 - Uploaded document metadata is saved to `project_documents`; uploaded photo metadata is saved to `project_photos`.
 - `/client/projects/:id` and public `/lacak-proyek` continue to display uploaded documents/photos read-only from the same real Supabase records.
+- Phase 2D admin project detail operational polish added for daily project management.
+- `/admin/projects/:id` now has a clearer operational layout with project header, status/progress summary, progress management, timeline, documents, and progress photos.
+- `super_admin` and `project_manager` can delete incorrect timeline updates from `/admin/projects/:id`.
+- `super_admin` and `project_manager` can delete uploaded project documents and progress photos from `/admin/projects/:id`.
+- Document/photo delete actions remove metadata and attempt Supabase Storage object cleanup, with a non-blocking warning if Storage cleanup cannot complete.
+- Supabase delete policy migration added for project updates, document/photo metadata, and Storage objects.
 - `/admin/clients` client card layout spacing refined so the portal status panel no longer overlaps email, phone, or address text.
 - Client multi-project visibility remains based on `auth.users.id -> clients.user_id -> clients.id -> projects.client_id`, so one linked client account can see all assigned projects.
 - Final frontend polish pass completed for public brand alignment, spacing, CTA hierarchy, and copy tone.
@@ -91,8 +97,10 @@
 - Client portal activation migration added for `clients.portal_activated_at`.
 - `Portal aktif` is now shown only after `portal_activated_at` is set by the password update flow or client dashboard fallback.
 - Supabase Storage migration added for `project-documents` and `project-photos` buckets.
+- Supabase delete policy migration added for project timeline updates, uploaded document metadata, uploaded photo metadata, and Storage object removal.
 - Admin document upload added with category support: Quotation, Desain Final, Invoice, Kontrak, and Lainnya.
 - Admin progress photo upload added with caption support.
+- Admin project detail delete actions added for timeline updates, documents, and progress photos.
 - Upload validation added for supported file types and size limits.
 - `/admin/clients` now has invitation loading, success, and error states.
 - `/admin/clients` client cards now prioritize client name, email, phone, address, portal status, and contextual invitation guidance.
@@ -117,6 +125,7 @@
 - Deploy and configure the `invite-client` Supabase Edge Function for production invitations.
 - Run the client portal activation migration in Supabase if the production database does not yet have `clients.portal_activated_at`.
 - Run the Storage bucket/policy migration in Supabase if the production project does not yet have upload-ready buckets.
+- Run `supabase/migrations/20260612020000_add_project_delete_policies.sql` in Supabase before testing delete actions in production.
 - If the Edge Function is not deployed, create/invite Supabase Auth users manually, then link client records through `clients.user_id`.
 - Decide whether production documents should remain public MVP URLs or move to private buckets with signed URLs.
 - Add admin user management and invite flow.
@@ -130,7 +139,7 @@
 - The production JS bundle is above Vite's default 500 kB warning threshold after adding Supabase. This is a warning, not a build failure; route-level code splitting can be added later.
 
 ## Next Task
-- Run `supabase/migrations/20260612010000_add_project_storage_buckets.sql` in Supabase, then upload one test document and one test progress photo from `/admin/projects/:id`.
+- Run `supabase/migrations/20260612020000_add_project_delete_policies.sql` in Supabase, then test deleting one timeline update, one document, and one progress photo from `/admin/projects/:id`.
 
 ## Exact Command To Run Locally
 ```bash
@@ -139,7 +148,7 @@ npm run dev
 ```
 
 ## Build Status
-- Passed with `npm run build` after the compact `/admin/clients` UI polish.
+- Passed with `npm run build` after Phase 2D admin project detail operational polish and delete actions.
 - Output directory: `dist/`.
 - Non-fatal warnings: React Router and Framer Motion `"use client"` directives, plus Vite chunk-size warning after adding Supabase.
 

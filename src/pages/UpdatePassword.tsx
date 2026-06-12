@@ -1,6 +1,7 @@
 import { FormEvent, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { updatePassword } from "../lib/auth";
+import { markClientPortalActivated } from "../lib/projectData";
 import { isSupabaseConfigured } from "../lib/supabase";
 
 export function UpdatePassword() {
@@ -28,13 +29,15 @@ export function UpdatePassword() {
 
     setLoading(true);
     const { error: updateError } = await updatePassword(password);
-    setLoading(false);
 
     if (updateError) {
+      setLoading(false);
       setError("Password belum dapat diperbarui. Buka kembali link reset terbaru dari email Anda.");
       return;
     }
 
+    await markClientPortalActivated().catch(() => undefined);
+    setLoading(false);
     setMessage("Password berhasil diperbarui. Anda akan diarahkan ke halaman login.");
     window.setTimeout(() => navigate("/login", { replace: true }), 1300);
   };

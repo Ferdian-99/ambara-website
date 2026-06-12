@@ -153,6 +153,12 @@ export async function inviteClientToPortal(clientId: string) {
   return payload as InviteClientResult;
 }
 
+export async function markClientPortalActivated() {
+  if (!supabase) return;
+  const { error } = await supabase.rpc("mark_own_client_portal_active");
+  if (error) throw error;
+}
+
 export async function createProjectRecord(input: CreateProjectInput) {
   const client = requireSupabase();
   const { data, error } = await client.from("projects").insert(input).select("*, clients(*)").single();
@@ -219,7 +225,12 @@ export async function fetchProjectsForClientUser(userId: string) {
   const { data: clientRows, error: clientsError } = await client.from("clients").select("*").eq("user_id", userId);
   if (clientsError) throw clientsError;
 
-  const clientIds = ((clientRows ?? []) as ClientRow[]).map((item) => item.id);
+  const linkedClients = (clientRows ?? []) as ClientRow[];
+  if (linkedClients.some((item) => !item.portal_activated_at)) {
+    await markClientPortalActivated().catch(() => undefined);
+  }
+
+  const clientIds = linkedClients.map((item) => item.id);
   if (!clientIds.length) return [];
 
   const { data, error } = await client
@@ -237,7 +248,12 @@ export async function fetchClientProjectBundle(identifier: string, userId: strin
   const { data: clientRows, error: clientsError } = await client.from("clients").select("*").eq("user_id", userId);
   if (clientsError) throw clientsError;
 
-  const clientIds = ((clientRows ?? []) as ClientRow[]).map((item) => item.id);
+  const linkedClients = (clientRows ?? []) as ClientRow[];
+  if (linkedClients.some((item) => !item.portal_activated_at)) {
+    await markClientPortalActivated().catch(() => undefined);
+  }
+
+  const clientIds = linkedClients.map((item) => item.id);
   if (!clientIds.length) return null;
 
   const bundle = await fetchProjectBundle(identifier);

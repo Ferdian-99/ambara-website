@@ -81,6 +81,7 @@ Preferred invitation flow after deploying the Edge Function:
 4. The function upserts `public.profiles` with `role = client`.
 5. The function links `clients.user_id` to the Auth User UID.
 6. The client opens the email link, lands on `/update-password`, sets a password, then logs in at `/login`.
+7. After the password is set, the app marks the linked client row as activated through `portal_activated_at`.
 
 Manual fallback if the Edge Function is not deployed:
 
@@ -93,13 +94,35 @@ Manual fallback if the Edge Function is not deployed:
 
 The admin clients page shows portal status for each client:
 
-- `Undangan terkirim`: `clients.user_id` is linked, but the app does not yet track whether the client has accepted the email and created a password.
 - `Belum terhubung`: no Auth user UID is linked yet.
+- `Undangan terkirim`: `clients.user_id` is linked, but `portal_activated_at` is still empty.
+- `Portal aktif`: the client has set a password or reached the client dashboard, and `portal_activated_at` has been filled.
 - `Email belum tersedia`: add an email before preparing a portal account.
 
-Use `Portal aktif` only after a future accepted/confirmed signal is available.
+Portal lifecycle:
+
+```text
+Belum terhubung -> Undangan terkirim -> Portal aktif
+```
 
 Do not use a Supabase `service_role` key in the frontend. The service role key belongs only in the Supabase Edge Function environment.
+
+## Client Portal Activation Migration
+
+Existing Supabase projects should run this migration before relying on the active portal status:
+
+```sql
+alter table public.clients
+add column if not exists portal_activated_at timestamptz;
+```
+
+The repository includes the full migration at:
+
+```text
+supabase/migrations/20260612000000_add_client_portal_activation.sql
+```
+
+The migration also creates `public.mark_own_client_portal_active()`, a narrow authenticated RPC used by the frontend after `/update-password` succeeds and as a fallback when a client dashboard loads. It only updates client rows where `clients.user_id = auth.uid()`.
 
 ## Client Invitation Edge Function
 

@@ -44,6 +44,7 @@ export type Database = {
           email: string;
           phone: string | null;
           address: string | null;
+          portal_activated_at: string | null;
           created_at: string;
         };
         Insert: {
@@ -53,6 +54,7 @@ export type Database = {
           email: string;
           phone?: string | null;
           address?: string | null;
+          portal_activated_at?: string | null;
           created_at?: string;
         };
         Update: Partial<Database["public"]["Tables"]["clients"]["Insert"]>;
@@ -152,6 +154,12 @@ export type Database = {
           created_at?: string;
         };
         Update: Partial<Database["public"]["Tables"]["project_photos"]["Insert"]>;
+      };
+    };
+    Functions: {
+      mark_own_client_portal_active: {
+        Args: Record<string, never>;
+        Returns: void;
       };
     };
   };

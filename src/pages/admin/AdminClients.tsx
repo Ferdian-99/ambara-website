@@ -142,15 +142,6 @@ export function AdminClients() {
   };
 
   const getAccountMeta = (client: ClientRow) => {
-    if (client.user_id) {
-      return {
-        status: "Undangan terkirim",
-        helper: "Client sudah dibuatkan akses portal. Setelah menerima email dan membuat password, client dapat login ke portal.",
-        canInvite: false,
-        canAttemptInvite: false,
-      };
-    }
-
     if (!client.email?.trim()) {
       return {
         status: "Email belum tersedia",
@@ -160,11 +151,29 @@ export function AdminClients() {
       };
     }
 
+    if (!client.user_id) {
+      return {
+        status: "Belum terhubung",
+        helper: "Kirim undangan agar client dapat membuat password sendiri melalui email.",
+        canInvite: true,
+        canAttemptInvite: true,
+      };
+    }
+
+    if (!client.portal_activated_at) {
+      return {
+        status: "Undangan terkirim",
+        helper: "Undangan sudah dikirim. Menunggu client membuat password dan mengaktifkan portal.",
+        canInvite: false,
+        canAttemptInvite: false,
+      };
+    }
+
     return {
-      status: "Belum terhubung",
-      helper: "Kirim undangan agar client dapat membuat password sendiri melalui email.",
-      canInvite: true,
-      canAttemptInvite: true,
+      status: "Portal aktif",
+      helper: "Client sudah mengaktifkan portal dan dapat melihat semua proyek yang terhubung ke data client ini.",
+      canInvite: false,
+      canAttemptInvite: false,
     };
   };
 

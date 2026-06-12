@@ -18,6 +18,10 @@
 - Manual Supabase User UID linking remains available as a fallback if the Edge Function is not deployed.
 - `/admin/clients` invitation UI refined so normal admins see clear portal status and invite actions first, while manual Supabase User UID linking is tucked into an advanced fallback section.
 - `/admin/clients` now uses `Undangan terkirim` for linked invited accounts instead of implying the portal is already active before acceptance is tracked.
+- Client portal activation tracking added with `clients.portal_activated_at`.
+- `/update-password` now marks the linked client record as activated after a successful password update.
+- Client dashboard/project access also marks older linked client accounts active as a fallback when `portal_activated_at` is still empty.
+- `/admin/clients` now distinguishes `Belum terhubung`, `Undangan terkirim`, `Email belum tersedia`, and `Portal aktif` based on email, `user_id`, and `portal_activated_at`.
 - `/admin/clients` client card layout spacing refined so the portal status panel no longer overlaps email, phone, or address text.
 - Client multi-project visibility remains based on `auth.users.id -> clients.user_id -> clients.id -> projects.client_id`, so one linked client account can see all assigned projects.
 - Final frontend polish pass completed for public brand alignment, spacing, CTA hierarchy, and copy tone.
@@ -78,6 +82,8 @@
 - Supabase Edge Function source added at `supabase/functions/invite-client/index.ts`.
 - Invitation flow can create/invite a client auth user, upsert the client profile role, and link `clients.user_id` when the Edge Function is deployed.
 - Invitation redirect behavior documented for Supabase `SITE_URL`, Auth URL Configuration, redirect URLs, and the Invite user email template.
+- Client portal activation migration added for `clients.portal_activated_at`.
+- `Portal aktif` is now shown only after `portal_activated_at` is set by the password update flow or client dashboard fallback.
 - `/admin/clients` now has invitation loading, success, and error states.
 - `/admin/clients` client cards now prioritize client name, email, phone, address, portal status, and contextual invitation guidance.
 - `/admin/clients` client cards now stack safely on narrower dashboard widths and use a bounded two-column layout on wide desktop screens.
@@ -97,8 +103,9 @@
 - Run `supabase/schema.sql` and adapt `supabase/seed.sql` with real auth user IDs if not already done.
 - Test admin/client dashboard flows with real Supabase roles and RLS.
 - Configure Supabase password reset redirect URLs for production and local development.
-- Deploy and configure the `invite-client` Supabase Edge Function for production invitations.
 - In Supabase Auth URL Configuration, set Site URL to `https://ambara-website.vercel.app` and add the production/local wildcard redirect URLs documented in `BACKEND_SETUP.md`.
+- Deploy and configure the `invite-client` Supabase Edge Function for production invitations.
+- Run the client portal activation migration in Supabase if the production database does not yet have `clients.portal_activated_at`.
 - If the Edge Function is not deployed, create/invite Supabase Auth users manually, then link client records through `clients.user_id`.
 - Implement Supabase Storage upload flows.
 - Add admin user management and invite flow.
@@ -112,7 +119,7 @@
 - The production JS bundle is above Vite's default 500 kB warning threshold after adding Supabase. This is a warning, not a build failure; route-level code splitting can be added later.
 
 ## Next Task
-- Deploy the updated `invite-client` Supabase Edge Function, confirm `SITE_URL=https://ambara-website.vercel.app`, then send a fresh invitation to verify the email lands on `/update-password`.
+- Run `supabase/migrations/20260612000000_add_client_portal_activation.sql` in Supabase, then test the full invite lifecycle: `Belum terhubung` -> `Undangan terkirim` -> `Portal aktif`.
 
 ## Exact Command To Run Locally
 ```bash
@@ -121,7 +128,7 @@ npm run dev
 ```
 
 ## Build Status
-- Passed with `npm run build` after the invite redirect and portal status wording fix.
+- Passed with `npm run build` after the portal activation status update.
 - Output directory: `dist/`.
 - Non-fatal warnings: React Router and Framer Motion `"use client"` directives, plus Vite chunk-size warning after adding Supabase.
 

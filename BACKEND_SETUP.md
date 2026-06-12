@@ -175,7 +175,7 @@ Production recommendation:
 
 Storage delete behavior:
 
-- `/admin/projects/:id` attempts to delete the Storage object and then removes the metadata record.
+- `/admin/projects/:id` removes the metadata record first, then attempts to delete the related Storage object.
 - If Storage removal fails but metadata deletion succeeds, the document/photo disappears from admin, client dashboard, and public tracking lists; the app shows a non-blocking warning so the orphaned object can be checked in Supabase Storage if needed.
 
 ## Client Invitation Edge Function

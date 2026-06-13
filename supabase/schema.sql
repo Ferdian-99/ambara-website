@@ -86,6 +86,27 @@ create table if not exists public.project_photos (
   created_at timestamptz not null default now()
 );
 
+create table if not exists public.portfolio_items (
+  id uuid primary key default gen_random_uuid(),
+  title text not null,
+  slug text not null unique,
+  category text,
+  location text,
+  year text,
+  short_description text,
+  description text,
+  cover_image_url text,
+  gallery_urls text[] not null default '{}',
+  services text[] not null default '{}',
+  materials text[] not null default '{}',
+  is_featured boolean not null default false,
+  sort_order integer not null default 0,
+  published_at timestamptz,
+  archived_at timestamptz,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
 create or replace function public.touch_updated_at()
 returns trigger language plpgsql as $$
 begin
@@ -140,12 +161,36 @@ before update on public.clients
 for each row
 execute function public.prevent_non_super_admin_client_archive_change();
 
+create or replace function public.prevent_non_super_admin_portfolio_archive_change()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if old.archived_at is distinct from new.archived_at
+    and public.current_user_role() <> 'super_admin'
+  then
+    raise exception 'Only super_admin can archive or restore portfolio items.';
+  end if;
+
+  return new;
+end;
+$$;
+
+drop trigger if exists portfolio_archive_guard on public.portfolio_items;
+create trigger portfolio_archive_guard
+before update on public.portfolio_items
+for each row
+execute function public.prevent_non_super_admin_portfolio_archive_change();
+
 alter table public.profiles enable row level security;
 alter table public.clients enable row level security;
 alter table public.projects enable row level security;
 alter table public.project_updates enable row level security;
 alter table public.project_documents enable row level security;
 alter table public.project_photos enable row level security;
+alter table public.portfolio_items enable row level security;
 
 drop policy if exists "profiles can read own profile" on public.profiles;
 create policy "profiles can read own profile" on public.profiles for select using (id = auth.uid() or public.is_internal_user());
@@ -198,5 +243,18 @@ create policy "photos readable for project access" on public.project_photos for 
 drop policy if exists "photos manager create" on public.project_photos;
 create policy "photos manager create" on public.project_photos for insert with check (public.can_manage_projects());
 
+drop policy if exists "portfolio public published read" on public.portfolio_items;
+create policy "portfolio public published read" on public.portfolio_items for select using (published_at is not null and archived_at is null);
+
+drop policy if exists "portfolio admin read all" on public.portfolio_items;
+create policy "portfolio admin read all" on public.portfolio_items for select to authenticated using (public.current_user_role() in ('super_admin', 'content_manager'));
+
+drop policy if exists "portfolio admin insert" on public.portfolio_items;
+create policy "portfolio admin insert" on public.portfolio_items for insert to authenticated with check (public.current_user_role() in ('super_admin', 'content_manager'));
+
+drop policy if exists "portfolio admin update" on public.portfolio_items;
+create policy "portfolio admin update" on public.portfolio_items for update to authenticated using (public.current_user_role() in ('super_admin', 'content_manager')) with check (public.current_user_role() in ('super_admin', 'content_manager'));
+
 insert into storage.buckets (id, name, public) values ('project-documents', 'project-documents', false) on conflict (id) do nothing;
 insert into storage.buckets (id, name, public) values ('project-photos', 'project-photos', false) on conflict (id) do nothing;
+insert into storage.buckets (id, name, public) values ('portfolio-images', 'portfolio-images', true) on conflict (id) do nothing;

@@ -19,6 +19,7 @@ export function AdminHome() {
 
   const canViewProjects = hasPermission(role, "projects:view_all");
   const canCreateProject = hasPermission(role, "projects:create");
+  const canManagePortfolio = role === "super_admin" || role === "content_manager";
 
   useEffect(() => {
     if (!canViewProjects) {
@@ -66,8 +67,13 @@ export function AdminHome() {
       <main className="dashboard-content">
         <section className="dashboard-panel">
           <p className="section-label">Content Manager</p>
-          <h1 className="mt-4 font-serif text-4xl">CMS akan dibuka pada fase berikutnya.</h1>
-          <p>Untuk saat ini role content manager hanya memiliki akses dashboard placeholder tanpa data proyek operasional.</p>
+          <h1 className="mt-4 font-serif text-4xl">Kelola konten portfolio publik AMBARA.</h1>
+          <p>Role content manager dapat mengatur showcase portfolio tanpa membuka data proyek operasional.</p>
+          {canManagePortfolio && (
+            <Link className="btn-primary mt-6 inline-flex" to="/admin/portfolio">
+              Kelola Portfolio
+            </Link>
+          )}
         </section>
       </main>
     );
@@ -103,6 +109,16 @@ export function AdminHome() {
           </section>
 
           <section className="dashboard-grid">
+            {canManagePortfolio && (
+              <article className="dashboard-panel">
+                <p className="section-label">CMS</p>
+                <h2>Kelola Portfolio</h2>
+                <p>Tambah, edit, publish, dan arsipkan showcase publik AMBARA dari dashboard.</p>
+                <Link className="btn-secondary mt-6 inline-flex" to="/admin/portfolio">
+                  Buka Portfolio CMS
+                </Link>
+              </article>
+            )}
             <article className="dashboard-panel">
               <h2>Recent Project Updates</h2>
               {updates.length ? (

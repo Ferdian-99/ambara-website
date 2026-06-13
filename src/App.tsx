@@ -6,6 +6,7 @@ import { AdminDocuments } from "./pages/admin/AdminDocuments";
 import { AdminHome } from "./pages/admin/AdminHome";
 import { AdminLayout } from "./pages/admin/AdminLayout";
 import { AdminLogin } from "./pages/admin/AdminLogin";
+import { AdminPortfolio } from "./pages/admin/AdminPortfolio";
 import { AdminProjectDetail } from "./pages/admin/AdminProjectDetail";
 import { AdminProjectNew } from "./pages/admin/AdminProjectNew";
 import { AdminProjects } from "./pages/admin/AdminProjects";
@@ -58,6 +59,7 @@ const router = createBrowserRouter([
           { path: "projects/:id", element: <AdminProjectDetail /> },
           { path: "clients", element: <AdminClients /> },
           { path: "documents", element: <AdminDocuments /> },
+          { path: "portfolio", element: <AdminPortfolio /> },
         ],
       },
     ],

@@ -161,6 +161,49 @@ export type Database = {
         };
         Update: Partial<Database["public"]["Tables"]["project_photos"]["Insert"]>;
       };
+      portfolio_items: {
+        Row: {
+          id: string;
+          title: string;
+          slug: string;
+          category: string | null;
+          location: string | null;
+          year: string | null;
+          short_description: string | null;
+          description: string | null;
+          cover_image_url: string | null;
+          gallery_urls: string[];
+          services: string[];
+          materials: string[];
+          is_featured: boolean;
+          sort_order: number;
+          published_at: string | null;
+          archived_at: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          title: string;
+          slug: string;
+          category?: string | null;
+          location?: string | null;
+          year?: string | null;
+          short_description?: string | null;
+          description?: string | null;
+          cover_image_url?: string | null;
+          gallery_urls?: string[];
+          services?: string[];
+          materials?: string[];
+          is_featured?: boolean;
+          sort_order?: number;
+          published_at?: string | null;
+          archived_at?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["portfolio_items"]["Insert"]>;
+      };
     };
     Functions: {
       mark_own_client_portal_active: {

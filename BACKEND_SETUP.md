@@ -159,6 +159,43 @@ Project archive safety:
 - `super_admin` and `project_manager` can archive or restore projects.
 - Archived projects remain available in the admin archive filter for review or restore.
 
+## Portfolio CMS Setup
+
+Phase 3A adds CMS-managed public portfolio items.
+
+Run this migration after the previous migrations:
+
+```text
+supabase/migrations/20260612060000_add_portfolio_cms.sql
+```
+
+It creates:
+
+- `public.portfolio_items`
+- Storage bucket `portfolio-images`
+- Public read policies for published, active portfolio items
+- Admin policies for `super_admin` and `content_manager`
+- A guard so only `super_admin` can archive or restore portfolio items
+- Sample portfolio rows for Residensi Senja, Villa Aksara, and Studio Nara using `on conflict do nothing`
+
+For this MVP, `portfolio-images` is a public bucket because portfolio media is marketing content. Production recommendation:
+
+- Upload optimized JPG/WEBP images sized for web use.
+- Keep only public marketing assets in `portfolio-images`.
+- Avoid uploading private client documents, invoices, or sensitive project files into this bucket.
+
+Public access:
+
+- `/portofolio` reads published portfolio items where `published_at is not null` and `archived_at is null`.
+- `/portofolio/:slug` reads one published portfolio item by slug.
+- If Supabase is unavailable or no CMS data exists, the public pages keep the existing static fallback content.
+
+Admin access:
+
+- `/admin/portfolio` is available to `super_admin` and `content_manager`.
+- `super_admin` and `content_manager` can create, edit, publish, and unpublish portfolio items.
+- Only `super_admin` can archive or restore portfolio items.
+
 ## Project Storage Setup
 
 Phase 2C adds Supabase Storage upload for project documents and progress photos.
@@ -389,6 +426,14 @@ The default Supabase invitation email can be customized there. Keep the invitati
 - Admin client/project lists now default to active records and include archive filters.
 - Client portal and public tracking hide archived projects.
 
+## Completed In Phase 3A
+
+- Portfolio CMS database table and Storage bucket migration added.
+- Public portfolio list/detail pages now read published CMS data with static fallback.
+- Admin Portfolio CMS route added at `/admin/portfolio`.
+- Admin users with CMS access can create, edit, publish, unpublish, and upload portfolio images.
+- Super admin can archive and restore portfolio CMS items.
+
 ## Role Notes For Phase 2B
 
 - `super_admin`: can view and manage projects, clients, and updates.
@@ -403,6 +448,7 @@ The default Supabase invitation email can be customized there. Keep the invitati
 - Run the project delete policy migration in Supabase before testing delete actions in production.
 - Run `supabase/migrations/20260612030000_fix_project_delete_policies.sql` if delete actions appear successful but records still return after refresh.
 - Run `supabase/migrations/20260612050000_add_archive_fields.sql` before using client/project edit and archive controls.
+- Run `supabase/migrations/20260612060000_add_portfolio_cms.sql` before using Portfolio CMS in production.
 - Review whether production documents should move from public bucket URLs to private buckets with signed URLs.
 - Add complete admin user management.
 - Add stronger production RLS review and security test pass.

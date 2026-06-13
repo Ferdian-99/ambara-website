@@ -12,6 +12,7 @@ const adminNav = [
   { label: "Projects", href: "/admin/projects" },
   { label: "Clients", href: "/admin/clients" },
   { label: "Documents", href: "/admin/documents" },
+  { label: "Portfolio", href: "/admin/portfolio", cmsOnly: true },
 ];
 
 export function useDashboardContext() {
@@ -34,7 +35,7 @@ export function AdminLayout() {
           AMBARA
         </NavLink>
         <nav>
-          {adminNav.map((item) => (
+          {adminNav.filter((item) => !item.cmsOnly || role === "super_admin" || role === "content_manager").map((item) => (
             <NavLink key={item.href} to={item.href} end={item.href === "/admin"} className={({ isActive }) => (isActive ? "is-active" : "")}>
               {item.label}
             </NavLink>

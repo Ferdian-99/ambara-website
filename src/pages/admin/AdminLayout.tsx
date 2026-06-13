@@ -11,7 +11,7 @@ const adminNav = [
   { label: "Overview", href: "/admin" },
   { label: "Projects", href: "/admin/projects" },
   { label: "Clients", href: "/admin/clients" },
-  { label: "Documents", href: "/admin/documents" },
+  { label: "Dokumen", href: "/admin/documents" },
   { label: "Homepage", href: "/admin/homepage", cmsOnly: true },
   { label: "Portfolio", href: "/admin/portfolio", cmsOnly: true },
 ];
@@ -26,7 +26,7 @@ export function AdminLayout() {
 
   const handleLogout = async () => {
     await signOut();
-    navigate("/admin/login", { replace: true });
+    navigate("/login", { replace: true });
   };
 
   return (

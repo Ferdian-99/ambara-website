@@ -170,7 +170,7 @@ export function Tracking() {
                   <div className="progress-track"><div style={{ width: `${project.progress_percentage}%` }} /></div>
                 </div>
 
-                <div className="mt-10 grid gap-3 md:grid-cols-9">
+                <div className="mt-10 grid gap-3 md:grid-cols-3 lg:grid-cols-9">
                   {trackingStages.map((stage, index) => (
                     <div key={stage} className={`stage-node ${index <= activeIndex ? "is-done" : ""}`}>
                       <span>{index + 1}</span>

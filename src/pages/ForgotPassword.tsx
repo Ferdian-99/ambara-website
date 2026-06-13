@@ -21,7 +21,7 @@ export function ForgotPassword() {
     setLoading(false);
 
     if (resetError) {
-      setError("Link reset password belum dapat dikirim. Periksa email atau konfigurasi Supabase.");
+      setError("Link reset password belum dapat dikirim. Periksa email atau coba lagi beberapa saat lagi.");
       return;
     }
 
@@ -39,7 +39,7 @@ export function ForgotPassword() {
         <p className="auth-copy">
           Masukkan email yang digunakan untuk akun portal. AMBARA akan mengirimkan tautan aman untuk membuat password baru.
         </p>
-        {!isSupabaseConfigured && <div className="auth-alert">Supabase env belum tersedia. Lihat BACKEND_SETUP.md untuk konfigurasi.</div>}
+        {!isSupabaseConfigured && <div className="auth-alert">Portal belum siap digunakan. Hubungi pengelola sistem AMBARA.</div>}
         <form className="auth-form" onSubmit={handleSubmit}>
           <label>
             Email

@@ -54,11 +54,11 @@ function BackendSetupGate() {
   return (
     <main className="dashboard-gate">
       <div>
-        <p className="section-label">Phase 2A Setup</p>
-        <h1>Supabase belum dikonfigurasi.</h1>
+        <p className="section-label">Portal Setup</p>
+        <h1>Portal belum siap digunakan.</h1>
         <p>
-          Dashboard sudah disiapkan, tetapi route terlindungi membutuhkan environment variable Supabase.
-          Ikuti panduan setup sebelum mencoba login admin atau client.
+          Dashboard sudah disiapkan, tetapi koneksi portal perlu diaktifkan sebelum login admin atau client dapat digunakan.
+          Ikuti panduan setup atau hubungi pengelola sistem AMBARA.
         </p>
         <div className="mt-8 flex flex-col gap-3 sm:flex-row">
           <Link className="btn-primary" to="/">

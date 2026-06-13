@@ -42,7 +42,7 @@ export function ClientProjects() {
     <main className="dashboard-content">
       <div className="dashboard-heading">
         <div>
-          <p className="section-label">My Projects</p>
+          <p className="section-label">Proyek Saya</p>
           <h1>Proyek yang terhubung dengan akun Anda.</h1>
         </div>
       </div>

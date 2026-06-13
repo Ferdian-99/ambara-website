@@ -53,7 +53,7 @@ export function UpdatePassword() {
         <p className="auth-copy">
           Gunakan password yang hanya Anda ketahui. Setelah berhasil, silakan masuk kembali melalui portal AMBARA.
         </p>
-        {!isSupabaseConfigured && <div className="auth-alert">Supabase env belum tersedia. Lihat BACKEND_SETUP.md untuk konfigurasi.</div>}
+        {!isSupabaseConfigured && <div className="auth-alert">Portal belum siap digunakan. Hubungi pengelola sistem AMBARA.</div>}
         <form className="auth-form" onSubmit={handleSubmit}>
           <label>
             Password Baru

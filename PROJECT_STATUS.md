@@ -58,6 +58,13 @@
 - `/admin/homepage` added for editing hero, statistics, about, and featured service text without exposing layout/design controls.
 - Homepage CMS enforces fixed content shape and max text lengths so admin edits cannot break the layout.
 - `/admin/clients` client card layout spacing refined so the portal status panel no longer overlaps email, phone, or address text.
+- Phase 4A production readiness polish added for presentation and launch preparation.
+- Public metadata improved with stronger default title, description, Open Graph, Twitter card, and warm ivory theme color.
+- Public SPA routes now update page title and description based on the current route.
+- Dashboard mobile/overflow polish added for tables, project stages, file rows, and long text.
+- Admin/client/auth error copy refined to avoid exposing technical backend terms to normal users.
+- `BACKEND_SETUP.md` now includes a final production security and QA checklist.
+- `ADMIN_GUIDE.md` added as a simple Indonesian operating guide for non-technical admins.
 - Client multi-project visibility remains based on `auth.users.id -> clients.user_id -> clients.id -> projects.client_id`, so one linked client account can see all assigned projects.
 - Final frontend polish pass completed for public brand alignment, spacing, CTA hierarchy, and copy tone.
 - Official AMBARA logo integration fixed: public header/navbar uses `/assets/ambara-logo-dark-v2.png`, and footer/dark usage uses `/assets/ambara-logo-light.png`.
@@ -172,7 +179,7 @@
 - The production JS bundle is above Vite's default 500 kB warning threshold after adding Supabase. This is a warning, not a build failure; route-level code splitting can be added later.
 
 ## Next Task
-- Run `supabase/migrations/20260612070000_add_homepage_cms.sql`, then test `/admin/homepage` by editing hero text and confirming `/` updates without redeploy.
+- Final launch smoke test on Vercel with separate admin and client accounts: public tracking, login redirects, admin project update/upload/delete, client project view, Portfolio CMS, and Homepage CMS.
 
 ## Exact Command To Run Locally
 ```bash
@@ -181,7 +188,7 @@ npm run dev
 ```
 
 ## Build Status
-- Passed with `npm run build` after Phase 3B lightweight Homepage CMS.
+- Passed with `npm run build` after Phase 4A production readiness and final QA polish.
 - Output directory: `dist/`.
 - Non-fatal warnings: React Router and Framer Motion `"use client"` directives, plus Vite chunk-size warning after adding Supabase.
 

@@ -70,7 +70,7 @@ export function ClientProjectDetail() {
     return (
       <main className="dashboard-content">
         <section className="dashboard-panel">
-          <p className="section-label">Project not found</p>
+          <p className="section-label">Proyek tidak ditemukan</p>
           <h1 className="mt-4 font-serif text-4xl">Project tidak ditemukan untuk akun ini.</h1>
           <p>Client hanya dapat melihat proyek yang terhubung dengan akun mereka.</p>
           <Link className="btn-secondary mt-5 inline-flex" to="/client/projects">
@@ -110,7 +110,7 @@ export function ClientProjectDetail() {
             <div style={{ width: `${project.progress_percentage}%` }} />
           </div>
         </div>
-        <div className="mt-8 grid gap-3 md:grid-cols-9">
+        <div className="mt-8 grid gap-3 md:grid-cols-3 lg:grid-cols-9">
           {trackingStages.map((stage, index) => (
             <div key={stage} className={`stage-node ${index <= activeIndex ? "is-done" : ""}`}>
               <span>{index + 1}</span>
@@ -123,7 +123,7 @@ export function ClientProjectDetail() {
 
       <section className="dashboard-grid">
         <article className="dashboard-panel">
-          <h2>Timeline Updates</h2>
+          <h2>Timeline Progress</h2>
           {updates.length ? (
             updates.map((item) => (
               <div key={item.id} className="dashboard-row">
@@ -141,7 +141,7 @@ export function ClientProjectDetail() {
         </article>
 
         <article className="dashboard-panel">
-          <h2>Documents</h2>
+          <h2>Dokumen</h2>
           {documents.length ? (
             <div className="placeholder-grid">
               {documents.map((item) => (
@@ -160,7 +160,7 @@ export function ClientProjectDetail() {
       </section>
 
       <section className="dashboard-panel mt-8">
-        <h2>Progress Photos</h2>
+        <h2>Foto Progress</h2>
         {photos.length ? (
           <div className="admin-photo-grid">
             {photos.map((item) => (

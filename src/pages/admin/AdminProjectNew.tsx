@@ -93,10 +93,10 @@ export function AdminProjectNew() {
         estimated_completion: form.estimated_completion || null,
         notes: form.notes.trim() || null,
       });
-      setSuccess("Project record berhasil dibuat.");
+      setSuccess("Data proyek berhasil dibuat.");
       navigate(`/admin/projects/${project.id}`);
     } catch {
-      setError("Project record belum dapat disimpan. Pastikan kode proyek unik dan role memiliki akses.");
+      setError("Data proyek belum dapat disimpan. Pastikan kode proyek unik dan data sudah benar.");
     } finally {
       setSaving(false);
     }
@@ -118,8 +118,8 @@ export function AdminProjectNew() {
     <main className="dashboard-content">
       <div className="dashboard-heading">
         <div>
-          <p className="section-label">New Project</p>
-          <h1>Buat record proyek atau order baru.</h1>
+          <p className="section-label">Proyek Baru</p>
+          <h1>Buat data proyek atau order baru.</h1>
         </div>
       </div>
 
@@ -131,7 +131,7 @@ export function AdminProjectNew() {
             {clients.length === 0 && (
               <div className="dashboard-empty mb-6">
                 <span>Client belum tersedia</span>
-                <p>Buat client record terlebih dahulu sebelum membuat proyek.</p>
+                <p>Buat data client terlebih dahulu sebelum membuat proyek.</p>
                 <Link className="btn-secondary mt-5 inline-flex" to="/admin/clients">
                   Buka Clients
                 </Link>
@@ -153,31 +153,31 @@ export function AdminProjectNew() {
               </label>
               <div className="form-grid">
                 <label>
-                  Project code
+                  Kode proyek
                   <input value={form.project_code} onChange={(event) => updateField("project_code", event.target.value)} placeholder="AMB-2026-002" />
                 </label>
                 <label>
-                  Project name
+                  Nama proyek
                   <input value={form.project_name} onChange={(event) => updateField("project_name", event.target.value)} placeholder="Nama proyek" />
                 </label>
               </div>
               <div className="form-grid">
                 <label>
-                  Project type
+                  Tipe proyek
                   <input value={form.project_type} onChange={(event) => updateField("project_type", event.target.value)} placeholder="Built-in Furniture" />
                 </label>
                 <label>
-                  Location
+                  Lokasi
                   <input value={form.location} onChange={(event) => updateField("location", event.target.value)} placeholder="Jakarta Selatan" />
                 </label>
               </div>
               <label>
-                Budget range
+                Rentang budget
                 <input value={form.budget_range} onChange={(event) => updateField("budget_range", event.target.value)} placeholder="IDR 25-50 juta" />
               </label>
               <div className="form-grid three">
                 <label>
-                  Current stage
+                  Tahap saat ini
                   <select value={form.current_stage} onChange={(event) => updateField("current_stage", event.target.value as ProjectStage)}>
                     {trackingStages.map((stage) => (
                       <option key={stage} value={stage}>
@@ -187,7 +187,7 @@ export function AdminProjectNew() {
                   </select>
                 </label>
                 <label>
-                  Progress percentage
+                  Persentase progress
                   <input
                     type="number"
                     value={form.progress_percentage}
@@ -208,15 +208,15 @@ export function AdminProjectNew() {
                 </label>
               </div>
               <label>
-                Estimated completion
+                Estimasi selesai
                 <input type="date" value={form.estimated_completion} onChange={(event) => updateField("estimated_completion", event.target.value)} />
               </label>
               <label>
-                Notes
+                Catatan
                 <textarea value={form.notes} onChange={(event) => updateField("notes", event.target.value)} placeholder="Catatan awal proyek" />
               </label>
               <button type="submit" disabled={saving || clients.length === 0}>
-                {saving ? "Menyimpan..." : "Simpan Project"}
+                {saving ? "Menyimpan..." : "Simpan Proyek"}
               </button>
             </form>
           </>

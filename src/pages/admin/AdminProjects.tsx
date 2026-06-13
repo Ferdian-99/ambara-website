@@ -28,7 +28,7 @@ export function AdminProjects() {
         if (mounted) setProjects(rows);
       })
       .catch(() => {
-        if (mounted) setError("Daftar proyek belum dapat dimuat. Periksa koneksi atau konfigurasi RLS.");
+        if (mounted) setError("Daftar proyek belum dapat dimuat. Coba refresh halaman atau hubungi pengelola sistem.");
       })
       .finally(() => {
         if (mounted) setLoading(false);
@@ -74,7 +74,7 @@ export function AdminProjects() {
         {!loading && !error && projects.length === 0 && (
           <div className="dashboard-empty">
             <span>{filter === "archived" ? "Arsip kosong" : "Belum ada proyek"}</span>
-            <p>{filter === "archived" ? "Proyek yang diarsipkan akan tampil di sini." : "Project record akan tampil di sini setelah dibuat oleh tim AMBARA."}</p>
+            <p>{filter === "archived" ? "Proyek yang diarsipkan akan tampil di sini." : "Data proyek akan tampil di sini setelah dibuat oleh tim AMBARA."}</p>
           </div>
         )}
         {!loading && !error && projects.length > 0 && (

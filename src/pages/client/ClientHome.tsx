@@ -72,7 +72,7 @@ export function ClientHome() {
         <>
           <section className="dashboard-metrics">
             <article>
-              <span>Current Stage</span>
+              <span>Tahap Saat Ini</span>
               <strong>{featuredProject?.current_stage}</strong>
               <p>{featuredProject?.project_name}</p>
             </article>
@@ -82,12 +82,12 @@ export function ClientHome() {
               <p>Rata-rata progress proyek</p>
             </article>
             <article>
-              <span>Estimated Completion</span>
+              <span>Estimasi Selesai</span>
               <strong>{formatDate(featuredProject?.estimated_completion ?? null)}</strong>
               <p>Estimasi project terbaru</p>
             </article>
             <article>
-              <span>Total Projects</span>
+              <span>Total Proyek</span>
               <strong>{projects.length}</strong>
               <p>Terhubung dengan akun Anda</p>
             </article>

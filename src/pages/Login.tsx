@@ -80,7 +80,7 @@ export function Login() {
         <p className="auth-copy">
           Satu akses untuk tim internal dan client. Setelah masuk, sistem akan membuka dashboard sesuai role akun.
         </p>
-        {!isSupabaseConfigured && <div className="auth-alert">Supabase env belum tersedia. Lihat BACKEND_SETUP.md untuk konfigurasi.</div>}
+        {!isSupabaseConfigured && <div className="auth-alert">Portal belum siap digunakan. Hubungi pengelola sistem AMBARA.</div>}
         {checkingSession ? (
           <p className="auth-alert">Memeriksa sesi AMBARA...</p>
         ) : (

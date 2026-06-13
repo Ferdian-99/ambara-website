@@ -17,7 +17,7 @@ export function ClientLayout() {
 
   const handleLogout = async () => {
     await signOut();
-    navigate("/client/login", { replace: true });
+    navigate("/login", { replace: true });
   };
 
   return (
@@ -28,22 +28,22 @@ export function ClientLayout() {
         </NavLink>
         <nav>
           <NavLink to="/client" end className={({ isActive }) => (isActive ? "is-active" : "")}>
-            Overview
+            Ringkasan
           </NavLink>
           <NavLink to="/client/projects" className={({ isActive }) => (isActive ? "is-active" : "")}>
-            Projects
+            Proyek
           </NavLink>
         </nav>
         <div className="dashboard-note">
-          <span>Client Area</span>
-          <strong>Project Monitoring</strong>
+          <span>Area Client</span>
+          <strong>Monitoring Proyek</strong>
           <p>Klien hanya dapat melihat proyek yang terhubung dengan akunnya.</p>
         </div>
       </aside>
       <div className="dashboard-main">
         <header className="dashboard-topbar">
           <div>
-            <span>Client Dashboard</span>
+            <span>Dashboard Client</span>
             <strong>{authState.profile?.full_name ?? authState.user?.email}</strong>
           </div>
           <button type="button" onClick={handleLogout}>

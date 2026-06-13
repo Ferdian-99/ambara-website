@@ -1,4 +1,4 @@
-import { PropsWithChildren, useState } from "react";
+import { PropsWithChildren, useEffect, useState } from "react";
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { faqItems, moodOptions, navItems } from "./data";
@@ -7,6 +7,74 @@ const logoCandidates = {
   dark: "/assets/ambara-logo-dark-v2.png",
   light: "/assets/ambara-logo-light.png",
 };
+
+const defaultMeta = {
+  title: "AMBARA Interior | Studio Interior dan Furnitur Custom Premium",
+  description:
+    "AMBARA Interior adalah studio desain interior dan furnitur custom premium untuk hunian, villa, kantor, dan ruang komersial.",
+};
+
+const routeMeta: Record<string, { title: string; description: string }> = {
+  "/": defaultMeta,
+  "/tentang": {
+    title: "Tentang AMBARA | Filosofi Desain Interior Custom",
+    description:
+      "Kenali pendekatan AMBARA dalam merancang interior custom yang tenang, presisi, dan selaras dengan karakter ruang.",
+  },
+  "/layanan": {
+    title: "Layanan AMBARA | Interior Design dan Built-in Furniture",
+    description:
+      "Layanan desain interior, custom furniture, built-in furniture, space planning, dan proyek residensial maupun komersial.",
+  },
+  "/portofolio": {
+    title: "Portofolio AMBARA | Residensial, Villa, dan Komersial",
+    description:
+      "Kurasi proyek interior dan furnitur custom AMBARA untuk hunian, villa, studio, kantor, cafe, dan ruang komersial.",
+  },
+  "/proses": {
+    title: "Proses Kerja AMBARA | Dari Konsultasi hingga Instalasi",
+    description:
+      "Alur kerja proyek AMBARA dari konsultasi, pengukuran, konsep desain, produksi, finishing, pengiriman, hingga serah terima.",
+  },
+  "/lacak-proyek": {
+    title: "Lacak Proyek AMBARA | Monitoring Progress Interior",
+    description:
+      "Masukkan kode proyek AMBARA untuk melihat status, timeline, dokumen, dan foto progress yang tersedia.",
+  },
+  "/kontak": {
+    title: "Kontak AMBARA | Konsultasi Interior dan Furnitur Custom",
+    description:
+      "Hubungi AMBARA untuk konsultasi proyek interior custom, built-in furniture, dan kebutuhan ruang residensial atau komersial.",
+  },
+  "/login": {
+    title: "Portal AMBARA | Login Admin dan Client",
+    description: "Masuk ke portal AMBARA untuk mengelola proyek atau melihat progress proyek yang terhubung dengan akun Anda.",
+  },
+  "/forgot-password": {
+    title: "Reset Password Portal AMBARA",
+    description: "Minta tautan reset password untuk akun portal AMBARA Anda.",
+  },
+  "/update-password": {
+    title: "Update Password Portal AMBARA",
+    description: "Buat password baru untuk akun portal AMBARA melalui tautan undangan atau reset password.",
+  },
+};
+
+function getRouteMeta(pathname: string) {
+  if (pathname.startsWith("/portofolio/")) {
+    return {
+      title: "Detail Portofolio | AMBARA Interior",
+      description: "Detail proyek interior dan furnitur custom AMBARA, termasuk konsep, material, dan pendekatan pengerjaan.",
+    };
+  }
+
+  return routeMeta[pathname] ?? defaultMeta;
+}
+
+function updateMetaTag(selector: string, attribute: "content", value: string) {
+  const tag = document.head.querySelector(selector);
+  if (tag) tag.setAttribute(attribute, value);
+}
 
 export function SectionLabel({ children }: PropsWithChildren) {
   return <p className="section-label">{children}</p>;
@@ -47,14 +115,16 @@ export function PageShell({ eyebrow, title, intro, children }: PropsWithChildren
 
 function BrandMark({ variant = "dark", compact = false }: { variant?: "dark" | "light"; compact?: boolean }) {
   const logoSrc = logoCandidates[variant];
+  const [logoFailed, setLogoFailed] = useState(false);
 
-  if (logoSrc) {
+  if (logoSrc && !logoFailed) {
     return (
       <img
         src={logoSrc}
         alt="Logo AMBARA"
         className={`${compact ? "h-11 max-w-[176px] md:h-14 md:max-w-[224px]" : "h-12 max-w-[190px] md:h-14 md:max-w-[224px]"} w-auto object-contain`}
         loading="eager"
+        onError={() => setLogoFailed(true)}
       />
     );
   }
@@ -80,6 +150,16 @@ export function Layout() {
   const location = useLocation();
 
   const closeMenu = () => setMenuOpen(false);
+
+  useEffect(() => {
+    const meta = getRouteMeta(location.pathname);
+    document.title = meta.title;
+    updateMetaTag('meta[name="description"]', "content", meta.description);
+    updateMetaTag('meta[property="og:title"]', "content", meta.title);
+    updateMetaTag('meta[property="og:description"]', "content", meta.description);
+    updateMetaTag('meta[name="twitter:title"]', "content", meta.title);
+    updateMetaTag('meta[name="twitter:description"]', "content", meta.description);
+  }, [location.pathname]);
 
   return (
     <div className="min-h-screen bg-ivory text-charcoal">

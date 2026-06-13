@@ -51,7 +51,7 @@ export function AdminClients() {
       const clientRows = await fetchClients(filter);
       setClients(clientRows);
     } catch {
-      setError("Data client belum dapat dimuat. Periksa koneksi atau konfigurasi RLS.");
+      setError("Data client belum dapat dimuat. Coba refresh halaman atau hubungi pengelola sistem.");
     } finally {
       setLoading(false);
     }
@@ -109,7 +109,7 @@ export function AdminClients() {
       setSuccess("Client record berhasil dibuat.");
       await loadClients();
     } catch {
-      setError("Client belum dapat disimpan. Pastikan role memiliki akses dan data sudah benar.");
+      setError("Client belum dapat disimpan. Periksa data dan coba lagi.");
     } finally {
       setSaving(false);
     }
@@ -249,7 +249,7 @@ export function AdminClients() {
       <div className="dashboard-heading">
         <div>
           <p className="section-label">Clients</p>
-          <h1>Client records untuk proyek AMBARA.</h1>
+          <h1>Data client untuk proyek AMBARA.</h1>
           <p className="mt-5 max-w-3xl leading-7 text-graphite/70">
             Kelola data client, kirim undangan portal, dan pantau status aktivasi akun dengan ringkas.
           </p>
@@ -271,7 +271,7 @@ export function AdminClients() {
           {!loading && !error && clients.length === 0 && (
             <div className="dashboard-empty">
               <span>{filter === "archived" ? "Arsip kosong" : "Belum ada client"}</span>
-              <p>{filter === "archived" ? "Client yang diarsipkan akan tampil di sini." : "Client record akan tampil setelah dibuat oleh tim sales atau super admin."}</p>
+              <p>{filter === "archived" ? "Client yang diarsipkan akan tampil di sini." : "Data client akan tampil setelah dibuat oleh tim sales atau super admin."}</p>
             </div>
           )}
           {!loading && clients.map((client) => (

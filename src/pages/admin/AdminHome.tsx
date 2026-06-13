@@ -36,7 +36,7 @@ export function AdminHome() {
         setClients(data.clients);
       })
       .catch(() => {
-        if (mounted) setError("Overview belum dapat dimuat dari Supabase.");
+        if (mounted) setError("Overview belum dapat dimuat. Coba refresh halaman atau hubungi pengelola sistem.");
       })
       .finally(() => {
         if (mounted) setLoading(false);
@@ -55,10 +55,10 @@ export function AdminHome() {
       : 0;
 
     return [
-      ["Active Projects", String(activeProjects), "Proyek berjalan"],
-      ["Finishing Stage", String(finishing), "Butuh QC akhir"],
-      ["Client Records", String(clients.length), "Client terbaru termuat"],
-      ["Average Progress", `${averageProgress}%`, "Rata-rata proyek"],
+      ["Proyek Aktif", String(activeProjects), "Proyek berjalan"],
+      ["Tahap Finishing", String(finishing), "Butuh QC akhir"],
+      ["Data Client", String(clients.length), "Client terbaru termuat"],
+      ["Rata-rata Progress", `${averageProgress}%`, "Rata-rata proyek"],
     ];
   }, [clients.length, projects]);
 
@@ -165,7 +165,7 @@ export function AdminHome() {
               ) : (
                 <div className="dashboard-empty">
                   <span>Belum ada proyek</span>
-                  <p>Project record akan muncul setelah dibuat.</p>
+                  <p>Data proyek akan muncul setelah dibuat.</p>
                 </div>
               )}
             </article>

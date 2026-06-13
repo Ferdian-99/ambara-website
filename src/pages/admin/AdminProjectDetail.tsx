@@ -160,7 +160,7 @@ export function AdminProjectDetail() {
       setSuccess("Progress proyek berhasil diperbarui.");
       await loadProject();
     } catch {
-      setError("Progress belum dapat disimpan. Pastikan role memiliki akses update proyek.");
+      setError("Progress belum dapat disimpan. Coba periksa data update lalu ulangi.");
     } finally {
       setSaving(false);
     }
@@ -279,7 +279,7 @@ export function AdminProjectDetail() {
       setDocumentUploadSuccess("Dokumen proyek berhasil diunggah.");
       await loadProject();
     } catch {
-      setDocumentUploadError("Dokumen belum dapat diunggah. Periksa bucket Storage dan policy upload.");
+      setDocumentUploadError("Dokumen belum dapat diunggah. Coba lagi atau hubungi pengelola sistem.");
     } finally {
       setUploadingDocument(false);
     }
@@ -319,7 +319,7 @@ export function AdminProjectDetail() {
       setPhotoUploadSuccess("Foto progress berhasil diunggah.");
       await loadProject();
     } catch {
-      setPhotoUploadError("Foto progress belum dapat diunggah. Periksa bucket Storage dan policy upload.");
+      setPhotoUploadError("Foto progress belum dapat diunggah. Coba lagi atau hubungi pengelola sistem.");
     } finally {
       setUploadingPhoto(false);
     }
@@ -431,8 +431,8 @@ export function AdminProjectDetail() {
     return (
       <main className="dashboard-content">
         <section className="dashboard-panel">
-          <p className="section-label">Project not found</p>
-          <h1 className="mt-4 font-serif text-4xl">Project record tidak ditemukan.</h1>
+          <p className="section-label">Proyek tidak ditemukan</p>
+          <h1 className="mt-4 font-serif text-4xl">Data proyek tidak ditemukan.</h1>
           <p>Periksa kembali URL atau buka daftar proyek.</p>
           <Link className="btn-secondary mt-5 inline-flex" to="/admin/projects">
             Kembali ke Projects
@@ -448,7 +448,7 @@ export function AdminProjectDetail() {
     <main className="dashboard-content">
       <div className="dashboard-heading project-detail-heading">
         <div>
-          <p className="section-label">Project Detail</p>
+          <p className="section-label">Detail Proyek</p>
           <h1>{project.project_name}</h1>
           <p className="mt-4 text-graphite/65">{project.project_code} / {project.clients?.name ?? "Client belum terhubung"}</p>
           {copySuccess && <p className="project-inline-note">{copySuccess}</p>}
@@ -478,7 +478,7 @@ export function AdminProjectDetail() {
           </div>
           <div className="progress-track"><div style={{ width: `${project.progress_percentage}%` }} /></div>
         </div>
-        <div className="mt-8 grid gap-3 md:grid-cols-9">
+        <div className="mt-8 grid gap-3 md:grid-cols-3 lg:grid-cols-9">
           {trackingStages.map((item, index) => (
             <div key={item} className={`stage-node ${index <= activeIndex ? "is-done" : ""}`}>
               <span>{index + 1}</span>
@@ -496,7 +496,7 @@ export function AdminProjectDetail() {
         {canManage && (
           <div className="dashboard-action-row mt-6">
             <button className="dashboard-ghost-button" type="button" onClick={() => setEditingProject((current) => !current)}>
-              {editingProject ? "Tutup Edit" : "Edit Project"}
+              {editingProject ? "Tutup Edit" : "Edit Proyek"}
             </button>
             {project.archived_at ? (
               <button className="dashboard-ghost-button" type="button" disabled={archivingProject} onClick={() => void handleRestoreProject()}>
@@ -513,31 +513,31 @@ export function AdminProjectDetail() {
           <form className="dashboard-form compact" onSubmit={handleProjectEdit}>
             <div className="form-grid">
               <label>
-                Project code
+                Kode proyek
                 <input value={projectEditForm.project_code} onChange={(event) => updateProjectEditField("project_code", event.target.value)} />
               </label>
               <label>
-                Project name
+                Nama proyek
                 <input value={projectEditForm.project_name} onChange={(event) => updateProjectEditField("project_name", event.target.value)} />
               </label>
             </div>
             <div className="form-grid">
               <label>
-                Project type
+                Tipe proyek
                 <input value={projectEditForm.project_type} onChange={(event) => updateProjectEditField("project_type", event.target.value)} />
               </label>
               <label>
-                Location
+                Lokasi
                 <input value={projectEditForm.location} onChange={(event) => updateProjectEditField("location", event.target.value)} />
               </label>
             </div>
             <label>
-              Budget range
+              Rentang budget
               <input value={projectEditForm.budget_range} onChange={(event) => updateProjectEditField("budget_range", event.target.value)} placeholder="IDR 25-50 juta" />
             </label>
             <div className="form-grid three">
               <label>
-                Current stage
+                Tahap saat ini
                 <select value={projectEditForm.current_stage} onChange={(event) => updateProjectEditField("current_stage", event.target.value as ProjectStage)}>
                   {trackingStages.map((item) => (
                     <option key={item}>{item}</option>
@@ -558,21 +558,21 @@ export function AdminProjectDetail() {
               </label>
             </div>
             <label>
-              Estimated completion
+              Estimasi selesai
               <input type="date" value={projectEditForm.estimated_completion} onChange={(event) => updateProjectEditField("estimated_completion", event.target.value)} />
             </label>
             <label>
-              Notes
+              Catatan
               <textarea value={projectEditForm.notes} onChange={(event) => updateProjectEditField("notes", event.target.value)} />
             </label>
-            <button type="submit" disabled={savingProject}>{savingProject ? "Menyimpan..." : "Simpan Project"}</button>
+            <button type="submit" disabled={savingProject}>{savingProject ? "Menyimpan..." : "Simpan Proyek"}</button>
           </form>
         )}
       </section>
 
       <section className="dashboard-grid">
         <article className="dashboard-panel">
-          <h2>Progress Management</h2>
+          <h2>Kelola Progress</h2>
           {canManage ? (
             <form className="dashboard-form compact" onSubmit={handleSubmit}>
               {error && <p className="dashboard-alert">{error}</p>}
@@ -582,7 +582,7 @@ export function AdminProjectDetail() {
                 <input value={title} onChange={(event) => setTitle(event.target.value)} placeholder="Produksi kabinet utama dimulai" />
               </label>
               <label>
-                Stage
+                Tahap
                 <select value={stage} onChange={(event) => setStage(event.target.value as ProjectStage)}>
                   {trackingStages.map((item) => (
                     <option key={item}>{item}</option>
@@ -590,14 +590,14 @@ export function AdminProjectDetail() {
                 </select>
               </label>
               <label>
-                Progress Percentage
+                Persentase progress
                 <div className="progress-input-row">
                   <input type="range" value={progress} onChange={(event) => setProgress(event.target.value)} min={0} max={100} />
                   <input type="number" value={progress} onChange={(event) => setProgress(event.target.value)} min={0} max={100} />
                 </div>
               </label>
               <label>
-                Progress Description
+                Deskripsi progress
                 <textarea value={description} onChange={(event) => setDescription(event.target.value)} placeholder="Tuliskan pembaruan progress yang akan terlihat oleh client." />
               </label>
               <button type="submit" disabled={saving}>
@@ -610,7 +610,7 @@ export function AdminProjectDetail() {
         </article>
 
         <article className="dashboard-panel">
-          <h2>Timeline Updates</h2>
+          <h2>Timeline Progress</h2>
           {updates.length ? (
             updates.map((item) => (
               <div key={item.id} className="dashboard-row">
@@ -642,7 +642,7 @@ export function AdminProjectDetail() {
 
       <section className="dashboard-grid">
         <article className="dashboard-panel">
-          <h2>Documents</h2>
+          <h2>Dokumen</h2>
           {canUpload ? (
             <form className="dashboard-form compact" onSubmit={handleDocumentUpload}>
               {documentUploadError && <p className="dashboard-alert">{documentUploadError}</p>}
@@ -702,7 +702,7 @@ export function AdminProjectDetail() {
         </article>
 
         <article className="dashboard-panel">
-          <h2>Progress Photos</h2>
+          <h2>Foto Progress</h2>
           {canUpload ? (
             <form className="dashboard-form compact" onSubmit={handlePhotoUpload}>
               {photoUploadError && <p className="dashboard-alert">{photoUploadError}</p>}

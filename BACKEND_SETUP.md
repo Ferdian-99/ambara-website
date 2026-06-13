@@ -399,6 +399,22 @@ Authentication -> Email Templates -> Invite user
 
 The default Supabase invitation email can be customized there. Keep the invitation link based on Supabase's confirmation/action URL variable so the `redirectTo` value from `invite-client` is respected. Avoid hardcoded localhost URLs in the template.
 
+## Production Readiness Checklist
+
+Use this before presenting or launching the production app:
+
+- Never place the Supabase `service_role` key in Vercel frontend environment variables. The frontend should only use `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`.
+- Rotate the Supabase service role key before production if it was ever pasted into a frontend env, shared in chat, committed, or exposed during testing.
+- Keep `SUPABASE_SERVICE_ROLE_KEY` only inside Supabase Edge Function secrets for `invite-client`.
+- Configure custom SMTP in Supabase for more reliable invitation and password reset emails.
+- Test invitation and reset emails after changing Supabase Auth email templates.
+- For sensitive production documents, consider private Storage buckets and signed URLs instead of public file URLs.
+- Test `/lacak-proyek` in an incognito browser with a valid code, an invalid code, and no login session.
+- Test roles with separate accounts for `super_admin`, `project_manager`, `sales`, `content_manager`, and `client`.
+- Confirm a client account can only see projects connected through `auth.users.id -> clients.user_id -> clients.id -> projects.client_id`.
+- Confirm public users cannot open `/admin/*` or `/client/*` routes directly after deployment.
+- Confirm Vercel SPA fallback is active so direct links such as `/admin/login`, `/client/projects`, and `/portofolio/project-slug` do not return 404.
+
 ## Completed In Phase 2A
 
 - Supabase client integration.

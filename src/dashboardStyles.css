@@ -58,6 +58,10 @@
     @apply min-h-32 resize-none;
   }
 
+  .dashboard-form select {
+    @apply h-[46px] leading-5;
+  }
+
   .auth-form button,
   .dashboard-form button {
     @apply bg-charcoal px-6 py-3 text-sm font-medium normal-case tracking-normal text-linen transition hover:bg-champagne hover:text-charcoal disabled:cursor-not-allowed disabled:opacity-50;

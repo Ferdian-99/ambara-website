@@ -386,7 +386,7 @@ export function AdminPortfolio() {
               Nama Project
               <input value={form.title} onChange={(event) => updateField("title", event.target.value)} placeholder="Residensi Senja" />
             </label>
-            <div className="form-grid three">
+            <div className="grid gap-5 md:grid-cols-[1.15fr_minmax(0,1fr)_8rem]">
               <label>
                 Jenis Project
                 <select value={form.category} onChange={(event) => updateField("category", event.target.value)}>
@@ -398,7 +398,6 @@ export function AdminPortfolio() {
                     <option key={category} value={category}>{category}</option>
                   ))}
                 </select>
-                <small>Untuk filter portfolio publik.</small>
               </label>
               <label>
                 Lokasi

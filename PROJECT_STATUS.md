@@ -52,6 +52,11 @@
 - Portfolio CMS admin UI refined for non-technical admins with Indonesian labels, photo previews, upload-first image handling, and collapsed advanced technical fields.
 - Homepage portfolio and featured project sections now read published featured CMS portfolio items with static fallback.
 - Portfolio CMS `Jenis Project` field changed from free text to a controlled dropdown for Residensial, Villa, and Komersial.
+- Phase 3B lightweight Homepage CMS added for controlled homepage text editing.
+- `public.site_settings` migration added with public read for `homepage` and admin write for `super_admin`/`content_manager`.
+- Public `/` now reads validated homepage CMS text with static fallback if CMS data is missing, invalid, or unavailable.
+- `/admin/homepage` added for editing hero, statistics, about, and featured service text without exposing layout/design controls.
+- Homepage CMS enforces fixed content shape and max text lengths so admin edits cannot break the layout.
 - `/admin/clients` client card layout spacing refined so the portal status panel no longer overlaps email, phone, or address text.
 - Client multi-project visibility remains based on `auth.users.id -> clients.user_id -> clients.id -> projects.client_id`, so one linked client account can see all assigned projects.
 - Final frontend polish pass completed for public brand alignment, spacing, CTA hierarchy, and copy tone.
@@ -79,7 +84,7 @@
 - Admin login route added at `/admin/login`.
 - Unified public login route added at `/login` with role-based redirects.
 - Admin dashboard shell added at `/admin`.
-- Admin routes added: `/admin/projects`, `/admin/projects/new`, `/admin/projects/:id`, `/admin/clients`, `/admin/documents`.
+- Admin routes added: `/admin/projects`, `/admin/projects/new`, `/admin/projects/:id`, `/admin/clients`, `/admin/documents`, `/admin/homepage`.
 - Client login route added at `/client/login`.
 - Client dashboard shell added at `/client`.
 - Client routes added: `/client/projects`, `/client/projects/:id`.
@@ -121,6 +126,8 @@
 - Supabase Portfolio CMS migration added for portfolio showcase content and `portfolio-images` bucket.
 - Homepage Portfolio CMS integration added so items marked `Tampilkan di Beranda` can appear on `/`.
 - Public portfolio filters are fixed to `Semua`, `Residensial`, `Villa`, and `Komersial` with case-insensitive matching.
+- Supabase Homepage CMS migration added for `site_settings`.
+- Homepage CMS helper added with strict validation, default fallback, admin update, and public read helpers.
 - Admin document upload added with category support: Quotation, Desain Final, Invoice, Kontrak, and Lainnya.
 - Admin progress photo upload added with caption support.
 - Admin project detail delete actions added for timeline updates, documents, and progress photos.
@@ -135,8 +142,7 @@
 - Official logo presentation adjusted for desktop and mobile navbar readability.
 - Public homepage and Tentang copy refined toward custom interior, built-in furniture, workshop production, and installation.
 - Company profile video section added with a responsive YouTube embed.
-- Backend file upload UI remains informational only; real upload is not implemented yet.
-- CMS not implemented.
+- Full CMS/page builder is not implemented; only controlled Portfolio CMS and lightweight Homepage CMS are implemented.
 - Payment gateway not implemented.
 - Complex analytics not implemented.
 
@@ -152,11 +158,12 @@
 - Run `supabase/migrations/20260612030000_fix_project_delete_policies.sql` in Supabase to harden delete policies and resolve zero-row/RLS-blocked delete behavior.
 - Run `supabase/migrations/20260612050000_add_archive_fields.sql` in Supabase before using edit/archive controls.
 - Run `supabase/migrations/20260612060000_add_portfolio_cms.sql` in Supabase before using Portfolio CMS controls.
+- Run `supabase/migrations/20260612070000_add_homepage_cms.sql` in Supabase before using Homepage CMS controls.
 - If the Edge Function is not deployed, create/invite Supabase Auth users manually, then link client records through `clients.user_id`.
 - Decide whether production documents should remain public MVP URLs or move to private buckets with signed URLs.
 - Add admin user management and invite flow.
 - Add production security review for RLS policies.
-- Later phase: CMS, richer admin dashboard, and full client portal polish.
+- Later phase: richer admin dashboard, fuller CMS modules, and full client portal polish.
 
 ## Known Issues
 - The local machine does not have global `node`, `npm`, or `git` on PATH. A workspace-local portable Node runtime was used for install/build verification and is ignored by git in `.tools/`.
@@ -165,7 +172,7 @@
 - The production JS bundle is above Vite's default 500 kB warning threshold after adding Supabase. This is a warning, not a build failure; route-level code splitting can be added later.
 
 ## Next Task
-- Test `/admin/portfolio` by creating or editing a published item with `Tampilkan di Beranda` enabled, then confirm it appears on `/`, `/portofolio`, and `/portofolio/:slug`.
+- Run `supabase/migrations/20260612070000_add_homepage_cms.sql`, then test `/admin/homepage` by editing hero text and confirming `/` updates without redeploy.
 
 ## Exact Command To Run Locally
 ```bash
@@ -174,7 +181,7 @@ npm run dev
 ```
 
 ## Build Status
-- Passed with `npm run build` after Portfolio CMS category dropdown refinement.
+- Passed with `npm run build` after Phase 3B lightweight Homepage CMS.
 - Output directory: `dist/`.
 - Non-fatal warnings: React Router and Framer Motion `"use client"` directives, plus Vite chunk-size warning after adding Supabase.
 

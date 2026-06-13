@@ -107,6 +107,13 @@ create table if not exists public.portfolio_items (
   updated_at timestamptz not null default now()
 );
 
+create table if not exists public.site_settings (
+  id text primary key,
+  value jsonb not null default '{}'::jsonb,
+  updated_at timestamptz not null default now(),
+  updated_by uuid references public.profiles(id)
+);
+
 create or replace function public.touch_updated_at()
 returns trigger language plpgsql as $$
 begin
@@ -191,6 +198,7 @@ alter table public.project_updates enable row level security;
 alter table public.project_documents enable row level security;
 alter table public.project_photos enable row level security;
 alter table public.portfolio_items enable row level security;
+alter table public.site_settings enable row level security;
 
 drop policy if exists "profiles can read own profile" on public.profiles;
 create policy "profiles can read own profile" on public.profiles for select using (id = auth.uid() or public.is_internal_user());
@@ -255,6 +263,20 @@ create policy "portfolio admin insert" on public.portfolio_items for insert to a
 drop policy if exists "portfolio admin update" on public.portfolio_items;
 create policy "portfolio admin update" on public.portfolio_items for update to authenticated using (public.current_user_role() in ('super_admin', 'content_manager')) with check (public.current_user_role() in ('super_admin', 'content_manager'));
 
+drop policy if exists "site settings homepage public read" on public.site_settings;
+create policy "site settings homepage public read" on public.site_settings for select using (id = 'homepage');
+
+drop policy if exists "site settings admin read all" on public.site_settings;
+create policy "site settings admin read all" on public.site_settings for select to authenticated using (public.current_user_role() in ('super_admin', 'content_manager'));
+
+drop policy if exists "site settings cms insert" on public.site_settings;
+create policy "site settings cms insert" on public.site_settings for insert to authenticated with check (id = 'homepage' and public.current_user_role() in ('super_admin', 'content_manager'));
+
+drop policy if exists "site settings cms update" on public.site_settings;
+create policy "site settings cms update" on public.site_settings for update to authenticated using (id = 'homepage' and public.current_user_role() in ('super_admin', 'content_manager')) with check (id = 'homepage' and public.current_user_role() in ('super_admin', 'content_manager'));
+
 insert into storage.buckets (id, name, public) values ('project-documents', 'project-documents', false) on conflict (id) do nothing;
 insert into storage.buckets (id, name, public) values ('project-photos', 'project-photos', false) on conflict (id) do nothing;
 insert into storage.buckets (id, name, public) values ('portfolio-images', 'portfolio-images', true) on conflict (id) do nothing;
+
+insert into public.site_settings (id, value) values ('homepage', '{}'::jsonb) on conflict (id) do nothing;

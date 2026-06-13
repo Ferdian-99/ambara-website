@@ -12,6 +12,7 @@ const adminNav = [
   { label: "Projects", href: "/admin/projects" },
   { label: "Clients", href: "/admin/clients" },
   { label: "Documents", href: "/admin/documents" },
+  { label: "Homepage", href: "/admin/homepage", cmsOnly: true },
   { label: "Portfolio", href: "/admin/portfolio", cmsOnly: true },
 ];
 
@@ -44,7 +45,7 @@ export function AdminLayout() {
         <div className="dashboard-note">
           <span>Role</span>
           <strong>{roleLabels[role]}</strong>
-          {hasPermission(role, "cms:placeholder") && <p>CMS disiapkan untuk fase berikutnya.</p>}
+          {hasPermission(role, "cms:placeholder") && <p>Akses CMS tersedia untuk homepage dan portfolio publik.</p>}
         </div>
       </aside>
       <div className="dashboard-main">

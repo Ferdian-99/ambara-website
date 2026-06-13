@@ -196,6 +196,35 @@ Admin access:
 - `super_admin` and `content_manager` can create, edit, publish, and unpublish portfolio items.
 - Only `super_admin` can archive or restore portfolio items.
 
+## Homepage CMS Setup
+
+Phase 3B adds lightweight homepage text management while keeping the homepage layout controlled by frontend code.
+
+Run this migration after the Portfolio CMS migration:
+
+```text
+supabase/migrations/20260612070000_add_homepage_cms.sql
+```
+
+It creates:
+
+- `public.site_settings`
+- One row with `id = 'homepage'`
+- Public read access for homepage settings only
+- Admin read/write policies for `super_admin` and `content_manager`
+
+Homepage CMS scope:
+
+- Admins can edit text for the hero, three statistics, about section, and three featured service cards.
+- Admins cannot change section order, layout, colors, typography, spacing, buttons, raw HTML, markdown, JSON, or page structure.
+- The frontend validates text length and fixed item counts before saving.
+- If settings are missing, invalid, incomplete, or Supabase is unavailable, `/` falls back to the built-in AMBARA homepage text.
+
+Admin access:
+
+- `/admin/homepage` is available to `super_admin` and `content_manager`.
+- `super_admin` can load default text into the form before saving.
+
 ## Project Storage Setup
 
 Phase 2C adds Supabase Storage upload for project documents and progress photos.

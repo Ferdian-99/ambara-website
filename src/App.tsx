@@ -4,6 +4,7 @@ import { ProtectedRoute } from "./routes/ProtectedRoute";
 import { AdminClients } from "./pages/admin/AdminClients";
 import { AdminDocuments } from "./pages/admin/AdminDocuments";
 import { AdminHome } from "./pages/admin/AdminHome";
+import { AdminHomepage } from "./pages/admin/AdminHomepage";
 import { AdminLayout } from "./pages/admin/AdminLayout";
 import { AdminLogin } from "./pages/admin/AdminLogin";
 import { AdminPortfolio } from "./pages/admin/AdminPortfolio";
@@ -59,6 +60,7 @@ const router = createBrowserRouter([
           { path: "projects/:id", element: <AdminProjectDetail /> },
           { path: "clients", element: <AdminClients /> },
           { path: "documents", element: <AdminDocuments /> },
+          { path: "homepage", element: <AdminHomepage /> },
           { path: "portfolio", element: <AdminPortfolio /> },
         ],
       },

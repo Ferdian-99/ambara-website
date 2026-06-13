@@ -68,11 +68,16 @@ export function AdminHome() {
         <section className="dashboard-panel">
           <p className="section-label">Content Manager</p>
           <h1 className="mt-4 font-serif text-4xl">Kelola konten portfolio publik AMBARA.</h1>
-          <p>Role content manager dapat mengatur showcase portfolio tanpa membuka data proyek operasional.</p>
+          <p>Role content manager dapat mengatur teks homepage dan showcase portfolio tanpa membuka data proyek operasional.</p>
           {canManagePortfolio && (
-            <Link className="btn-primary mt-6 inline-flex" to="/admin/portfolio">
-              Kelola Portfolio
-            </Link>
+            <div className="mt-6 flex flex-wrap gap-3">
+              <Link className="btn-primary inline-flex" to="/admin/homepage">
+                Edit Homepage
+              </Link>
+              <Link className="btn-secondary inline-flex" to="/admin/portfolio">
+                Kelola Portfolio
+              </Link>
+            </div>
           )}
         </section>
       </main>
@@ -110,14 +115,24 @@ export function AdminHome() {
 
           <section className="dashboard-grid">
             {canManagePortfolio && (
-              <article className="dashboard-panel">
-                <p className="section-label">CMS</p>
-                <h2>Kelola Portfolio</h2>
-                <p>Tambah, edit, publish, dan arsipkan showcase publik AMBARA dari dashboard.</p>
-                <Link className="btn-secondary mt-6 inline-flex" to="/admin/portfolio">
-                  Buka Portfolio CMS
-                </Link>
-              </article>
+              <>
+                <article className="dashboard-panel">
+                  <p className="section-label">CMS</p>
+                  <h2>Edit Homepage</h2>
+                  <p>Perbarui teks hero, statistik, tentang, dan layanan unggulan tanpa mengubah desain beranda.</p>
+                  <Link className="btn-secondary mt-6 inline-flex" to="/admin/homepage">
+                    Buka Homepage CMS
+                  </Link>
+                </article>
+                <article className="dashboard-panel">
+                  <p className="section-label">CMS</p>
+                  <h2>Kelola Portfolio</h2>
+                  <p>Tambah, edit, publish, dan arsipkan showcase publik AMBARA dari dashboard.</p>
+                  <Link className="btn-secondary mt-6 inline-flex" to="/admin/portfolio">
+                    Buka Portfolio CMS
+                  </Link>
+                </article>
+              </>
             )}
             <article className="dashboard-panel">
               <h2>Recent Project Updates</h2>

@@ -21,6 +21,7 @@ import {
   whyAmbara,
 } from "../data";
 import { listFeaturedPortfolioItems, type PortfolioItemRow } from "../lib/portfolioData";
+import { defaultHomepageSettings, getHomepageSettings, type HomepageSettings } from "../lib/siteSettingsData";
 
 const staticFeaturedItems: PortfolioItemRow[] = portfolioProjects.map((project, index) => ({
   id: project.slug,
@@ -44,11 +45,21 @@ const staticFeaturedItems: PortfolioItemRow[] = portfolioProjects.map((project, 
 }));
 
 export function Home() {
+  const [homepageContent, setHomepageContent] = useState<HomepageSettings>(defaultHomepageSettings);
   const [cmsFeaturedItems, setCmsFeaturedItems] = useState<PortfolioItemRow[]>([]);
   const [portfolioLoading, setPortfolioLoading] = useState(true);
 
   useEffect(() => {
     let mounted = true;
+    getHomepageSettings()
+      .then((settings) => {
+        if (mounted) setHomepageContent(settings);
+      })
+      .catch((fetchError) => {
+        console.error("Homepage text CMS gagal dimuat:", fetchError);
+        if (mounted) setHomepageContent(defaultHomepageSettings);
+      });
+
     listFeaturedPortfolioItems(4)
       .then((items) => {
         if (mounted) setCmsFeaturedItems(items);
@@ -80,19 +91,22 @@ export function Home() {
       <section className="relative overflow-hidden pt-24">
         <div className="mx-auto grid min-h-[92svh] max-w-7xl gap-10 px-5 pb-14 pt-12 md:grid-cols-[0.86fr_1.14fr] md:px-8 md:pb-20 md:pt-20">
           <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: "easeOut" }} className="flex flex-col justify-center">
-            <p className="mb-5 text-xs font-medium uppercase tracking-[0.32em] text-champagne">Custom Interior / Built-in Furniture / Production & Installation</p>
-            <h1 className="max-w-2xl font-serif text-4xl leading-[1.04] text-charcoal sm:text-5xl lg:text-6xl">Interior custom yang dirancang rapi, diproduksi presisi, dan dipasang terukur.</h1>
+            <p className="mb-5 text-xs font-medium uppercase tracking-[0.32em] text-champagne">{homepageContent.hero.eyebrow}</p>
+            <h1 className="max-w-2xl font-serif text-4xl leading-[1.04] text-charcoal sm:text-5xl lg:text-6xl">{homepageContent.hero.headline}</h1>
             <p className="mt-7 max-w-xl text-base leading-8 text-graphite/72 md:text-lg">
-              AMBARA menangani hunian, kantor, dan cafe melalui desain interior, built-in furniture, produksi workshop, dan instalasi yang jelas dari awal sampai serah terima.
+              {homepageContent.hero.subheadline}
             </p>
             <div className="mt-10 flex flex-col gap-3 sm:flex-row">
-              <Link className="btn-primary" to="/portofolio">Lihat Portofolio</Link>
-              <Link className="btn-secondary" to="/lacak-proyek">Lacak Proyek</Link>
+              <Link className="btn-primary" to="/portofolio">{homepageContent.hero.primaryCtaText}</Link>
+              <Link className="btn-secondary" to="/lacak-proyek">{homepageContent.hero.secondaryCtaText}</Link>
             </div>
             <div className="mt-12 grid max-w-xl grid-cols-3 border-y border-charcoal/10 py-5 text-xs uppercase tracking-[0.18em] text-graphite/60">
-              <span>Residensial</span>
-              <span>Office</span>
-              <span>Built-in</span>
+              {homepageContent.stats.map((stat) => (
+                <span key={`${stat.value}-${stat.label}`} className="pr-3">
+                  <strong className="block font-medium text-charcoal">{stat.value}</strong>
+                  <small className="mt-1 block text-[0.65rem] font-normal text-graphite/55">{stat.label}</small>
+                </span>
+              ))}
             </div>
           </motion.div>
           <motion.div initial={{ opacity: 0, scale: 0.985 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1, ease: "easeOut", delay: 0.12 }} className="hero-visual min-h-[520px] md:min-h-[680px]">
@@ -110,11 +124,11 @@ export function Home() {
       <section className="border-y border-charcoal/10 bg-linen py-20 md:py-28">
         <div className="content-grid">
           <Reveal>
-            <SectionLabel>Tentang Ambara</SectionLabel>
-            <h2 className="section-title">Studio custom interior yang menyatukan desain, produksi, dan pemasangan.</h2>
+            <SectionLabel>{homepageContent.about.eyebrow}</SectionLabel>
+            <h2 className="section-title">{homepageContent.about.headline}</h2>
           </Reveal>
           <Reveal delay={0.08}>
-            <p className="lead-copy">Kami bekerja dari kebutuhan ruang nyata: mendengar, mengukur, menyusun gambar kerja, memproduksi di workshop, lalu memastikan instalasi selesai rapi di lokasi.</p>
+            <p className="lead-copy">{homepageContent.about.body}</p>
             <Link className="text-link mt-8 inline-flex" to="/tentang">Mengenal AMBARA</Link>
           </Reveal>
         </div>
@@ -131,13 +145,13 @@ export function Home() {
           <Link className="text-link" to="/layanan">Lihat semua layanan</Link>
         </div>
         <div className="premium-grid mt-12">
-          {services.slice(0, 3).map((service, index) => (
-            <Reveal key={service.title} delay={index * 0.06}>
+          {homepageContent.services.map((service, index) => (
+            <Reveal key={`${service.title}-${index}`} delay={index * 0.06}>
               <article className="service-panel">
-                <span className="text-sm text-champagne">{service.number}</span>
+                <span className="text-sm text-champagne">{services[index]?.number ?? `0${index + 1}`}</span>
                 <h3 className="mt-10 font-serif text-3xl">{service.title}</h3>
-                <p className="mt-4 leading-7 text-graphite/70">{service.summary}</p>
-                <div className="mt-8 border-t border-charcoal/10 pt-5 text-sm text-graphite/62">{service.suitable}</div>
+                <p className="mt-4 leading-7 text-graphite/70">{service.description}</p>
+                <div className="mt-8 border-t border-charcoal/10 pt-5 text-sm text-graphite/62">{services[index]?.suitable ?? "Layanan custom AMBARA yang dikerjakan terukur."}</div>
               </article>
             </Reveal>
           ))}

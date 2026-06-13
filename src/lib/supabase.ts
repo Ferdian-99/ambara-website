@@ -1,6 +1,8 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import type { UserRole } from "./rbac";
 
+export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
+
 export type ProjectStage =
   | "Konsultasi"
   | "Konsep Desain"
@@ -203,6 +205,21 @@ export type Database = {
           updated_at?: string;
         };
         Update: Partial<Database["public"]["Tables"]["portfolio_items"]["Insert"]>;
+      };
+      site_settings: {
+        Row: {
+          id: string;
+          value: Json;
+          updated_at: string;
+          updated_by: string | null;
+        };
+        Insert: {
+          id: string;
+          value?: Json;
+          updated_at?: string;
+          updated_by?: string | null;
+        };
+        Update: Partial<Database["public"]["Tables"]["site_settings"]["Insert"]>;
       };
     };
     Functions: {

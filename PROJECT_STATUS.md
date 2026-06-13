@@ -37,6 +37,13 @@
 - Progress photo delete reliability fixed: metadata deletes now verify that one row was actually removed before showing success.
 - Admin delete errors now show the actual Supabase/RLS message instead of a generic failure.
 - Hardened delete policy migration added so only authenticated `super_admin` and `project_manager` profiles can delete timeline updates, document/photo metadata, and Storage objects.
+- Phase 2E client/project edit and archive safety added.
+- `clients.archived_at` and `projects.archived_at` soft archive fields added, plus `projects.budget_range` for project edit records.
+- `/admin/clients` now supports active/archive filters, compact client editing, super-admin archive, and restore.
+- `/admin/clients` blocks archiving a client while active projects still belong to that client.
+- `/admin/projects` now defaults to active projects and includes an archive filter.
+- `/admin/projects/:id` now supports project basic-info editing, archiving, and restoring while preserving timeline, documents, and photos.
+- Client dashboard and public `/lacak-proyek` now hide archived projects by default.
 - `/admin/clients` client card layout spacing refined so the portal status panel no longer overlaps email, phone, or address text.
 - Client multi-project visibility remains based on `auth.users.id -> clients.user_id -> clients.id -> projects.client_id`, so one linked client account can see all assigned projects.
 - Final frontend polish pass completed for public brand alignment, spacing, CTA hierarchy, and copy tone.
@@ -102,6 +109,7 @@
 - Supabase Storage migration added for `project-documents` and `project-photos` buckets.
 - Supabase delete policy migration added for project timeline updates, uploaded document metadata, uploaded photo metadata, and Storage object removal.
 - Supabase delete verification added for project timeline updates, uploaded document metadata, and uploaded photo metadata so zero-row/RLS-blocked deletes are reported clearly.
+- Supabase archive migration added for client/project soft archive safety and project budget range.
 - Admin document upload added with category support: Quotation, Desain Final, Invoice, Kontrak, and Lainnya.
 - Admin progress photo upload added with caption support.
 - Admin project detail delete actions added for timeline updates, documents, and progress photos.
@@ -131,6 +139,7 @@
 - Run the Storage bucket/policy migration in Supabase if the production project does not yet have upload-ready buckets.
 - Run `supabase/migrations/20260612020000_add_project_delete_policies.sql` in Supabase before testing delete actions in production.
 - Run `supabase/migrations/20260612030000_fix_project_delete_policies.sql` in Supabase to harden delete policies and resolve zero-row/RLS-blocked delete behavior.
+- Run `supabase/migrations/20260612050000_add_archive_fields.sql` in Supabase before using edit/archive controls.
 - If the Edge Function is not deployed, create/invite Supabase Auth users manually, then link client records through `clients.user_id`.
 - Decide whether production documents should remain public MVP URLs or move to private buckets with signed URLs.
 - Add admin user management and invite flow.
@@ -144,7 +153,7 @@
 - The production JS bundle is above Vite's default 500 kB warning threshold after adding Supabase. This is a warning, not a build failure; route-level code splitting can be added later.
 
 ## Next Task
-- Run `supabase/migrations/20260612030000_fix_project_delete_policies.sql` in Supabase, then test deleting one progress photo from `/admin/projects/:id` and confirm it disappears after refresh.
+- Run `supabase/migrations/20260612050000_add_archive_fields.sql` in Supabase, then test editing and archiving one project and one client.
 
 ## Exact Command To Run Locally
 ```bash
@@ -153,7 +162,7 @@ npm run dev
 ```
 
 ## Build Status
-- Passed with `npm run build` after progress photo delete reliability fix.
+- Passed with `npm run build` after Phase 2E client/project edit and archive safety.
 - Output directory: `dist/`.
 - Non-fatal warnings: React Router and Framer Motion `"use client"` directives, plus Vite chunk-size warning after adding Supabase.
 

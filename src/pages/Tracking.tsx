@@ -52,7 +52,12 @@ export function Tracking() {
     setLookupState("loading");
 
     try {
-      const { data, error } = await supabase.from("projects").select("*").eq("project_code", normalizedCode).maybeSingle();
+      const { data, error } = await supabase
+        .from("projects")
+        .select("*")
+        .eq("project_code", normalizedCode)
+        .is("archived_at", null)
+        .maybeSingle();
 
       if (error) throw error;
 

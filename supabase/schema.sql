@@ -34,6 +34,7 @@ create table if not exists public.clients (
   email text not null,
   phone text,
   address text,
+  archived_at timestamptz,
   created_at timestamptz not null default now()
 );
 
@@ -44,11 +45,13 @@ create table if not exists public.projects (
   project_name text not null,
   project_type text not null,
   location text,
+  budget_range text,
   current_stage public.project_stage not null default 'Konsultasi',
   progress_percentage integer not null default 0 check (progress_percentage >= 0 and progress_percentage <= 100),
   status public.project_status not null default 'active',
   estimated_completion date,
   notes text,
+  archived_at timestamptz,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
@@ -113,6 +116,29 @@ create or replace function public.can_create_sales_records()
 returns boolean language sql security definer stable set search_path = public as $$
   select public.current_user_role() in ('super_admin', 'sales');
 $$;
+
+create or replace function public.prevent_non_super_admin_client_archive_change()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if old.archived_at is distinct from new.archived_at
+    and public.current_user_role() <> 'super_admin'
+  then
+    raise exception 'Only super_admin can archive or restore clients.';
+  end if;
+
+  return new;
+end;
+$$;
+
+drop trigger if exists clients_archive_guard on public.clients;
+create trigger clients_archive_guard
+before update on public.clients
+for each row
+execute function public.prevent_non_super_admin_client_archive_change();
 
 alter table public.profiles enable row level security;
 alter table public.clients enable row level security;

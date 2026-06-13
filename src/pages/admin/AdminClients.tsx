@@ -1,8 +1,12 @@
 import { FormEvent, useEffect, useState } from "react";
 import {
+  archiveClient,
   createClientRecord,
   fetchClients,
   inviteClientToPortal,
+  restoreClient,
+  updateClient,
+  type ArchiveFilter,
   type ClientRow,
 } from "../../lib/projectData";
 import { hasPermission } from "../../lib/rbac";
@@ -20,14 +24,20 @@ export function AdminClients() {
   const { role } = useDashboardContext();
   const [clients, setClients] = useState<ClientRow[]>([]);
   const [form, setForm] = useState(initialForm);
+  const [editForm, setEditForm] = useState({ name: "", email: "", phone: "", address: "" });
+  const [filter, setFilter] = useState<ArchiveFilter>("active");
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [savingEdit, setSavingEdit] = useState(false);
+  const [archivingId, setArchivingId] = useState<string | null>(null);
   const [invitingId, setInvitingId] = useState<string | null>(null);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
   const canView = hasPermission(role, "clients:view");
   const canCreate = hasPermission(role, "clients:create");
+  const canArchive = role === "super_admin";
 
   const loadClients = async () => {
     if (!canView) {
@@ -38,7 +48,7 @@ export function AdminClients() {
     setLoading(true);
     setError("");
     try {
-      const clientRows = await fetchClients();
+      const clientRows = await fetchClients(filter);
       setClients(clientRows);
     } catch {
       setError("Data client belum dapat dimuat. Periksa koneksi atau konfigurasi RLS.");
@@ -50,10 +60,28 @@ export function AdminClients() {
   useEffect(() => {
     void loadClients();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [canView]);
+  }, [canView, filter]);
 
   const updateField = (field: keyof typeof form, value: string) => {
     setForm((current) => ({ ...current, [field]: value }));
+    setError("");
+    setSuccess("");
+  };
+
+  const startEdit = (client: ClientRow) => {
+    setEditingId(client.id);
+    setEditForm({
+      name: client.name,
+      email: client.email,
+      phone: client.phone ?? "",
+      address: client.address ?? "",
+    });
+    setError("");
+    setSuccess("");
+  };
+
+  const updateEditField = (field: keyof typeof editForm, value: string) => {
+    setEditForm((current) => ({ ...current, [field]: value }));
     setError("");
     setSuccess("");
   };
@@ -87,6 +115,36 @@ export function AdminClients() {
     }
   };
 
+  const handleEditClient = async (event: FormEvent) => {
+    event.preventDefault();
+    if (!editingId) return;
+
+    setError("");
+    setSuccess("");
+
+    if (!editForm.name.trim() || !editForm.email.trim()) {
+      setError("Nama dan email client wajib diisi.");
+      return;
+    }
+
+    setSavingEdit(true);
+    try {
+      await updateClient(editingId, {
+        name: editForm.name.trim(),
+        email: editForm.email.trim(),
+        phone: editForm.phone.trim() || null,
+        address: editForm.address.trim() || null,
+      });
+      setEditingId(null);
+      setSuccess("Data client berhasil diperbarui.");
+      await loadClients();
+    } catch (editError) {
+      setError(editError instanceof Error ? editError.message : "Data client belum dapat diperbarui.");
+    } finally {
+      setSavingEdit(false);
+    }
+  };
+
   const handleInviteClient = async (client: ClientRow) => {
     setError("");
     setSuccess("");
@@ -105,6 +163,40 @@ export function AdminClients() {
       setError(inviteError instanceof Error ? inviteError.message : "Undangan portal belum dapat dikirim.");
     } finally {
       setInvitingId(null);
+    }
+  };
+
+  const handleArchiveClient = async (client: ClientRow) => {
+    if (!window.confirm("Arsipkan client ini? Data proyek dan akun portal tidak akan dihapus.")) return;
+
+    setArchivingId(client.id);
+    setError("");
+    setSuccess("");
+    try {
+      await archiveClient(client.id);
+      setSuccess("Client berhasil diarsipkan.");
+      await loadClients();
+    } catch (archiveError) {
+      setError(archiveError instanceof Error ? archiveError.message : "Client belum dapat diarsipkan.");
+    } finally {
+      setArchivingId(null);
+    }
+  };
+
+  const handleRestoreClient = async (client: ClientRow) => {
+    if (!window.confirm("Pulihkan client ini ke daftar aktif?")) return;
+
+    setArchivingId(client.id);
+    setError("");
+    setSuccess("");
+    try {
+      await restoreClient(client.id);
+      setSuccess("Client berhasil dipulihkan.");
+      await loadClients();
+    } catch (restoreError) {
+      setError(restoreError instanceof Error ? restoreError.message : "Client belum dapat dipulihkan.");
+    } finally {
+      setArchivingId(null);
     }
   };
 
@@ -166,14 +258,20 @@ export function AdminClients() {
 
       <section className="dashboard-grid">
         <article className="dashboard-panel">
-          <h2>Daftar Client</h2>
+          <div className="dashboard-panel-heading">
+            <h2>Daftar Client</h2>
+            <div className="dashboard-filter-toggle">
+              <button type="button" className={filter === "active" ? "is-active" : ""} onClick={() => setFilter("active")}>Aktif</button>
+              <button type="button" className={filter === "archived" ? "is-active" : ""} onClick={() => setFilter("archived")}>Arsip</button>
+            </div>
+          </div>
           {loading && <p className="dashboard-muted">Memuat client...</p>}
           {error && <p className="dashboard-alert">{error}</p>}
           {success && <p className="dashboard-success">{success}</p>}
           {!loading && !error && clients.length === 0 && (
             <div className="dashboard-empty">
-              <span>Belum ada client</span>
-              <p>Client record akan tampil setelah dibuat oleh tim sales atau super admin.</p>
+              <span>{filter === "archived" ? "Arsip kosong" : "Belum ada client"}</span>
+              <p>{filter === "archived" ? "Client yang diarsipkan akan tampil di sini." : "Client record akan tampil setelah dibuat oleh tim sales atau super admin."}</p>
             </div>
           )}
           {!loading && clients.map((client) => (
@@ -185,6 +283,7 @@ export function AdminClients() {
                     <div className="dashboard-client-profile">
                       <span>Client</span>
                       <h3>{client.name}</h3>
+                      {client.archived_at && <span className="dashboard-status-pill mt-3">DIARSIPKAN</span>}
                       <div className="dashboard-client-meta">
                         <p>{client.email || "Email belum diisi"}</p>
                         <p>{client.phone ?? "Nomor telepon belum diisi"}</p>
@@ -204,7 +303,62 @@ export function AdminClients() {
                           {invitingId === client.id ? "Mengirim undangan..." : "Kirim Undangan Portal"}
                         </button>
                       )}
+                      <div className="dashboard-action-row">
+                        {canCreate && (
+                          <button type="button" className="dashboard-ghost-button" onClick={() => startEdit(client)}>
+                            Edit
+                          </button>
+                        )}
+                        {canArchive && !client.archived_at && (
+                          <button
+                            type="button"
+                            className="dashboard-delete-button"
+                            onClick={() => void handleArchiveClient(client)}
+                            disabled={archivingId === client.id}
+                          >
+                            {archivingId === client.id ? "Mengarsipkan..." : "Arsipkan"}
+                          </button>
+                        )}
+                        {canArchive && client.archived_at && (
+                          <button
+                            type="button"
+                            className="dashboard-ghost-button"
+                            onClick={() => void handleRestoreClient(client)}
+                            disabled={archivingId === client.id}
+                          >
+                            {archivingId === client.id ? "Memulihkan..." : "Pulihkan"}
+                          </button>
+                        )}
+                      </div>
                     </div>
+                    {editingId === client.id && (
+                      <form className="dashboard-link-form dashboard-client-edit" onSubmit={handleEditClient}>
+                        <div className="form-grid">
+                          <label>
+                            Nama
+                            <input value={editForm.name} onChange={(event) => updateEditField("name", event.target.value)} />
+                          </label>
+                          <label>
+                            Email
+                            <input type="email" value={editForm.email} onChange={(event) => updateEditField("email", event.target.value)} />
+                          </label>
+                        </div>
+                        <div className="form-grid">
+                          <label>
+                            Phone
+                            <input value={editForm.phone} onChange={(event) => updateEditField("phone", event.target.value)} />
+                          </label>
+                          <label>
+                            Address
+                            <input value={editForm.address} onChange={(event) => updateEditField("address", event.target.value)} />
+                          </label>
+                        </div>
+                        <div className="dashboard-action-row">
+                          <button type="submit" disabled={savingEdit}>{savingEdit ? "Menyimpan..." : "Simpan Perubahan"}</button>
+                          <button type="button" onClick={() => setEditingId(null)}>Batal</button>
+                        </div>
+                      </form>
+                    )}
                   </div>
                 );
               })()}

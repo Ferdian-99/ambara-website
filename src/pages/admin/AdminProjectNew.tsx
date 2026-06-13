@@ -19,6 +19,7 @@ const initialForm = {
   project_name: "",
   project_type: "",
   location: "",
+  budget_range: "",
   current_stage: "Konsultasi" as ProjectStage,
   progress_percentage: "0",
   status: "active" as ProjectStatus,
@@ -85,6 +86,7 @@ export function AdminProjectNew() {
         project_name: form.project_name.trim(),
         project_type: form.project_type.trim(),
         location: form.location.trim() || null,
+        budget_range: form.budget_range.trim() || null,
         current_stage: form.current_stage,
         progress_percentage: normalizeProgress(Number(form.progress_percentage)),
         status: form.status,
@@ -169,6 +171,10 @@ export function AdminProjectNew() {
                   <input value={form.location} onChange={(event) => updateField("location", event.target.value)} placeholder="Jakarta Selatan" />
                 </label>
               </div>
+              <label>
+                Budget range
+                <input value={form.budget_range} onChange={(event) => updateField("budget_range", event.target.value)} placeholder="IDR 25-50 juta" />
+              </label>
               <div className="form-grid three">
                 <label>
                   Current stage

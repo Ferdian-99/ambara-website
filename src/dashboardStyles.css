@@ -176,6 +176,26 @@
     @apply font-serif text-3xl;
   }
 
+  .dashboard-panel-heading {
+    @apply mb-6 flex flex-col justify-between gap-4 sm:flex-row sm:items-center;
+  }
+
+  .dashboard-filter-toggle {
+    @apply inline-flex border border-charcoal/10 bg-ivory p-1;
+  }
+
+  .dashboard-filter-toggle button {
+    @apply px-4 py-2 text-xs uppercase tracking-[0.18em] text-graphite/60 transition hover:text-champagne;
+  }
+
+  .dashboard-filter-toggle button.is-active {
+    @apply bg-charcoal text-linen;
+  }
+
+  .dashboard-action-row {
+    @apply flex flex-wrap items-center gap-2;
+  }
+
   .dashboard-row {
     @apply border-t border-charcoal/10 py-5;
   }
@@ -214,6 +234,10 @@
 
   .dashboard-client-meta p {
     @apply mt-0 break-words;
+  }
+
+  .dashboard-client-edit {
+    @apply md:col-span-2;
   }
 
   .dashboard-portal-panel {

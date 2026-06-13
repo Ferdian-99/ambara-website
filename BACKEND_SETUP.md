@@ -124,6 +124,41 @@ supabase/migrations/20260612000000_add_client_portal_activation.sql
 
 The migration also creates `public.mark_own_client_portal_active()`, a narrow authenticated RPC used by the frontend after `/update-password` succeeds and as a fallback when a client dashboard loads. It only updates client rows where `clients.user_id = auth.uid()`.
 
+## Archive Safety Migration
+
+Phase 2E adds soft archive fields so clients and projects can be removed from active views without permanent data loss.
+
+Run this migration after the previous dashboard/storage migrations:
+
+```text
+supabase/migrations/20260612050000_add_archive_fields.sql
+```
+
+It adds:
+
+- `clients.archived_at`
+- `projects.archived_at`
+- `projects.budget_range`
+
+Archive behavior:
+
+- Active admin lists show records where `archived_at is null`.
+- Archive tabs show records where `archived_at is not null`.
+- Client portal project lists only show active projects.
+- Public `/lacak-proyek` only searches active projects.
+- Archiving never deletes Supabase Auth users, profiles, project updates, documents, photos, or project history.
+
+Client archive safety:
+
+- Only `super_admin` can archive or restore clients.
+- The app blocks client archive if the client still has active projects.
+- A database trigger also blocks non-`super_admin` changes to `clients.archived_at`.
+
+Project archive safety:
+
+- `super_admin` and `project_manager` can archive or restore projects.
+- Archived projects remain available in the admin archive filter for review or restore.
+
 ## Project Storage Setup
 
 Phase 2C adds Supabase Storage upload for project documents and progress photos.
@@ -345,6 +380,15 @@ The default Supabase invitation email can be customized there. Keep the invitati
 - `super_admin` and `project_manager` can delete progress photo metadata and attempt Storage object cleanup from `project-photos`.
 - Delete policy migration added for timeline updates, document/photo metadata, and Storage objects.
 
+## Completed In Phase 2E
+
+- Archive fields added for clients and projects.
+- Admin clients can be edited by permitted roles without exposing manual UID linking.
+- Super admin can archive/restore clients, with active-project protection.
+- Admin projects can be edited, archived, and restored by manager roles.
+- Admin client/project lists now default to active records and include archive filters.
+- Client portal and public tracking hide archived projects.
+
 ## Role Notes For Phase 2B
 
 - `super_admin`: can view and manage projects, clients, and updates.
@@ -358,6 +402,7 @@ The default Supabase invitation email can be customized there. Keep the invitati
 - Run the Storage bucket/policy migration in Supabase if not already applied.
 - Run the project delete policy migration in Supabase before testing delete actions in production.
 - Run `supabase/migrations/20260612030000_fix_project_delete_policies.sql` if delete actions appear successful but records still return after refresh.
+- Run `supabase/migrations/20260612050000_add_archive_fields.sql` before using client/project edit and archive controls.
 - Review whether production documents should move from public bucket URLs to private buckets with signed URLs.
 - Add complete admin user management.
 - Add stronger production RLS review and security test pass.

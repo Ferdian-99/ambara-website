@@ -3,11 +3,14 @@ import { Link, useParams } from "react-router-dom";
 import { trackingStages } from "../../data";
 import {
   addProjectUpdate,
+  archiveProject,
   deleteProjectDocument,
   deleteProjectPhoto,
   deleteProjectUpdate,
   fetchProjectBundle,
   normalizeProgress,
+  restoreProject,
+  updateProject,
   uploadProjectDocument,
   uploadProjectPhoto,
   type DocumentCategory,
@@ -17,7 +20,7 @@ import {
   type ProjectUpdateRow,
 } from "../../lib/projectData";
 import { hasPermission } from "../../lib/rbac";
-import type { ProjectStage } from "../../lib/supabase";
+import type { ProjectStage, ProjectStatus } from "../../lib/supabase";
 import { useDashboardContext } from "./AdminLayout";
 
 const documentCategories: DocumentCategory[] = ["Quotation", "Desain Final", "Invoice", "Kontrak", "Lainnya"];
@@ -25,6 +28,7 @@ const documentExtensions = [".pdf", ".doc", ".docx", ".jpg", ".jpeg", ".png"];
 const photoExtensions = [".jpg", ".jpeg", ".png", ".webp"];
 const maxDocumentSize = 10 * 1024 * 1024;
 const maxPhotoSize = 8 * 1024 * 1024;
+const projectStatuses: ProjectStatus[] = ["draft", "active", "on_hold", "completed", "cancelled"];
 
 function formatDate(value: string | null) {
   if (!value) return "Belum ditentukan";
@@ -69,6 +73,21 @@ export function AdminProjectDetail() {
   const [deleteError, setDeleteError] = useState("");
   const [deleteSuccess, setDeleteSuccess] = useState("");
   const [copySuccess, setCopySuccess] = useState("");
+  const [editingProject, setEditingProject] = useState(false);
+  const [savingProject, setSavingProject] = useState(false);
+  const [archivingProject, setArchivingProject] = useState(false);
+  const [projectEditForm, setProjectEditForm] = useState({
+    project_code: "",
+    project_name: "",
+    project_type: "",
+    location: "",
+    budget_range: "",
+    current_stage: "Konsultasi" as ProjectStage,
+    progress_percentage: "0",
+    status: "active" as ProjectStatus,
+    estimated_completion: "",
+    notes: "",
+  });
 
   const canView = hasPermission(role, "projects:view_all");
   const canManage = hasPermission(role, "projects:manage");
@@ -84,6 +103,18 @@ export function AdminProjectDetail() {
       if (data) {
         setStage(data.project.current_stage);
         setProgress(String(data.project.progress_percentage));
+        setProjectEditForm({
+          project_code: data.project.project_code,
+          project_name: data.project.project_name,
+          project_type: data.project.project_type,
+          location: data.project.location ?? "",
+          budget_range: data.project.budget_range ?? "",
+          current_stage: data.project.current_stage,
+          progress_percentage: String(data.project.progress_percentage),
+          status: data.project.status,
+          estimated_completion: data.project.estimated_completion ?? "",
+          notes: data.project.notes ?? "",
+        });
       }
     } catch {
       setError("Detail proyek belum dapat dimuat.");
@@ -132,6 +163,82 @@ export function AdminProjectDetail() {
       setError("Progress belum dapat disimpan. Pastikan role memiliki akses update proyek.");
     } finally {
       setSaving(false);
+    }
+  };
+
+  const updateProjectEditField = (field: keyof typeof projectEditForm, value: string) => {
+    setProjectEditForm((current) => ({ ...current, [field]: value }));
+    setError("");
+    setSuccess("");
+  };
+
+  const handleProjectEdit = async (event: FormEvent) => {
+    event.preventDefault();
+    if (!bundle) return;
+
+    setError("");
+    setSuccess("");
+
+    if (!projectEditForm.project_code.trim() || !projectEditForm.project_name.trim() || !projectEditForm.project_type.trim()) {
+      setError("Kode proyek, nama proyek, dan tipe proyek wajib diisi.");
+      return;
+    }
+
+    setSavingProject(true);
+    try {
+      await updateProject(bundle.project.id, {
+        project_code: projectEditForm.project_code,
+        project_name: projectEditForm.project_name.trim(),
+        project_type: projectEditForm.project_type.trim(),
+        location: projectEditForm.location.trim() || null,
+        budget_range: projectEditForm.budget_range.trim() || null,
+        current_stage: projectEditForm.current_stage,
+        progress_percentage: normalizeProgress(Number(projectEditForm.progress_percentage)),
+        status: projectEditForm.status,
+        estimated_completion: projectEditForm.estimated_completion || null,
+        notes: projectEditForm.notes.trim() || null,
+      });
+      setEditingProject(false);
+      setSuccess("Project berhasil diperbarui.");
+      await loadProject();
+    } catch (editError) {
+      setError(getErrorMessage(editError));
+    } finally {
+      setSavingProject(false);
+    }
+  };
+
+  const handleArchiveProject = async () => {
+    if (!bundle || !window.confirm("Arsipkan proyek ini? Timeline, dokumen, dan foto tetap tersimpan.")) return;
+
+    setArchivingProject(true);
+    setError("");
+    setSuccess("");
+    try {
+      await archiveProject(bundle.project.id);
+      setSuccess("Project berhasil diarsipkan.");
+      await loadProject();
+    } catch (archiveError) {
+      setError(getErrorMessage(archiveError));
+    } finally {
+      setArchivingProject(false);
+    }
+  };
+
+  const handleRestoreProject = async () => {
+    if (!bundle || !window.confirm("Pulihkan proyek ini ke daftar aktif?")) return;
+
+    setArchivingProject(true);
+    setError("");
+    setSuccess("");
+    try {
+      await restoreProject(bundle.project.id);
+      setSuccess("Project berhasil dipulihkan.");
+      await loadProject();
+    } catch (restoreError) {
+      setError(getErrorMessage(restoreError));
+    } finally {
+      setArchivingProject(false);
     }
   };
 
@@ -348,6 +455,7 @@ export function AdminProjectDetail() {
         </div>
         <div className="project-heading-actions">
           <span className="status-badge">{project.status}</span>
+          {project.archived_at && <span className="dashboard-status-pill">DIARSIPKAN</span>}
           <span className="dashboard-status-pill">{project.current_stage}</span>
           <button className="dashboard-ghost-button" type="button" onClick={handleCopyProjectCode}>
             Salin kode
@@ -361,6 +469,7 @@ export function AdminProjectDetail() {
           <div><span>Lokasi</span><strong>{project.location ?? "Belum diisi"}</strong></div>
           <div><span>Client</span><strong>{project.clients?.name ?? "Belum terhubung"}</strong></div>
           <div><span>Estimasi</span><strong>{formatDate(project.estimated_completion)}</strong></div>
+          <div><span>Budget</span><strong>{project.budget_range ?? "Belum diisi"}</strong></div>
         </div>
         <div className="mt-8">
           <div className="mb-3 flex justify-between text-sm">
@@ -383,6 +492,81 @@ export function AdminProjectDetail() {
             {deleteError && <p className="dashboard-alert">{deleteError}</p>}
             {deleteSuccess && <p className="dashboard-success">{deleteSuccess}</p>}
           </div>
+        )}
+        {canManage && (
+          <div className="dashboard-action-row mt-6">
+            <button className="dashboard-ghost-button" type="button" onClick={() => setEditingProject((current) => !current)}>
+              {editingProject ? "Tutup Edit" : "Edit Project"}
+            </button>
+            {project.archived_at ? (
+              <button className="dashboard-ghost-button" type="button" disabled={archivingProject} onClick={() => void handleRestoreProject()}>
+                {archivingProject ? "Memulihkan..." : "Pulihkan Project"}
+              </button>
+            ) : (
+              <button className="dashboard-delete-button" type="button" disabled={archivingProject} onClick={() => void handleArchiveProject()}>
+                {archivingProject ? "Mengarsipkan..." : "Arsipkan Proyek"}
+              </button>
+            )}
+          </div>
+        )}
+        {canManage && editingProject && (
+          <form className="dashboard-form compact" onSubmit={handleProjectEdit}>
+            <div className="form-grid">
+              <label>
+                Project code
+                <input value={projectEditForm.project_code} onChange={(event) => updateProjectEditField("project_code", event.target.value)} />
+              </label>
+              <label>
+                Project name
+                <input value={projectEditForm.project_name} onChange={(event) => updateProjectEditField("project_name", event.target.value)} />
+              </label>
+            </div>
+            <div className="form-grid">
+              <label>
+                Project type
+                <input value={projectEditForm.project_type} onChange={(event) => updateProjectEditField("project_type", event.target.value)} />
+              </label>
+              <label>
+                Location
+                <input value={projectEditForm.location} onChange={(event) => updateProjectEditField("location", event.target.value)} />
+              </label>
+            </div>
+            <label>
+              Budget range
+              <input value={projectEditForm.budget_range} onChange={(event) => updateProjectEditField("budget_range", event.target.value)} placeholder="IDR 25-50 juta" />
+            </label>
+            <div className="form-grid three">
+              <label>
+                Current stage
+                <select value={projectEditForm.current_stage} onChange={(event) => updateProjectEditField("current_stage", event.target.value as ProjectStage)}>
+                  {trackingStages.map((item) => (
+                    <option key={item}>{item}</option>
+                  ))}
+                </select>
+              </label>
+              <label>
+                Progress
+                <input type="number" value={projectEditForm.progress_percentage} min={0} max={100} onChange={(event) => updateProjectEditField("progress_percentage", event.target.value)} />
+              </label>
+              <label>
+                Status
+                <select value={projectEditForm.status} onChange={(event) => updateProjectEditField("status", event.target.value as ProjectStatus)}>
+                  {projectStatuses.map((item) => (
+                    <option key={item}>{item}</option>
+                  ))}
+                </select>
+              </label>
+            </div>
+            <label>
+              Estimated completion
+              <input type="date" value={projectEditForm.estimated_completion} onChange={(event) => updateProjectEditField("estimated_completion", event.target.value)} />
+            </label>
+            <label>
+              Notes
+              <textarea value={projectEditForm.notes} onChange={(event) => updateProjectEditField("notes", event.target.value)} />
+            </label>
+            <button type="submit" disabled={savingProject}>{savingProject ? "Menyimpan..." : "Simpan Project"}</button>
+          </form>
         )}
       </section>
 

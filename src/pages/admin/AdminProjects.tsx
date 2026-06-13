@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { fetchAdminProjects, type ProjectWithClient } from "../../lib/projectData";
+import { fetchAdminProjects, type ArchiveFilter, type ProjectWithClient } from "../../lib/projectData";
 import { hasPermission } from "../../lib/rbac";
 import { useDashboardContext } from "./AdminLayout";
 
 export function AdminProjects() {
   const { role } = useDashboardContext();
   const [projects, setProjects] = useState<ProjectWithClient[]>([]);
+  const [filter, setFilter] = useState<ArchiveFilter>("active");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -20,7 +21,9 @@ export function AdminProjects() {
     }
 
     let mounted = true;
-    fetchAdminProjects()
+    setLoading(true);
+    setError("");
+    fetchAdminProjects(filter)
       .then((rows) => {
         if (mounted) setProjects(rows);
       })
@@ -34,7 +37,7 @@ export function AdminProjects() {
     return () => {
       mounted = false;
     };
-  }, [canView]);
+  }, [canView, filter]);
 
   if (!canView) {
     return (
@@ -59,12 +62,19 @@ export function AdminProjects() {
       </div>
 
       <section className="dashboard-panel">
+        <div className="dashboard-panel-heading">
+          <h2>{filter === "archived" ? "Arsip Proyek" : "Proyek Aktif"}</h2>
+          <div className="dashboard-filter-toggle">
+            <button type="button" className={filter === "active" ? "is-active" : ""} onClick={() => setFilter("active")}>Aktif</button>
+            <button type="button" className={filter === "archived" ? "is-active" : ""} onClick={() => setFilter("archived")}>Arsip</button>
+          </div>
+        </div>
         {loading && <p className="dashboard-muted">Memuat proyek AMBARA...</p>}
         {error && <p className="dashboard-alert">{error}</p>}
         {!loading && !error && projects.length === 0 && (
           <div className="dashboard-empty">
-            <span>Belum ada proyek</span>
-            <p>Project record akan tampil di sini setelah dibuat oleh tim AMBARA.</p>
+            <span>{filter === "archived" ? "Arsip kosong" : "Belum ada proyek"}</span>
+            <p>{filter === "archived" ? "Proyek yang diarsipkan akan tampil di sini." : "Project record akan tampil di sini setelah dibuat oleh tim AMBARA."}</p>
           </div>
         )}
         {!loading && !error && projects.length > 0 && (
@@ -80,7 +90,7 @@ export function AdminProjects() {
             {projects.map((project) => (
               <Link key={project.id} to={`/admin/projects/${project.id}`} className="dashboard-table-row project-table">
                 <span>{project.project_code}</span>
-                <strong>{project.project_name}</strong>
+                <strong>{project.project_name}{project.archived_at ? " / DIARSIPKAN" : ""}</strong>
                 <span>{project.clients?.name ?? "Client belum terhubung"}</span>
                 <span>{project.current_stage}</span>
                 <span>{project.progress_percentage}%</span>

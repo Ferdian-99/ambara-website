@@ -45,6 +45,7 @@ export type Database = {
           phone: string | null;
           address: string | null;
           portal_activated_at: string | null;
+          archived_at: string | null;
           created_at: string;
         };
         Insert: {
@@ -55,6 +56,7 @@ export type Database = {
           phone?: string | null;
           address?: string | null;
           portal_activated_at?: string | null;
+          archived_at?: string | null;
           created_at?: string;
         };
         Update: Partial<Database["public"]["Tables"]["clients"]["Insert"]>;
@@ -67,11 +69,13 @@ export type Database = {
           project_name: string;
           project_type: string;
           location: string | null;
+          budget_range: string | null;
           current_stage: ProjectStage;
           progress_percentage: number;
           status: ProjectStatus;
           estimated_completion: string | null;
           notes: string | null;
+          archived_at: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -82,11 +86,13 @@ export type Database = {
           project_name: string;
           project_type: string;
           location?: string | null;
+          budget_range?: string | null;
           current_stage?: ProjectStage;
           progress_percentage?: number;
           status?: ProjectStatus;
           estimated_completion?: string | null;
           notes?: string | null;
+          archived_at?: string | null;
           created_at?: string;
           updated_at?: string;
         };

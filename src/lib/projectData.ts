@@ -28,12 +28,33 @@ export type CreateClientInput = {
   address: string | null;
 };
 
+export type UpdateClientInput = {
+  name: string;
+  email: string;
+  phone: string | null;
+  address: string | null;
+};
+
 export type CreateProjectInput = {
   client_id: string;
   project_code: string;
   project_name: string;
   project_type: string;
   location: string | null;
+  budget_range?: string | null;
+  current_stage: ProjectStage;
+  progress_percentage: number;
+  status: ProjectStatus;
+  estimated_completion: string | null;
+  notes: string | null;
+};
+
+export type UpdateProjectInput = {
+  project_code: string;
+  project_name: string;
+  project_type: string;
+  location: string | null;
+  budget_range: string | null;
   current_stage: ProjectStage;
   progress_percentage: number;
   status: ProjectStatus;
@@ -79,6 +100,8 @@ export type DeleteStorageBackedRecordResult = {
   storageWarning?: string;
 };
 
+export type ArchiveFilter = "active" | "archived";
+
 const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 type SupabaseQueryClient = {
   from: (table: string) => any;
@@ -90,6 +113,11 @@ function describeSupabaseError(error: { message?: string; details?: string; hint
 }
 
 function toDeleteError(label: string, error: { message?: string; details?: string; hint?: string } | null | undefined) {
+  const message = describeSupabaseError(error);
+  return new Error(message ? `${label}: ${message}` : label);
+}
+
+function toMutationError(label: string, error: { message?: string; details?: string; hint?: string } | null | undefined) {
   const message = describeSupabaseError(error);
   return new Error(message ? `${label}: ${message}` : label);
 }
@@ -135,12 +163,16 @@ export function normalizeProgress(value: number) {
   return Math.min(100, Math.max(0, Math.round(value)));
 }
 
-export async function fetchAdminProjects() {
+export async function fetchAdminProjects(filter: ArchiveFilter = "active") {
   const client = requireSupabase();
-  const { data, error } = await client
+  const query = client
     .from("projects")
     .select("*, clients(*)")
     .order("created_at", { ascending: false });
+
+  const { data, error } = filter === "archived"
+    ? await query.not("archived_at", "is", null)
+    : await query.is("archived_at", null);
 
   if (error) throw error;
   return (data ?? []) as ProjectWithClient[];
@@ -150,9 +182,9 @@ export async function fetchAdminOverview() {
   const client = requireSupabase();
   const [{ data: projects, error: projectsError }, { data: updates, error: updatesError }, { data: clients, error: clientsError }] =
     await Promise.all([
-      client.from("projects").select("*, clients(*)").order("created_at", { ascending: false }).limit(6),
+      client.from("projects").select("*, clients(*)").is("archived_at", null).order("created_at", { ascending: false }).limit(6),
       client.from("project_updates").select("*").order("created_at", { ascending: false }).limit(5),
-      client.from("clients").select("*").order("created_at", { ascending: false }).limit(5),
+      client.from("clients").select("*").is("archived_at", null).order("created_at", { ascending: false }).limit(5),
     ]);
 
   if (projectsError) throw projectsError;
@@ -166,9 +198,12 @@ export async function fetchAdminOverview() {
   };
 }
 
-export async function fetchClients() {
+export async function fetchClients(filter: ArchiveFilter = "active") {
   const client = requireSupabase();
-  const { data, error } = await client.from("clients").select("*").order("created_at", { ascending: false });
+  const query = client.from("clients").select("*").order("created_at", { ascending: false });
+  const { data, error } = filter === "archived"
+    ? await query.not("archived_at", "is", null)
+    : await query.is("archived_at", null);
   if (error) throw error;
   return (data ?? []) as ClientRow[];
 }
@@ -185,6 +220,56 @@ export async function createClientRecord(input: CreateClientInput) {
   const { data, error } = await client.from("clients").insert(input).select("*").single();
   if (error) throw error;
   return data;
+}
+
+export async function updateClient(clientId: string, input: UpdateClientInput) {
+  const client = requireSupabase();
+  const { data, error } = await client
+    .from("clients")
+    .update(input)
+    .eq("id", clientId)
+    .select("*")
+    .single();
+
+  if (error) throw toMutationError("Client belum dapat diperbarui", error);
+  return data as ClientRow;
+}
+
+export async function archiveClient(clientId: string) {
+  const client = requireSupabase();
+  const { count, error: projectsError } = await client
+    .from("projects")
+    .select("id", { count: "exact", head: true })
+    .eq("client_id", clientId)
+    .is("archived_at", null);
+
+  if (projectsError) throw toMutationError("Status proyek client belum dapat diperiksa", projectsError);
+  if ((count ?? 0) > 0) {
+    throw new Error("Client ini masih memiliki proyek aktif. Arsipkan proyek terlebih dahulu sebelum mengarsipkan client.");
+  }
+
+  const { data, error } = await client
+    .from("clients")
+    .update({ archived_at: new Date().toISOString() })
+    .eq("id", clientId)
+    .select("*")
+    .single();
+
+  if (error) throw toMutationError("Client belum dapat diarsipkan", error);
+  return data as ClientRow;
+}
+
+export async function restoreClient(clientId: string) {
+  const client = requireSupabase();
+  const { data, error } = await client
+    .from("clients")
+    .update({ archived_at: null })
+    .eq("id", clientId)
+    .select("*")
+    .single();
+
+  if (error) throw toMutationError("Client belum dapat dipulihkan", error);
+  return data as ClientRow;
 }
 
 export async function updateClientPortalUser(clientId: string, userId: string | null) {
@@ -223,8 +308,60 @@ export async function markClientPortalActivated() {
 
 export async function createProjectRecord(input: CreateProjectInput) {
   const client = requireSupabase();
-  const { data, error } = await client.from("projects").insert(input).select("*, clients(*)").single();
+  const { data, error } = await client.from("projects").insert({
+    ...input,
+    project_code: input.project_code.trim().toUpperCase(),
+  }).select("*, clients(*)").single();
   if (error) throw error;
+  return data as ProjectWithClient;
+}
+
+export async function updateProject(projectId: string, input: UpdateProjectInput) {
+  const client = requireSupabase();
+  const normalizedCode = input.project_code.trim().toUpperCase();
+
+  if (!normalizedCode) {
+    throw new Error("Project code wajib diisi.");
+  }
+
+  const { data, error } = await client
+    .from("projects")
+    .update({
+      ...input,
+      project_code: normalizedCode,
+      progress_percentage: normalizeProgress(input.progress_percentage),
+    })
+    .eq("id", projectId)
+    .select("*, clients(*)")
+    .single();
+
+  if (error) throw toMutationError("Project belum dapat diperbarui", error);
+  return data as ProjectWithClient;
+}
+
+export async function archiveProject(projectId: string) {
+  const client = requireSupabase();
+  const { data, error } = await client
+    .from("projects")
+    .update({ archived_at: new Date().toISOString() })
+    .eq("id", projectId)
+    .select("*, clients(*)")
+    .single();
+
+  if (error) throw toMutationError("Project belum dapat diarsipkan", error);
+  return data as ProjectWithClient;
+}
+
+export async function restoreProject(projectId: string) {
+  const client = requireSupabase();
+  const { data, error } = await client
+    .from("projects")
+    .update({ archived_at: null })
+    .eq("id", projectId)
+    .select("*, clients(*)")
+    .single();
+
+  if (error) throw toMutationError("Project belum dapat dipulihkan", error);
   return data as ProjectWithClient;
 }
 
@@ -413,6 +550,7 @@ export async function fetchProjectsForClientUser(userId: string) {
     .from("projects")
     .select("*, clients(*)")
     .in("client_id", clientIds)
+    .is("archived_at", null)
     .order("created_at", { ascending: false });
 
   if (error) throw error;
@@ -433,7 +571,7 @@ export async function fetchClientProjectBundle(identifier: string, userId: strin
   if (!clientIds.length) return null;
 
   const bundle = await fetchProjectBundle(identifier);
-  if (!bundle || !clientIds.includes(bundle.project.client_id)) return null;
+  if (!bundle || bundle.project.archived_at || !clientIds.includes(bundle.project.client_id)) return null;
 
   return bundle;
 }

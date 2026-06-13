@@ -76,6 +76,22 @@ export async function listPublishedPortfolioItems() {
   return (data ?? []) as PortfolioItemRow[];
 }
 
+export async function listFeaturedPortfolioItems(limit = 4) {
+  if (!supabase) return [];
+  const { data, error } = await supabase
+    .from("portfolio_items")
+    .select("*")
+    .not("published_at", "is", null)
+    .is("archived_at", null)
+    .eq("is_featured", true)
+    .order("sort_order", { ascending: true })
+    .order("created_at", { ascending: false })
+    .limit(limit);
+
+  if (error) throw error;
+  return (data ?? []) as PortfolioItemRow[];
+}
+
 export async function getPublishedPortfolioItemBySlug(slug: string) {
   if (!supabase) return null;
   const { data, error } = await supabase

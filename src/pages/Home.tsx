@@ -1,3 +1,4 @@
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
@@ -19,8 +20,61 @@ import {
   services,
   whyAmbara,
 } from "../data";
+import { listFeaturedPortfolioItems, type PortfolioItemRow } from "../lib/portfolioData";
+
+const staticFeaturedItems: PortfolioItemRow[] = portfolioProjects.map((project, index) => ({
+  id: project.slug,
+  title: project.title,
+  slug: project.slug,
+  category: project.category,
+  location: project.location,
+  year: project.year,
+  short_description: project.concept,
+  description: project.solution,
+  cover_image_url: project.imageSrc,
+  gallery_urls: [project.imageSrc],
+  services: [project.type],
+  materials: project.materials,
+  is_featured: index < 3,
+  sort_order: index * 10,
+  published_at: new Date().toISOString(),
+  archived_at: null,
+  created_at: new Date().toISOString(),
+  updated_at: new Date().toISOString(),
+}));
 
 export function Home() {
+  const [cmsFeaturedItems, setCmsFeaturedItems] = useState<PortfolioItemRow[]>([]);
+  const [portfolioLoading, setPortfolioLoading] = useState(true);
+
+  useEffect(() => {
+    let mounted = true;
+    listFeaturedPortfolioItems(4)
+      .then((items) => {
+        if (mounted) setCmsFeaturedItems(items);
+      })
+      .catch((fetchError) => {
+        console.error("Homepage portfolio CMS gagal dimuat:", fetchError);
+        if (mounted) setCmsFeaturedItems([]);
+      })
+      .finally(() => {
+        if (mounted) setPortfolioLoading(false);
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const homepagePortfolioItems = useMemo(
+    () => (cmsFeaturedItems.length ? cmsFeaturedItems : staticFeaturedItems.slice(0, 3)),
+    [cmsFeaturedItems],
+  );
+  const homepageFeaturedProject = homepagePortfolioItems[0];
+  const featuredStory = homepageFeaturedProject.description ?? homepageFeaturedProject.short_description ?? featuredProject.story;
+  const featuredMaterial = homepageFeaturedProject.materials.length ? homepageFeaturedProject.materials.join(", ") : featuredProject.mainMaterial;
+  const featuredService = homepageFeaturedProject.services.length ? homepageFeaturedProject.services.join(", ") : featuredProject.type;
+
   return (
     <main>
       <section className="relative overflow-hidden pt-24">
@@ -100,16 +154,17 @@ export function Home() {
             <Link className="text-link text-champagne" to="/portofolio">Jelajahi portofolio</Link>
           </div>
           <div className="mt-12 grid gap-5 md:grid-cols-12">
-            {portfolioProjects.slice(0, 3).map((project, index) => (
+            {portfolioLoading && <p className="md:col-span-12 text-sm uppercase tracking-[0.22em] text-champagne">Memuat portfolio pilihan...</p>}
+            {homepagePortfolioItems.slice(0, 4).map((project, index) => (
               <Link key={project.slug} to={`/portofolio/${project.slug}`} className={`group ${index === 0 ? "md:col-span-7" : "md:col-span-5"}`}>
-                <VisualBlock tone={project.tone} tall={index === 0} imageSrc={project.imageSrc} imageAlt={project.imageAlt} />
+                <VisualBlock tall={index === 0} imageSrc={project.cover_image_url ?? undefined} imageAlt={`Portfolio Ambara ${project.title}`} />
                 <div className="mt-5 flex items-start justify-between gap-4">
                   <div>
-                    <p className="text-xs uppercase tracking-[0.22em] text-champagne">{project.category}</p>
+                    <p className="text-xs uppercase tracking-[0.22em] text-champagne">{project.category ?? "Portfolio"}</p>
                     <h3 className="mt-2 font-serif text-2xl">{project.title}</h3>
-                    <p className="mt-1 text-sm text-linen/55">{project.type}</p>
+                    <p className="mt-1 text-sm text-linen/55">{project.short_description ?? project.services[0] ?? "Custom interior AMBARA"}</p>
                   </div>
-                  <p className="text-sm text-linen/55">{project.year}</p>
+                  <p className="text-sm text-linen/55">{project.year ?? ""}</p>
                 </div>
               </Link>
             ))}
@@ -122,19 +177,19 @@ export function Home() {
           <div className="featured-project">
             <div className="featured-copy">
               <SectionLabel>Featured Project</SectionLabel>
-              <h2>{featuredProject.name}</h2>
-              <p>{featuredProject.story}</p>
+              <h2>{homepageFeaturedProject.title}</h2>
+              <p>{featuredStory}</p>
               <div className="featured-meta">
-                <div><span>Project type</span><strong>{featuredProject.type}</strong></div>
-                <div><span>Year</span><strong>{featuredProject.year}</strong></div>
-                <div><span>Location</span><strong>{featuredProject.location}</strong></div>
+                <div><span>Jenis project</span><strong>{featuredService}</strong></div>
+                <div><span>Tahun</span><strong>{homepageFeaturedProject.year ?? featuredProject.year}</strong></div>
+                <div><span>Lokasi</span><strong>{homepageFeaturedProject.location ?? featuredProject.location}</strong></div>
                 <div><span>Area</span><strong>{featuredProject.area}</strong></div>
-                <div><span>Main material</span><strong>{featuredProject.mainMaterial}</strong></div>
-                <div><span>Duration</span><strong>{featuredProject.duration}</strong></div>
+                <div><span>Material utama</span><strong>{featuredMaterial}</strong></div>
+                <div><span>Durasi</span><strong>{featuredProject.duration}</strong></div>
               </div>
-              <Link className="btn-primary mt-8" to={`/portofolio/${featuredProject.slug}`}>View Project Detail</Link>
+              <Link className="btn-primary mt-8" to={`/portofolio/${homepageFeaturedProject.slug}`}>Lihat Detail Project</Link>
             </div>
-            <VisualBlock tone={featuredProject.tone} tall imageSrc={featuredProject.imageSrc} imageAlt={featuredProject.imageAlt} />
+            <VisualBlock tall imageSrc={homepageFeaturedProject.cover_image_url ?? featuredProject.imageSrc} imageAlt={`Featured project Ambara ${homepageFeaturedProject.title}`} />
           </div>
         </Reveal>
       </section>

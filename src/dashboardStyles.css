@@ -185,7 +185,7 @@
   }
 
   .dashboard-filter-toggle {
-    @apply inline-flex border border-charcoal/10 bg-ivory p-1;
+    @apply inline-flex flex-wrap border border-charcoal/10 bg-ivory p-1;
   }
 
   .dashboard-filter-toggle button {

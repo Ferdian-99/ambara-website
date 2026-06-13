@@ -225,6 +225,26 @@ Admin access:
 - `/admin/homepage` is available to `super_admin` and `content_manager`.
 - `super_admin` can load default text into the form before saving.
 
+## Contact Form Inbox Setup
+
+Phase 4B stores public `/kontak` form submissions in Supabase and exposes them in the admin dashboard.
+
+Run this migration after the Homepage CMS migration:
+
+```text
+supabase/migrations/20260612080000_add_contact_messages.sql
+```
+
+The migration creates `public.contact_messages` with Row Level Security:
+
+- anonymous visitors can insert messages from the contact page
+- anonymous visitors cannot read, update, or delete messages
+- `super_admin` and `sales` can view incoming messages in `/admin/messages`
+- `super_admin` and `sales` can mark messages as read, mark them as followed up, archive them, and restore archived messages
+- client users cannot view or manage contact messages
+
+The contact form saves messages only. It does not send email notifications or WhatsApp API notifications yet. A later Phase 4C can add notifications through SMTP, Supabase Edge Functions, or a WhatsApp Business API integration.
+
 ## Project Storage Setup
 
 Phase 2C adds Supabase Storage upload for project documents and progress photos.
@@ -479,11 +499,30 @@ Use this before presenting or launching the production app:
 - Admin users with CMS access can create, edit, publish, unpublish, and upload portfolio images.
 - Super admin can archive and restore portfolio CMS items.
 
+## Completed In Phase 3B
+
+- Lightweight Homepage CMS added through `public.site_settings`.
+- `/admin/homepage` can update controlled homepage text for `super_admin` and `content_manager`.
+- Public homepage keeps a static fallback if settings are missing or unavailable.
+
+## Completed In Phase 4A
+
+- Production readiness polish added for metadata, route-aware titles, access safety notes, mobile overflow, and non-technical dashboard copy.
+- `ADMIN_GUIDE.md` added for non-technical admin use.
+- Production security checklist added above.
+
+## Completed In Phase 4B
+
+- Contact form submissions from `/kontak` are saved into `public.contact_messages`.
+- `/admin/messages` added for `super_admin` and `sales`.
+- Admin inbox supports filters, read status, followed-up status, archive/restore, WhatsApp follow-up links, and mailto links.
+- No automatic email or WhatsApp notification is implemented yet.
+
 ## Role Notes For Phase 2B
 
 - `super_admin`: can view and manage projects, clients, and updates.
 - `project_manager`: can create/manage projects and add project updates.
-- `sales`: can create clients and project records, and view project status.
+- `sales`: can create clients and project records, view project status, and manage contact inbox messages.
 - `content_manager`: can access the admin dashboard placeholder only; CMS remains future scope.
 - `client`: can access only client routes and view linked project data.
 
@@ -494,8 +533,10 @@ Use this before presenting or launching the production app:
 - Run `supabase/migrations/20260612030000_fix_project_delete_policies.sql` if delete actions appear successful but records still return after refresh.
 - Run `supabase/migrations/20260612050000_add_archive_fields.sql` before using client/project edit and archive controls.
 - Run `supabase/migrations/20260612060000_add_portfolio_cms.sql` before using Portfolio CMS in production.
+- Run `supabase/migrations/20260612070000_add_homepage_cms.sql` before using Homepage CMS in production.
+- Run `supabase/migrations/20260612080000_add_contact_messages.sql` before using the contact form inbox.
 - Review whether production documents should move from public bucket URLs to private buckets with signed URLs.
 - Add complete admin user management.
 - Add stronger production RLS review and security test pass.
-- Add CMS in a later phase.
+- Add notification delivery for contact messages in a later phase.
 - Add deployment environment variables in Vercel.

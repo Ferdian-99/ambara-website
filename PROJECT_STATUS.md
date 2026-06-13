@@ -65,6 +65,13 @@
 - Admin/client/auth error copy refined to avoid exposing technical backend terms to normal users.
 - `BACKEND_SETUP.md` now includes a final production security and QA checklist.
 - `ADMIN_GUIDE.md` added as a simple Indonesian operating guide for non-technical admins.
+- Phase 4B Contact Form Inbox added.
+- `public.contact_messages` migration added for public contact form submissions with RLS-protected admin access.
+- Public `/kontak` form now saves messages to Supabase and shows friendly success/error states.
+- `/admin/messages` added as `Pesan Masuk` for `super_admin` and `sales`.
+- Admin inbox supports filters, message detail, mark read, mark followed up, archive, restore, WhatsApp follow-up, and email follow-up links.
+- `/admin` dashboard now shows a `Pesan Masuk` card for `super_admin` and `sales`.
+- Email notification and WhatsApp API notification are not implemented yet.
 - Client multi-project visibility remains based on `auth.users.id -> clients.user_id -> clients.id -> projects.client_id`, so one linked client account can see all assigned projects.
 - Final frontend polish pass completed for public brand alignment, spacing, CTA hierarchy, and copy tone.
 - Official AMBARA logo integration fixed: public header/navbar uses `/assets/ambara-logo-dark-v2.png`, and footer/dark usage uses `/assets/ambara-logo-light.png`.
@@ -166,6 +173,7 @@
 - Run `supabase/migrations/20260612050000_add_archive_fields.sql` in Supabase before using edit/archive controls.
 - Run `supabase/migrations/20260612060000_add_portfolio_cms.sql` in Supabase before using Portfolio CMS controls.
 - Run `supabase/migrations/20260612070000_add_homepage_cms.sql` in Supabase before using Homepage CMS controls.
+- Run `supabase/migrations/20260612080000_add_contact_messages.sql` in Supabase before using the contact form inbox.
 - If the Edge Function is not deployed, create/invite Supabase Auth users manually, then link client records through `clients.user_id`.
 - Decide whether production documents should remain public MVP URLs or move to private buckets with signed URLs.
 - Add admin user management and invite flow.
@@ -179,7 +187,7 @@
 - The production JS bundle is above Vite's default 500 kB warning threshold after adding Supabase. This is a warning, not a build failure; route-level code splitting can be added later.
 
 ## Next Task
-- Final launch smoke test on Vercel with separate admin and client accounts: public tracking, login redirects, admin project update/upload/delete, client project view, Portfolio CMS, and Homepage CMS.
+- Run the contact message migration in Supabase, then smoke test `/kontak` submit and `/admin/messages` follow-up flow with a `super_admin` or `sales` account.
 
 ## Exact Command To Run Locally
 ```bash
@@ -188,7 +196,7 @@ npm run dev
 ```
 
 ## Build Status
-- Passed with `npm run build` after Phase 4A production readiness and final QA polish.
+- Passed with `npm run build` after Phase 4B Contact Form Inbox.
 - Output directory: `dist/`.
 - Non-fatal warnings: React Router and Framer Motion `"use client"` directives, plus Vite chunk-size warning after adding Supabase.
 

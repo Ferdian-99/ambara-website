@@ -114,6 +114,23 @@ create table if not exists public.site_settings (
   updated_by uuid references public.profiles(id)
 );
 
+create table if not exists public.contact_messages (
+  id uuid primary key default gen_random_uuid(),
+  name text not null,
+  email text,
+  phone text,
+  project_type text,
+  budget_range text,
+  message text not null,
+  source text not null default 'contact_page',
+  status text not null default 'new',
+  created_at timestamptz not null default now(),
+  read_at timestamptz,
+  archived_at timestamptz,
+  handled_by uuid references public.profiles(id) on delete set null,
+  constraint contact_messages_status_check check (status in ('new', 'read', 'followed_up', 'archived'))
+);
+
 create or replace function public.touch_updated_at()
 returns trigger language plpgsql as $$
 begin
@@ -199,6 +216,7 @@ alter table public.project_documents enable row level security;
 alter table public.project_photos enable row level security;
 alter table public.portfolio_items enable row level security;
 alter table public.site_settings enable row level security;
+alter table public.contact_messages enable row level security;
 
 drop policy if exists "profiles can read own profile" on public.profiles;
 create policy "profiles can read own profile" on public.profiles for select using (id = auth.uid() or public.is_internal_user());
@@ -274,6 +292,15 @@ create policy "site settings cms insert" on public.site_settings for insert to a
 
 drop policy if exists "site settings cms update" on public.site_settings;
 create policy "site settings cms update" on public.site_settings for update to authenticated using (id = 'homepage' and public.current_user_role() in ('super_admin', 'content_manager')) with check (id = 'homepage' and public.current_user_role() in ('super_admin', 'content_manager'));
+
+drop policy if exists "contact messages public insert" on public.contact_messages;
+create policy "contact messages public insert" on public.contact_messages for insert to anon, authenticated with check (status = 'new' and source = 'contact_page' and read_at is null and archived_at is null and handled_by is null);
+
+drop policy if exists "contact messages admin read" on public.contact_messages;
+create policy "contact messages admin read" on public.contact_messages for select to authenticated using (public.current_user_role() in ('super_admin', 'sales'));
+
+drop policy if exists "contact messages admin update" on public.contact_messages;
+create policy "contact messages admin update" on public.contact_messages for update to authenticated using (public.current_user_role() in ('super_admin', 'sales')) with check (public.current_user_role() in ('super_admin', 'sales'));
 
 insert into storage.buckets (id, name, public) values ('project-documents', 'project-documents', false) on conflict (id) do nothing;
 insert into storage.buckets (id, name, public) values ('project-photos', 'project-photos', false) on conflict (id) do nothing;

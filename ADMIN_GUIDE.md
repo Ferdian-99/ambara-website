@@ -21,6 +21,18 @@ Jika lupa password, klik `Lupa password?` di halaman login.
 
 Client yang baru dibuat belum otomatis bisa login sampai undangan portal dikirim dan diterima.
 
+## Cara Cek Pesan Masuk
+
+1. Buka `Pesan Masuk`.
+2. Gunakan filter `Baru`, `Dibaca`, `Ditindaklanjuti`, atau `Arsip` bila perlu.
+3. Klik `Buka Detail` untuk membaca pesan lengkap.
+4. Jika ada nomor WhatsApp, klik `Chat WhatsApp` untuk membuka percakapan manual.
+5. Jika ada email, klik `Email` untuk membalas lewat aplikasi email.
+6. Klik `Tandai Ditindaklanjuti` setelah pesan sudah dihubungi.
+7. Klik `Arsipkan` jika pesan sudah selesai ditangani.
+
+Pesan masuk berasal dari form `/kontak`. Sistem belum mengirim notifikasi otomatis ke email atau WhatsApp, jadi admin perlu mengecek inbox dashboard secara berkala.
+
 ## Cara Kirim Undangan Portal
 
 1. Buka `Clients`.
@@ -105,6 +117,7 @@ Data client, project, dan portfolio sebaiknya diarsipkan, bukan dihapus, jika ma
 - Arsipkan client bila client sudah tidak aktif.
 - Arsipkan project bila project sudah tidak perlu tampil di daftar aktif.
 - Arsipkan portfolio bila tidak ingin tampil di website publik.
+- Arsipkan pesan masuk bila inquiry sudah selesai ditindaklanjuti.
 
 Gunakan tombol arsip dengan hati-hati karena data yang diarsipkan tidak muncul di daftar aktif.
 
@@ -117,3 +130,4 @@ Gunakan tombol arsip dengan hati-hati karena data yang diarsipkan tidak muncul d
 - Jangan membuat client baru untuk orang yang sama jika data client lama masih ada.
 - Jangan memasukkan password client secara manual. Client sebaiknya membuat password sendiri melalui undangan email.
 - Jangan mengubah pengaturan lanjutan portfolio jika tidak memahami efeknya.
+- Jangan menandai pesan sebagai ditindaklanjuti sebelum client benar-benar dihubungi.

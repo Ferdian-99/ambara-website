@@ -11,6 +11,7 @@ const adminNav = [
   { label: "Overview", href: "/admin" },
   { label: "Projects", href: "/admin/projects" },
   { label: "Clients", href: "/admin/clients" },
+  { label: "Pesan Masuk", href: "/admin/messages", inboxOnly: true },
   { label: "Dokumen", href: "/admin/documents" },
   { label: "Homepage", href: "/admin/homepage", cmsOnly: true },
   { label: "Portfolio", href: "/admin/portfolio", cmsOnly: true },
@@ -36,7 +37,11 @@ export function AdminLayout() {
           AMBARA
         </NavLink>
         <nav>
-          {adminNav.filter((item) => !item.cmsOnly || role === "super_admin" || role === "content_manager").map((item) => (
+          {adminNav.filter((item) => {
+            if (item.cmsOnly && role !== "super_admin" && role !== "content_manager") return false;
+            if (item.inboxOnly && role !== "super_admin" && role !== "sales") return false;
+            return true;
+          }).map((item) => (
             <NavLink key={item.href} to={item.href} end={item.href === "/admin"} className={({ isActive }) => (isActive ? "is-active" : "")}>
               {item.label}
             </NavLink>

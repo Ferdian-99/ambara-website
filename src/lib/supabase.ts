@@ -15,6 +15,7 @@ export type ProjectStage =
   | "Selesai";
 
 export type ProjectStatus = "draft" | "active" | "on_hold" | "completed" | "cancelled";
+export type ContactMessageStatus = "new" | "read" | "followed_up" | "archived";
 
 export type Database = {
   public: {
@@ -220,6 +221,39 @@ export type Database = {
           updated_by?: string | null;
         };
         Update: Partial<Database["public"]["Tables"]["site_settings"]["Insert"]>;
+      };
+      contact_messages: {
+        Row: {
+          id: string;
+          name: string;
+          email: string | null;
+          phone: string | null;
+          project_type: string | null;
+          budget_range: string | null;
+          message: string;
+          source: string;
+          status: ContactMessageStatus;
+          created_at: string;
+          read_at: string | null;
+          archived_at: string | null;
+          handled_by: string | null;
+        };
+        Insert: {
+          id?: string;
+          name: string;
+          email?: string | null;
+          phone?: string | null;
+          project_type?: string | null;
+          budget_range?: string | null;
+          message: string;
+          source?: string;
+          status?: ContactMessageStatus;
+          created_at?: string;
+          read_at?: string | null;
+          archived_at?: string | null;
+          handled_by?: string | null;
+        };
+        Update: Partial<Database["public"]["Tables"]["contact_messages"]["Insert"]>;
       };
     };
     Functions: {

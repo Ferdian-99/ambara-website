@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import { countNewContactMessages } from "../../lib/contactMessagesData";
 import { fetchAdminOverview, type ClientRow, type ProjectUpdateRow, type ProjectWithClient } from "../../lib/projectData";
 import { hasPermission } from "../../lib/rbac";
 import { useDashboardContext } from "./AdminLayout";
@@ -14,12 +15,14 @@ export function AdminHome() {
   const [projects, setProjects] = useState<ProjectWithClient[]>([]);
   const [updates, setUpdates] = useState<ProjectUpdateRow[]>([]);
   const [clients, setClients] = useState<ClientRow[]>([]);
+  const [newMessageCount, setNewMessageCount] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   const canViewProjects = hasPermission(role, "projects:view_all");
   const canCreateProject = hasPermission(role, "projects:create");
   const canManagePortfolio = role === "super_admin" || role === "content_manager";
+  const canViewMessages = role === "super_admin" || role === "sales";
 
   useEffect(() => {
     if (!canViewProjects) {
@@ -46,6 +49,23 @@ export function AdminHome() {
       mounted = false;
     };
   }, [canViewProjects]);
+
+  useEffect(() => {
+    if (!canViewMessages) return;
+
+    let mounted = true;
+    countNewContactMessages()
+      .then((count) => {
+        if (mounted) setNewMessageCount(count);
+      })
+      .catch(() => {
+        if (mounted) setNewMessageCount(null);
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, [canViewMessages]);
 
   const metrics = useMemo(() => {
     const activeProjects = projects.filter((project) => project.status === "active").length;
@@ -114,6 +134,20 @@ export function AdminHome() {
           </section>
 
           <section className="dashboard-grid">
+            {canViewMessages && (
+              <article className="dashboard-panel">
+                <p className="section-label">Inquiry</p>
+                <h2>Pesan Masuk</h2>
+                <p>
+                  {newMessageCount === null
+                    ? "Lihat inquiry terbaru dari halaman kontak AMBARA."
+                    : `${newMessageCount} pesan baru menunggu dibaca.`}
+                </p>
+                <Link className="btn-secondary mt-6 inline-flex" to="/admin/messages">
+                  Buka Pesan Masuk
+                </Link>
+              </article>
+            )}
             {canManagePortfolio && (
               <>
                 <article className="dashboard-panel">

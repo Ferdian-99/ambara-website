@@ -17,6 +17,7 @@ import { useDashboardContext } from "./AdminLayout";
 
 const maxImageSize = 8 * 1024 * 1024;
 const allowedImageExtensions = [".jpg", ".jpeg", ".png", ".webp"];
+const projectCategoryOptions = ["Residensial", "Villa", "Komersial"];
 
 const initialForm = {
   title: "",
@@ -91,6 +92,10 @@ function statusLabel(item: PortfolioItemRow) {
   if (item.archived_at) return "Diarsipkan";
   if (item.published_at) return "Tampil di Website";
   return "Draft";
+}
+
+function isAllowedProjectCategory(category: string) {
+  return projectCategoryOptions.some((option) => option.toLowerCase() === category.trim().toLowerCase());
 }
 
 export function AdminPortfolio() {
@@ -384,7 +389,16 @@ export function AdminPortfolio() {
             <div className="form-grid three">
               <label>
                 Jenis Project
-                <input value={form.category} onChange={(event) => updateField("category", event.target.value)} placeholder="Residensial" />
+                <select value={form.category} onChange={(event) => updateField("category", event.target.value)}>
+                  <option value="" disabled>Pilih jenis project</option>
+                  {form.category && !isAllowedProjectCategory(form.category) && (
+                    <option value={form.category}>Kategori saat ini: {form.category}</option>
+                  )}
+                  {projectCategoryOptions.map((category) => (
+                    <option key={category} value={category}>{category}</option>
+                  ))}
+                </select>
+                <small>Untuk filter portfolio publik.</small>
               </label>
               <label>
                 Lokasi

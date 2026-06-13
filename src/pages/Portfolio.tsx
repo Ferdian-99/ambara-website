@@ -4,6 +4,8 @@ import { PageShell, Reveal, VisualBlock } from "../components";
 import { portfolioProjects } from "../data";
 import { listPublishedPortfolioItems, type PortfolioItemRow } from "../lib/portfolioData";
 
+const filterCategories = ["Semua", "Residensial", "Villa", "Komersial"];
+
 const fallbackItems: PortfolioItemRow[] = portfolioProjects.map((project, index) => ({
   id: project.slug,
   title: project.title,
@@ -49,12 +51,10 @@ export function Portfolio() {
   }, []);
 
   const items = cmsItems.length ? cmsItems : fallbackItems;
-  const categories = useMemo(
-    () => ["Semua", ...Array.from(new Set(items.map((item) => item.category).filter((item): item is string => Boolean(item))))],
-    [items],
-  );
   const projects = useMemo(
-    () => active === "Semua" ? items : items.filter((project) => project.category === active),
+    () => active === "Semua"
+      ? items
+      : items.filter((project) => project.category?.trim().toLowerCase() === active.toLowerCase()),
     [active, items],
   );
 
@@ -67,7 +67,7 @@ export function Portfolio() {
       <section className="section-wrap">
         {loading && <p className="mb-6 text-sm uppercase tracking-[0.2em] text-champagne">Memuat portfolio...</p>}
         <div className="flex flex-wrap gap-3">
-          {categories.map((category) => (
+          {filterCategories.map((category) => (
             <button
               key={category}
               type="button"

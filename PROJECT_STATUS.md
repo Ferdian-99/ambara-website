@@ -51,6 +51,7 @@
 - Portfolio CMS supports create, edit, publish, unpublish, cover/gallery image upload, and super-admin archive/restore.
 - Portfolio CMS admin UI refined for non-technical admins with Indonesian labels, photo previews, upload-first image handling, and collapsed advanced technical fields.
 - Homepage portfolio and featured project sections now read published featured CMS portfolio items with static fallback.
+- Portfolio CMS `Jenis Project` field changed from free text to a controlled dropdown for Residensial, Villa, and Komersial.
 - `/admin/clients` client card layout spacing refined so the portal status panel no longer overlaps email, phone, or address text.
 - Client multi-project visibility remains based on `auth.users.id -> clients.user_id -> clients.id -> projects.client_id`, so one linked client account can see all assigned projects.
 - Final frontend polish pass completed for public brand alignment, spacing, CTA hierarchy, and copy tone.
@@ -119,6 +120,7 @@
 - Supabase archive migration added for client/project soft archive safety and project budget range.
 - Supabase Portfolio CMS migration added for portfolio showcase content and `portfolio-images` bucket.
 - Homepage Portfolio CMS integration added so items marked `Tampilkan di Beranda` can appear on `/`.
+- Public portfolio filters are fixed to `Semua`, `Residensial`, `Villa`, and `Komersial` with case-insensitive matching.
 - Admin document upload added with category support: Quotation, Desain Final, Invoice, Kontrak, and Lainnya.
 - Admin progress photo upload added with caption support.
 - Admin project detail delete actions added for timeline updates, documents, and progress photos.
@@ -172,7 +174,7 @@ npm run dev
 ```
 
 ## Build Status
-- Passed with `npm run build` after Phase 3A Portfolio CMS admin UX and homepage CMS integration.
+- Passed with `npm run build` after Portfolio CMS category dropdown refinement.
 - Output directory: `dist/`.
 - Non-fatal warnings: React Router and Framer Motion `"use client"` directives, plus Vite chunk-size warning after adding Supabase.
 
